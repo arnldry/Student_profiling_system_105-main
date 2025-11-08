@@ -94,7 +94,7 @@
 								<div id="student-count" class="weight-700 font-24 text-dark">{{ $studentCount }}</div>
 
 								<div class="font-14 text-secondary weight-500">
-									Student Account
+									Student Profile
 								</div>
 							</div>
 							<div class="widget-icon" style="background-color:darkgreen;">
@@ -137,7 +137,7 @@
 
 					<div class="col-md-8 mb-20">
 						<div class="card-box height-100-p pd-20">
-							<h4 class="h4 text-blue">Student Count</h4>
+							<h4 class="h4 text-blue">Student Enrollment by School Year</h4>
 							<div id="chart3" style="min-height: 365px;">
 								
 							</div>
@@ -213,7 +213,7 @@
 
 			<!-- Pie Chart Section -->
 			<div class="bg-white pd-20 card-box mb-30">
-				<h4 class="h4 text-blue">Student Count per Curriculum</h4>
+				<h4 class="h4 text-blue">Student Distribution by Curriculum</h4>
 				<div id="curriculumChart" style="min-height: 365px;"></div>
 				<div id="curriculum-total" class="pt-10 font-16 text-dark fw-bold"></div>
 			</div>
