@@ -90,7 +90,7 @@ class RegisteredUserController extends Controller
         $pendingUser->notify(new EmailVerificationNotification($verificationToken));
 
         return redirect()->route('register')
-            ->with('success', 'Registration successful! Please check your email for verification link to create your password.');
+            ->with('success', 'Registration successful! Please check your email for verification link to create your password. The verification link will expire in 5 minutes.');
     }
 
     /**
