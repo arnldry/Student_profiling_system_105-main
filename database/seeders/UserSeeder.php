@@ -28,33 +28,33 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        $faker = Faker::create();
-        $users = [];
+        // $faker = Faker::create();
+        // $users = [];
 
-        for ($i = 1; $i <= 125; $i++) {
-            $domain = $faker->randomElement(['gmail.com', 'yahoo.com']);
-            $username = $faker->unique()->userName;
-            $email = strtolower($username . '@' . $domain);
+        // for ($i = 1; $i <= 125; $i++) {
+        //     $domain = $faker->randomElement(['gmail.com', 'yahoo.com']);
+        //     $username = $faker->unique()->userName;
+        //     $email = strtolower($username . '@' . $domain);
 
-            $users[] = [
-                'name' => $faker->name(),
-                'email' => $email,
-                'password' => Hash::make('123'),
-                'role' => 'student',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+        //     $users[] = [
+        //         'name' => $faker->name(),
+        //         'email' => $email,
+        //         'password' => Hash::make('123'),
+        //         'role' => 'student',
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ];
 
         
-            if ($i % 500) {
-                User::insert($users);
-                $users = [];
-            }
-        }
+        //     if ($i % 500) {
+        //         User::insert($users);
+        //         $users = [];
+        //     }
+        // }
 
-        if (!empty($users)) {
-            User::insert($users);
-        }
+        // if (!empty($users)) {
+        //     User::insert($users);
+        // }
 
 
     }
