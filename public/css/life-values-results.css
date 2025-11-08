@@ -1,0 +1,137 @@
+/* Styles specifically for life-values-results.blade.php */
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    padding: 20px;
+    line-height: 1.4;
+}
+
+.main-container {
+    background: #ffffff;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.scores-heading {
+    text-align: right;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 15px;
+}
+
+.values-list {
+    display: grid;
+    gap: 8px;
+}
+
+.value-item {
+    display: grid;
+    grid-template-columns: 20px 30px 1fr;
+    align-items: start;
+    gap: 10px;
+}
+
+.value-letter {
+    font-weight: bold;
+}
+
+.score-box {
+    border: 1px solid #000;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
+.value-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.value-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.value-desc {
+    font-size: 12px;
+    margin: 0;
+}
+
+.scoring-summary {
+    margin-top: 60px;
+}
+
+.scoring-summary h2 {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.scoring-summary p {
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.scoring-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px 40px;
+}
+
+.score-line {
+    display: flex;
+    flex-direction: column;
+}
+
+.score-input {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.score-letter {
+    font-weight: bold;
+    width: 15px;
+}
+
+.score-underline {
+    flex-grow: 1;
+    border-bottom: 1px solid #000;
+    padding: 0 5px;
+    min-height: 20px;
+}
+
+.score-questions {
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+/* Print settings */
+@media print {
+    body {
+        padding: 0;
+    }
+    .main-container {
+        padding: 20px;
+    }
+    @page {
+        size: A4;
+        margin: 2cm;
+    }
+}
