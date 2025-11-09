@@ -54,6 +54,8 @@
 				</h2>
 			</div>
 
+			
+
 			<!-- Row for widgets -->
 			<div class="row pb-10">
 
@@ -123,7 +125,36 @@
 					</div>
 				</div>
 			</div>
-
+<!-- Quick Actions Section -->
+			<div class="row pb-10">
+				<div class="col-12">
+					<div class="card-box pd-20">
+						<h4 class="h4 text-blue mb-3">Quick Actions</h4>
+						<div class="row">
+							<div class="col-md-3 col-sm-6 mb-3">
+								<a href="{{ route('admin.student-profile') }}" class="btn btn-primary btn-block">
+									<i class="fa fa-users"></i> View Students
+								</a>
+							</div>
+							<div class="col-md-3 col-sm-6 mb-3">
+								<a href="{{ route('admin.test-results') }}" class="btn btn-success btn-block">
+									<i class="fa fa-clipboard-check"></i> Test Results
+								</a>
+							</div>
+							<div class="col-md-3 col-sm-6 mb-3">
+								<a href="{{ route('admin.activity-log') }}" class="btn btn-warning btn-block">
+									<i class="fa fa-history"></i> Activity Log
+								</a>
+							</div>
+							<div class="col-md-3 col-sm-6 mb-3">
+								<a href="{{ route('admin.archived-files-data') }}" class="btn btn-info btn-block">
+									<i class="fa fa-archive"></i> Archived Files
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
 
 
 
@@ -137,7 +168,7 @@
 
 					<div class="col-md-8 mb-20">
 						<div class="card-box height-100-p pd-20">
-							<h4 class="h4 text-blue">Student Enrollment by School Year</h4>
+							<h4 class="h4 text-blue">Student Enrollment by Gender per School Year</h4>
 							<div id="chart3" style="min-height: 365px;">
 								
 							</div>

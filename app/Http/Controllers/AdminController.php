@@ -408,17 +408,18 @@ public function updateStudentInfo(Request $request, $id)
     if ($oldUserName !== $newUserName) {
         $changes[] = "Student Name: '{$oldUserName}' → '{$newUserName}'";
     }
+
     foreach ($validated as $key => $value) {
+        // Skip birthday as it's not important for activity logging
+        if ($key === 'birthday') {
+            continue;
+        }
+
         $oldValue = $oldInfo[$key] ?? null;
-        if ($oldValue != $value) {
-            // Format dates properly for display
-            if (in_array($key, ['birthday']) && !empty($oldValue)) {
-                $oldValue = \Carbon\Carbon::parse($oldValue)->format('Y-m-d');
-            }
-            if (in_array($key, ['birthday']) && !empty($value)) {
-                $value = \Carbon\Carbon::parse($value)->format('Y-m-d');
-            }
-            $changes[] = ucfirst(str_replace('_', ' ', $key)) . ": '{$oldValue}' → '{$value}'";
+        $newValue = $value;
+
+        if ($oldValue != $newValue) {
+            $changes[] = ucfirst(str_replace('_', ' ', $key)) . ": '{$oldValue}' → '{$newValue}'";
         }
     }
 

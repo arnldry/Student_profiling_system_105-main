@@ -48,10 +48,8 @@ class RegisteredUserController extends Controller
                 'max:255',
                 'unique:users,email',
                 'unique:pending_users,email',
-                'regex:/^[\w.%+-]+@(gmail|yahoo)\.com$/i',
             ],
         ], [
-            'email.regex' => 'You must register with a valid Gmail or Yahoo address.',
             'email.unique' => 'This email is already registered or pending verification.',
             'first_name.required' => 'First name is required.',
             'first_name.regex' => 'First name can only contain letters (including Ñ/ñ), spaces, hyphens, and apostrophes.',

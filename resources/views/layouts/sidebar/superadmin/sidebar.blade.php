@@ -48,12 +48,12 @@
 				</li>
 
 				<!-- Archived Section -->
-				<li>
+				<!-- <li>
 					<a href="{{ route('superadmin.archived-files')}}" class="dropdown-toggle no-arrow">
 						<span class="micon bi bi-archive"></span>
 						<span class="mtext">Archived</span>
 					</a>
-				</li>
+				</li> -->
 
 				<li>
 					<a href="{{ route('superadmin.update-profile') }}" class="dropdown-toggle no-arrow">

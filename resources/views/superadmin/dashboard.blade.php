@@ -134,6 +134,57 @@
                     </div>
 				</div>
 
+				<!-- Quick Actions Section -->
+				<div class="row pb-10">
+					<div class="col-12">
+						<div class="card-box pd-20">
+							<h4 class="h4 text-blue mb-3">Quick Actions</h4>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.admin-accounts') }}" class="btn btn-primary btn-block">
+										<i class="bi bi-people"></i> Admin Account
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.student-accounts') }}" class="btn btn-success btn-block">
+										<i class="fa fa-graduation-cap"></i> Student Account
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.backup-restore') }}" class="btn btn-warning btn-block">
+										<i class="bi bi-gear-fill"></i> Backup & Restore
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.school-year') }}" class="btn btn-danger btn-block">
+										<i class="bi bi-calendar"></i> Manage School Year
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.curriculum') }}" class="btn btn-info btn-block">
+										<i class="fa fa-book"></i> Manage Curriculum
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.archived-student-data') }}" class="btn btn-secondary btn-block">
+										<i class="bi bi-archive"></i> Archived Student Data
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.archived-files') }}" class="btn btn-dark btn-block">
+										<i class="bi bi-archive"></i> Archived Files
+									</a>
+								</div>
+								<div class="col-md-3 col-sm-6 mb-3">
+									<a href="{{ route('superadmin.update-profile') }}" class="btn btn-light btn-block">
+										<i class="bi bi-person"></i> Profile
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<!-- <div class="bg-white pd-20 card-box mb-30">
 						<h4 class="h4 text-blue">Student Chart</h4>
 						<div id="chart3" style="min-height: 365px;"></div>

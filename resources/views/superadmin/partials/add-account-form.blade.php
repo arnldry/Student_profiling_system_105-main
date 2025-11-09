@@ -70,19 +70,8 @@
                     <label class="form-check-label" for="showPasswordCheckbox">Show Password</label>
                 </div>
 
-                <!-- Role -->
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="role">Role <span class="text-danger">*</span></label>
-                        <select name="role" id="role" class="form-control" required>
-                            <option value="admin" {{ old('role')=='admin' ? 'selected' : '' }}>Admin</option>
-                        
-                        </select>
-                        @error('role')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
+                <!-- Hidden Role Field - Automatically set to admin -->
+                <input type="hidden" name="role" value="admin">
 
                 <button type="submit" class="btn btn-primary" id="submitBtn">
                     <i class="dw dw-save"></i> Save Account

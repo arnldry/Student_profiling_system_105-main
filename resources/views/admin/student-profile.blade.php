@@ -45,10 +45,9 @@
                         <thead>
                             <tr>
                                 <th>LRN</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                
-                                <th>Student Profile</th>
+                                <th>Student Name</th>
+                                <th>Grade and Section</th>
+                                <th>Curriculum</th>
                                 <th class="datatable-nosort">Action</th>
                         </thead>
                         <tbody>
@@ -62,21 +61,18 @@
                                         {{ $info ? $info->lrn : '-' }}
                                     </td>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $info ? $info->grade . ' / ' . $info->section : '-' }}</td>
+                                    <td>{{ $info ? $info->curriculum : '-' }}</td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-info" onclick="viewAdditionalInfo({{ $user->id }}, '{{ $user->name }}')">
                                             <i class="dw dw-eye"></i> View
                                         </button>
-                                    </td>
-                                   
-                                    <!-- Edit Student Button -->
-                                     <td>
                                         <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editInfoModal{{ $user->id }}">
-                                        <i class="dw dw-edit2"></i> Edit Information
+                                            <i class="dw dw-edit2"></i> Edit
                                         </button>
                                     </td>
-                            
-                                </tr>  
+
+                                </tr>
                                     {{-- 🔹 Edit Info Modal (Multi-Step Version) --}}
                                     <div class="modal fade" id="editInfoModal{{ $user->id }}" tabindex="-1" aria-labelledby="editInfoModalLabel{{ $user->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -1033,7 +1029,7 @@
                                     printBtn.onclick = function(e) {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        printStudentProfile(frontContent, backContent);
+                                        printStudentProfile(frontContent, backContent, learnerFullName);
                                         return false;
                                     };
                                 }
@@ -1048,7 +1044,7 @@
             });
         }
 
-        function printStudentProfile(frontContent, backContent) {
+        function printStudentProfile(frontContent, backContent, studentName) {
             // Create a hidden iframe for printing
             const iframe = document.createElement('iframe');
             iframe.style.position = 'absolute';
@@ -1057,15 +1053,15 @@
             iframe.style.border = 'none';
             iframe.style.opacity = '0';
             document.body.appendChild(iframe);
-            
+
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
+
             // Write the print content to the iframe
             iframeDoc.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Student Profile - Print</title>
+                    <title>${studentName}_Student_Profile</title>
                     <style>
                         @media print {
                             @page {

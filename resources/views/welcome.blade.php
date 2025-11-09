@@ -45,7 +45,7 @@
       <a href="#" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="landing-pages/assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Guindace Department</h1>
+        <h1 class="sitename">Guidance Department</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -406,7 +406,7 @@
               <div class="col-md-6 col-lg-3 aos-init aos-animate" data-aos="zoom-in" data-aos-delay="400">
                 <div class="team-card">
                   <div class="team-image">
-                    <img src="landing-pages/assets/img/person/rena.jpg" class="img-fluid" alt="">
+                    <img src="landing-pages/assets/img/person/person-f-3.webp" class="img-fluid" alt="">
                     <div class="team-overlay">
                       <p>Contact Information</p>
                       <div class="team-social">
@@ -446,7 +446,7 @@
           </a>
           <div class="footer-contact pt-3">
             <p>R7PJ+4J9, Rizal Avenue Extension, <br> Olongapo City, 2200 Zambales</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+            <!-- <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p> -->
             <p><strong>Email:</strong> <span>ocnchguidance@gmail.com</span></p>
           </div>
 
