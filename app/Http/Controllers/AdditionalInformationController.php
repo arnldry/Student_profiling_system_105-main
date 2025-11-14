@@ -15,7 +15,7 @@ class AdditionalInformationController extends Controller
 {
     public function additionalInfo()
     {
-        // $this->checkDatabase();
+    
 
         // Determine current school year consistent with dashboards:
         // FIXED: look for is_active = 0 instead of 1
@@ -36,7 +36,7 @@ class AdditionalInformationController extends Controller
     }
     public function store(Request $request)
     {
-        $this->checkDatabase();
+       
 
         $validated = $request->validate([
             'school_year' => 'required|exists:school_years,id',
@@ -170,20 +170,4 @@ class AdditionalInformationController extends Controller
         return response()->json(['exists' => $exists]);
     }
 
-    /**
-     * Check if database and required tables exist, otherwise throw 404.
-     */
-    // protected function checkDatabase()
-    // {
-    //     try {
-    //         DB::connection()->getPdo();
-    //         $tables = DB::select("SHOW TABLES");
-    //         $tableNames = array_map('current', $tables);
-    //         if (!in_array('users', $tableNames) || !in_array('additional_informations', $tableNames) || !in_array('school_years', $tableNames) || !in_array('curricula', $tableNames)) {
-    //             throw new NotFoundHttpException('Database or required tables not found.');
-    //         }
-    //     } catch (\Throwable $e) {
-    //         throw new NotFoundHttpException('Database not found.');
-    //     }
-    // }
 }

@@ -50,16 +50,16 @@
         /* Tab Styles - UPDATED FOR RESPONSIVE DESIGN */
         .form-tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 1px solid #e9ecef;
         }
         
-        /* Desktop - 4 columns */
+        /* Desktop - 5 columns */
         @media (min-width: 768px) {
             .form-tabs {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
         
@@ -258,9 +258,18 @@
                                 </span>
                             </a>
                         </div>
-                        <div class="form-tab last">
+                        <div class="form-tab">
                             <a href="#step-4">
                                 <span class="step">4</span>
+                                <span class="tab-text">
+                                    <span class="full-text">Guardian's Information</span>
+                                    <span class="abbr-text">Guardian Info</span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="form-tab last">
+                            <a href="#step-5">
+                                <span class="step">5</span>
                                 <span class="tab-text">
                                     <span class="full-text">Agreements</span>
                                     <span class="abbr-text">Agreements</span>
@@ -371,9 +380,9 @@
                                     <input type="text" name="address" id="address" class="form-control" placeholder="Enter Complete Address" required>
                                 </div>
 
-                                <!-- Contact Number -->
+                                <!-- Mobile Number -->
                                 <div class="col-md-6 form-group">
-                                    <label for="contact_number" class="font-weight-bold">Contact Number</label>
+                                    <label for="contact_number" class="font-weight-bold">Mobile Number</label>
                                     <input type="text" name="contact_number" id="contact_number" class="form-control" placeholder="09XXXXXXXXX" required>
                                 </div>
 
@@ -392,7 +401,16 @@
                                 <!-- Religion -->
                                 <div class="col-md-6 form-group">
                                     <label for="religion" class="font-weight-bold">Religion</label>
-                                    <input type="text" name="religion" id="religion" class="form-control" required placeholder="Enter Religion">
+                                    <select name="religion" id="religion" class="form-control" required>
+                                        <option value="">Select Religion</option>
+                                        <option value="Catholic">Catholic</option>
+                                        <option value="Protestant">Protestant</option>
+                                        <option value="Muslim">Muslim</option>
+                                        <option value="Buddhist">Buddhist</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Atheist">Atheist</option>
+                                        <option value="Others">Others</option>
+                                    </select>
                                 </div>
 
                                 <!-- Nationality -->
@@ -496,8 +514,50 @@
                             </div>
                         </div>
 
-                        <!-- Step 4: Agreements -->
+                        <!-- Step 4: Guardian Info -->
                         <div class="form-step" id="step-4">
+                            <div class="row g-3">
+                                <div class="col-md-6 form-group">
+                                    <label for="guardian_name" class="font-weight-bold">Guardian's Name</label>
+                                    <input type="text" name="guardian_name" id="guardian_name" class="form-control" placeholder="Enter Guardian's Name">
+                                </div>
+
+                                <div class="col-md-2 form-group">
+                                    <label for="guardian_age" class="font-weight-bold">Age</label>
+                                    <input type="number" name="guardian_age" id="guardian_age" class="form-control" placeholder="Age">
+                                </div>
+
+                                <!-- Occupation -->
+                               <div class="col-md-4 form-group">
+                                    <label for="guardian_occupation" class="font-weight-bold">Occupation / Work</label>
+                                    <input type="text" name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Enter Occupation">
+                                </div>
+
+                                <!-- Place of Work -->
+                                <div class="col-md-6 form-group">
+                                    <label for="guardian_place_work" class="font-weight-bold">Place of Work</label>
+                                    <input type="text" name="guardian_place_work" id="guardian_place_work" class="form-control" placeholder="Enter Place of Work">
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    <label for="guardian_contact" class="font-weight-bold">Contact Number</label>
+                                    <input type="text" name="guardian_contact" id="guardian_contact" class="form-control" placeholder="09XXXXXXXXX">
+                                </div>
+
+                                <div class="col-md-12 form-group">
+                                    <label for="guardian_fb" class="font-weight-bold">FB/Messenger</label>
+                                    <input type="text" name="guardian_fb" id="guardian_fb" class="form-control" placeholder="Guardian's FB/Messenger / Optional">
+                                </div>
+                            </div>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                                <button type="button" class="btn btn-primary next-step">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Agreements -->
+                        <div class="form-step" id="step-5">
                             <!-- Student and Parent Agreement Section -->
                             <div class="row g-3">
                                 <!-- For Student -->
@@ -505,17 +565,17 @@
                                     <h5 class="font-weight-bold">For Student</h5>
 
                                     <div class="form-check">
-                                        <input type="checkbox" name="student_agreement_1" id="student_agreement_1" class="form-check-input" required>
+                                        <input type="checkbox" name="student_agreement_1" id="student_agreement_1" class="form-check-input" required disabled>
                                         <label for="student_agreement_1" class="form-check-label">
-                                            Sumasang-ayon ako sa 
+                                            Sumasang-ayon ako sa
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#rulesModal" style="color: blue; text-decoration: underline;">Alituntunin sa Paaralan</a>
                                         </label>
                                     </div>
 
                                     <div class="form-check">
-                                        <input type="checkbox" name="student_agreement_2" id="student_agreement_2" class="form-check-input" required>
+                                        <input type="checkbox" name="student_agreement_2" id="student_agreement_2" class="form-check-input" required disabled>
                                         <label for="student_agreement_2" class="form-check-label">
-                                            Sumasang-ayon ako sa 
+                                            Sumasang-ayon ako sa
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#commitmentModal" style="color: blue; text-decoration: underline;">Komitment sa Paaralan</a>
                                         </label>
                                     </div>
@@ -526,17 +586,17 @@
                                     <h5 class="font-weight-bold">For Parent / Guardian</h5>
 
                                     <div class="form-check">
-                                        <input type="checkbox" name="parent_agreement_1" id="parent_agreement_1" class="form-check-input" required>
+                                        <input type="checkbox" name="parent_agreement_1" id="parent_agreement_1" class="form-check-input" required disabled>
                                         <label for="parent_agreement_1" class="form-check-label">
-                                            Sumasang-ayon ako sa 
+                                            Sumasang-ayon ako sa
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#parentDutiesModal" style="color: blue; text-decoration: underline;">Mga Tungkulin ng Magulang / Guardian</a>
                                         </label>
                                     </div>
 
                                     <div class="form-check">
-                                        <input type="checkbox" name="parent_agreement_2" id="parent_agreement_2" class="form-check-input" required>
+                                        <input type="checkbox" name="parent_agreement_2" id="parent_agreement_2" class="form-check-input" required disabled>
                                         <label for="parent_agreement_2" class="form-check-label">
-                                            Sumasang-ayon ako sa 
+                                            Sumasang-ayon ako sa
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#parentCommitmentModal" style="color: blue; text-decoration: underline;">Komitment sa Paaralan</a>
                                         </label>
                                     </div>
@@ -581,6 +641,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById("multiStepForm");
     const livingCheckboxes = document.querySelectorAll("input[name='living_mode[]']");
     let currentStep = 0;
+    let activeSteps = ['step-1', 'step-5']; // default, will be updated
+
+    const tabData = [
+        { label: 'Student Information', abbr: 'Student Info' },
+        { label: 'Father\'s Information', abbr: 'Father Info' },
+        { label: 'Mother\'s Information', abbr: 'Mother Info' },
+        { label: 'Guardian\'s Information', abbr: 'Guardian Info' },
+        { label: 'Agreements', abbr: 'Agreements' }
+    ];
+
+    function getActiveSteps() {
+        let steps = ['step-1'];
+        const fatherChecked = document.querySelector("input[name='living_mode[]'][value='Living with Father']").checked;
+        const motherChecked = document.querySelector("input[name='living_mode[]'][value='Living with Mother']").checked;
+        const guardianChecked = document.querySelector("input[name='living_mode[]'][value='Living with Other Guardians']").checked;
+        if (fatherChecked) steps.push('step-2');
+        if (motherChecked) steps.push('step-3');
+        if (guardianChecked) steps.push('step-4');
+        steps.push('step-5'); // agreements always
+        return steps;
+    }
 
     // 🔹 Add red asterisk for required labels
     document.querySelectorAll("input[required], select[required], textarea[required]").forEach(input => {
@@ -589,20 +670,39 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 🔹 Show correct step and highlight active tab
-    function showStep(step) {
-        steps.forEach((s, i) => {
-            s.classList.toggle("active", i === step);
-        });
+    function showStep(stepIndex) {
+        // Hide all steps
+        steps.forEach(s => s.classList.remove('active'));
+        // Show active step
+        const activeStepId = activeSteps[stepIndex];
+        const activeStepEl = document.getElementById(activeStepId);
+        if (activeStepEl) activeStepEl.classList.add('active');
 
-        tabs.forEach((t, i) => {
-            t.classList.toggle("current", i === step);
-            t.classList.toggle("done", i < step);
+        // Update tabs
+        const tabElements = document.querySelectorAll('.form-tab');
+        tabElements.forEach((tab, i) => {
+            if (i < activeSteps.length) {
+                tab.style.display = 'block';
+                const stepId = activeSteps[i];
+                const stepNum = parseInt(stepId.replace('step-', '')) - 1;
+                const data = tabData[stepNum];
+                const link = tab.querySelector('a');
+                link.href = '#' + stepId;
+                link.querySelector('.full-text').textContent = data.label;
+                link.querySelector('.abbr-text').textContent = data.abbr;
+                tab.classList.toggle('current', i === stepIndex);
+                tab.classList.toggle('done', i < stepIndex);
+                const stepSpan = tab.querySelector('.step');
+                if (stepSpan) stepSpan.textContent = i + 1;
+            } else {
+                tab.style.display = 'none';
+            }
         });
     }
 
     // 🔹 Move to next step
     function nextStep() {
-        if (currentStep < steps.length - 1) {
+        if (currentStep < activeSteps.length - 1) {
             currentStep++;
             showStep(currentStep);
         }
@@ -620,7 +720,11 @@ document.addEventListener('DOMContentLoaded', function () {
     nextBtns.forEach(btn => {
         btn.addEventListener("click", async function (e) {
             e.preventDefault();
-            if (!await validateStep(steps[currentStep])) return;
+            const currentStepEl = document.getElementById(activeSteps[currentStep]);
+            if (!await validateStep(currentStepEl)) return;
+            if (currentStep === 0) {
+                activeSteps = getActiveSteps();
+            }
             nextStep();
         });
     });
@@ -634,7 +738,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 🔹 Contact number restrictions - auto-start with "09"
-    const contactFields = ['contact_number', 'father_contact', 'mother_contact'];
+    const contactFields = ['contact_number', 'father_contact', 'mother_contact', 'guardian_contact'];
     contactFields.forEach(id => {
         const input = document.getElementById(id);
         if (!input) return;
@@ -678,6 +782,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Enable checkboxes when modals are opened
+    $('#rulesModal').on('shown.bs.modal', function () {
+        $('#student_agreement_1').prop('disabled', false);
+    });
+    $('#commitmentModal').on('shown.bs.modal', function () {
+        $('#student_agreement_2').prop('disabled', false);
+    });
+    $('#parentDutiesModal').on('shown.bs.modal', function () {
+        $('#parent_agreement_1').prop('disabled', false);
+    });
+    $('#parentCommitmentModal').on('shown.bs.modal', function () {
+        $('#parent_agreement_2').prop('disabled', false);
+    });
+
+    // Update tabs when living_mode changes in step 1
+    livingCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            if (currentStep === 0) {
+                activeSteps = getActiveSteps();
+                showStep(currentStep);
+            }
+        });
+    });
+
     // 🔹 LRN validation
     const lrnInput = document.getElementById("lrn");
     lrnInput.addEventListener("input", function () {
@@ -716,8 +844,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Validate agreement checkboxes in step 4
-        if (stepElement.id === "step-4") {
+        // Validate agreement checkboxes in step 5
+        if (stepElement.id === "step-5") {
             const agreementCheckboxes = stepElement.querySelectorAll("input[type='checkbox'][required]");
             for (let checkbox of agreementCheckboxes) {
                 if (!checkbox.checked) {
@@ -765,11 +893,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         e.preventDefault();
-        
-        // Validate the final step before showing confirmation
-        const lastStep = steps[steps.length - 1];
-        if (!await validateStep(lastStep)) {
-            return;
+
+        // Validate all active steps before showing confirmation
+        for (let i = 0; i < activeSteps.length; i++) {
+            const stepEl = document.getElementById(activeSteps[i]);
+            if (!await validateStep(stepEl)) {
+                currentStep = i;
+                showStep(currentStep);
+                return;
+            }
         }
         
         const result = await Swal.fire({
@@ -831,6 +963,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // 🔹 Initialize - show first step
+    activeSteps = getActiveSteps();
     showStep(currentStep);
 });
 </script>
