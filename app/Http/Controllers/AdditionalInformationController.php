@@ -7,7 +7,7 @@ use App\Models\Curriculum;
 use App\Models\SchoolYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,7 +15,7 @@ class AdditionalInformationController extends Controller
 {
     public function additionalInfo()
     {
-        $this->checkDatabase();
+        // $this->checkDatabase();
 
         // Determine current school year consistent with dashboards:
         // FIXED: look for is_active = 0 instead of 1
@@ -70,12 +70,12 @@ class AdditionalInformationController extends Controller
             'mother_contact' => 'nullable|string',
             'mother_fb' => 'nullable|string',
             
-            // 'guardian_name' => 'nullable|string',
-            // 'guardian_age' => 'nullable|integer|min:1',
-            // 'guardian_occupation' => 'nullable|string',
-            // 'guardian_place_work' => 'nullable|string',
-            // 'guardian_contact' => 'nullable|string',
-            // 'guardian_fb' => 'nullable|string',
+            'guardian_name' => 'nullable|string',
+            'guardian_age' => 'nullable|integer|min:1',
+            'guardian_occupation' => 'nullable|string',
+            'guardian_place_work' => 'nullable|string',
+            'guardian_contact' => 'nullable|string',
+            'guardian_fb' => 'nullable|string',
 
             // Agreements
             'student_agreement_1' => 'accepted',
@@ -134,12 +134,12 @@ class AdditionalInformationController extends Controller
                 'mother_contact' => $validated['mother_contact'] ?? null,
                 'mother_fb' => $validated['mother_fb'] ?? null,
 
-                // 'guardian_name' => $validated['guardian_name'] ?? null,
-                // 'guardian_age' => $validated['guardian_age'] ?? null,
-                // 'guardian_occupation' => $validated['guardian_occupation'] ?? null,
-                // 'guardian_place_work' => $validated['guardian_place_work'] ?? null,
-                // 'guardian_contact' => $validated['guardian_contact'] ?? null,
-                // 'guardian_fb' => $validated['guardian_fb'] ?? null,
+                'guardian_name' => $validated['guardian_name'] ?? null,
+                'guardian_age' => $validated['guardian_age'] ?? null,
+                'guardian_occupation' => $validated['guardian_occupation'] ?? null,
+                'guardian_place_work' => $validated['guardian_place_work'] ?? null,
+                'guardian_contact' => $validated['guardian_contact'] ?? null,
+                'guardian_fb' => $validated['guardian_fb'] ?? null,
 
                 'student_agreement_1' => true,
                 'student_agreement_2' => true,
@@ -173,17 +173,17 @@ class AdditionalInformationController extends Controller
     /**
      * Check if database and required tables exist, otherwise throw 404.
      */
-    protected function checkDatabase()
-    {
-        try {
-            DB::connection()->getPdo();
-            $tables = DB::select("SHOW TABLES");
-            $tableNames = array_map('current', $tables);
-            if (!in_array('users', $tableNames) || !in_array('additional_informations', $tableNames) || !in_array('school_years', $tableNames) || !in_array('curricula', $tableNames)) {
-                throw new NotFoundHttpException('Database or required tables not found.');
-            }
-        } catch (\Throwable $e) {
-            throw new NotFoundHttpException('Database not found.');
-        }
-    }
+    // protected function checkDatabase()
+    // {
+    //     try {
+    //         DB::connection()->getPdo();
+    //         $tables = DB::select("SHOW TABLES");
+    //         $tableNames = array_map('current', $tables);
+    //         if (!in_array('users', $tableNames) || !in_array('additional_informations', $tableNames) || !in_array('school_years', $tableNames) || !in_array('curricula', $tableNames)) {
+    //             throw new NotFoundHttpException('Database or required tables not found.');
+    //         }
+    //     } catch (\Throwable $e) {
+    //         throw new NotFoundHttpException('Database not found.');
+    //     }
+    // }
 }
