@@ -200,14 +200,21 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         
         // Additional Info Page
         Route::get('/student/additional-info', [AdditionalInformationController::class, 'additionalInfo'])->name('student.additional-info');
-        
+
         //Store Additional Info
         Route::post('/student/additional-info/store', [AdditionalInformationController::class, 'store'])->name('student.additional-info.store');
+
+    // View Additional Info
+    Route::get('/student/view-additional-info', [StudentController::class, 'viewAdditionalInfo'])->name('student.view-additional-info');
+    // JSON endpoint for popup view (student)
+    Route::get('/student/additional-info/json', [StudentController::class, 'getAdditionalInfoJson'])->name('student.additional-info.json');
         Route::view('/agreements', 'modals.agreements')->name('agreements');
 
         Route::post('/student/check-lrn', [AdditionalInformationController::class, 'checkLrn'])->name('student.check-lrn');
 
-        
+        // Download profile picture
+        Route::get('/student/download-profile-picture', [AdditionalInformationController::class, 'downloadProfilePicture'])->name('student.download-profile-picture');
+
         //student testing page
         Route::get('/student/testingdash', [StudentController::class, 'testing'])
         ->name('student.testingdash');

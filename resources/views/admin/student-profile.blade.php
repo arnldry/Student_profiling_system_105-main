@@ -86,25 +86,41 @@
                                                     </button>
                                                 </div>
 
-                                                <form action="{{ route('admin.update-student-info', $user->id) }}" method="POST" class="edit-student-form" data-user-id="{{ $user->id }}">
+                                                <form action="{{ route('admin.update-student-info', $user->id) }}" method="POST" enctype="multipart/form-data" class="edit-student-form" data-user-id="{{ $user->id }}">
                                                     @csrf
                                                     <div class="modal-body">
                                                         {{-- Step Indicators --}}
+                                                        @php
+                                                            // Normalize living_mode into an array for this modal
+                                                            $livingMode = [];
+                                                            if (isset($info->living_mode)) {
+                                                                if (is_array($info->living_mode)) {
+                                                                    $livingMode = $info->living_mode;
+                                                                } elseif (is_string($info->living_mode)) {
+                                                                    $decoded = json_decode($info->living_mode, true);
+                                                                    $livingMode = is_array($decoded) ? $decoded : [];
+                                                                }
+                                                            }
+                                                        @endphp
                                                         <div class="edit-form-tabs mb-4">
                                                             <div class="edit-form-tab active" data-step="1">
                                                                 <span class="step-number">1</span>
                                                                 <span class="step-label">Student Info</span>
                                                             </div>
-                                                            <div class="edit-form-tab" data-step="2">
+                                                            <div class="edit-form-tab" data-step="2" @if(!in_array('Living with Mother', $livingMode)) style="display:none" data-skip="1" @endif>
                                                                 <span class="step-number">2</span>
                                                                 <span class="step-label">Mother's Info</span>
                                                             </div>
-                                                            <div class="edit-form-tab" data-step="3">
+                                                            <div class="edit-form-tab" data-step="3" @if(!in_array('Living with Father', $livingMode)) style="display:none" data-skip="1" @endif>
                                                                 <span class="step-number">3</span>
                                                                 <span class="step-label">Father's Info</span>
                                                             </div>
-                                                            <div class="edit-form-tab" data-step="4">
+                                                            <div class="edit-form-tab" data-step="4" @if(!in_array('Living with Other Guardians', $livingMode)) style="display:none" data-skip="1" @endif>
                                                                 <span class="step-number">4</span>
+                                                                <span class="step-label">Guardian Info</span>
+                                                            </div>
+                                                            <div class="edit-form-tab" data-step="5">
+                                                                <span class="step-number">5</span>
                                                                 <span class="step-label">Agreements</span>
                                                             </div>
                                                         </div>
@@ -113,6 +129,17 @@
                                                         <div class="edit-form-step active" id="edit-step-1-{{ $user->id }}">
                                                             <h6 class="text-primary mb-3"><i class="dw dw-user"></i> Student Information</h6>
                                                             <div class="row">
+                                                                <div class="col-md-12 form-group text-center">
+                                                                    @php
+                                                                        $profileSrc = ($info && $info->profile_picture) ? asset($info->profile_picture) : '/vendors/images/logo-ocnhs.png';
+                                                                    @endphp
+                                                                    <label>Profile Photo</label>
+                                                                    <div style="margin-bottom:8px;">
+                                                                        <img id="edit-profile-preview-{{ $user->id }}" src="{{ $profileSrc }}" alt="Profile" style="width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                                                    </div>
+                                                                    <input type="file" name="profile_picture" id="edit-profile-photo-{{ $user->id }}" accept="image/*" class="form-control-file" />
+                                                                    <small class="form-text text-muted">Max 2MB. JPG, PNG only. Admin may change student photo here.</small>
+                                                                </div>
                                                                 <div class="col-md-6 form-group">
                                                                     <label>Student Name</label>
                                                                     <input type="text" name="student_name" id="edit-student-name-{{ $user->id }}" class="form-control" 
@@ -221,7 +248,7 @@
                                                         </div>
 
                                                         {{-- Step 2: Mother's Information --}}
-                                                        <div class="edit-form-step" id="edit-step-2-{{ $user->id }}">
+                                                        <div class="edit-form-step" id="edit-step-2-{{ $user->id }}" @if(!in_array('Living with Mother', $livingMode)) style="display:none" data-skip="1" @endif>
                                                             <h6 class="text-primary mb-3"><i class="dw dw-woman"></i> Mother's Information</h6>
                                                             <div class="row">
                                                                 <div class="col-md-6 form-group">
@@ -252,7 +279,7 @@
                                                         </div>
 
                                                         {{-- Step 3: Father's Information --}}
-                                                        <div class="edit-form-step" id="edit-step-3-{{ $user->id }}">
+                                                        <div class="edit-form-step" id="edit-step-3-{{ $user->id }}" @if(!in_array('Living with Father', $livingMode)) style="display:none" data-skip="1" @endif>
                                                             <h6 class="text-primary mb-3"><i class="dw dw-man"></i> Father's Information</h6>
                                                             <div class="row">
                                                                 <div class="col-md-6 form-group">
@@ -282,8 +309,39 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- Step 4: Agreements --}}
-                                                        <div class="edit-form-step" id="edit-step-4-{{ $user->id }}">
+                                                        {{-- Step 4: Guardian Information --}}
+                                                        <div class="edit-form-step" id="edit-step-4-{{ $user->id }}" @if(!in_array('Living with Other Guardians', $livingMode)) style="display:none" data-skip="1" @endif>
+                                                            <h6 class="text-primary mb-3"><i class="dw dw-user-1"></i> Guardian's Information</h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Name</label>
+                                                                    <input type="text" name="guardian_name" class="form-control" value="{{ $info->guardian_name ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Age</label>
+                                                                    <input type="number" name="guardian_age" class="form-control" value="{{ $info->guardian_age ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Occupation</label>
+                                                                    <input type="text" name="guardian_occupation" class="form-control" value="{{ $info->guardian_occupation ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Place of Work</label>
+                                                                    <input type="text" name="guardian_place_work" class="form-control" value="{{ $info->guardian_place_work ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Mobile Number</label>
+                                                                    <input type="text" name="guardian_contact" class="form-control" value="{{ $info->guardian_contact ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Facebook</label>
+                                                                    <input type="text" name="guardian_fb" class="form-control" value="{{ $info->guardian_fb ?? '' }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{-- Step 5: Agreements --}}
+                                                        <div class="edit-form-step" id="edit-step-5-{{ $user->id }}">
                                                             <h6 class="text-primary mb-3"><i class="dw dw-file"></i> Agreements</h6>
                                                             <div class="row">
                                                                 <div class="col-md-12">
@@ -457,8 +515,9 @@
             document.querySelectorAll('.edit-student-form').forEach(form => {
                 const modal = form.closest('.modal');
                 const userId = form.getAttribute('data-user-id');
-                const tabs = modal.querySelectorAll('.edit-form-tab');
-                const steps = modal.querySelectorAll('.edit-form-step');
+                // We'll maintain arrays for tabs/steps and refresh them when some steps are skipped
+                let tabs = Array.from(modal.querySelectorAll('.edit-form-tab'));
+                let steps = Array.from(modal.querySelectorAll('.edit-form-step'));
                 const nextBtn = modal.querySelector('.edit-next-btn');
                 const prevBtn = modal.querySelector('.edit-prev-btn');
                 const submitBtn = modal.querySelector('.edit-submit-btn');
@@ -567,6 +626,18 @@
                     });
                 }
 
+                // Profile photo preview (when admin selects a new file)
+                const profileInput = modal.querySelector(`#edit-profile-photo-${userId}`);
+                const profilePreview = modal.querySelector(`#edit-profile-preview-${userId}`);
+                if (profileInput && profilePreview) {
+                    profileInput.addEventListener('change', function (e) {
+                        const file = this.files && this.files[0];
+                        if (file) {
+                            profilePreview.src = URL.createObjectURL(file);
+                        }
+                    });
+                }
+
                 // Function to show a specific step
                 function showStep(stepIndex) {
                     // Hide all steps
@@ -597,6 +668,12 @@
                     currentStep = stepIndex;
                 }
 
+                // Refresh tabs and steps collections excluding those marked to skip (data-skip="1")
+                function refreshCollections() {
+                    tabs = Array.from(modal.querySelectorAll('.edit-form-tab')).filter(t => t.dataset.skip !== '1');
+                    steps = Array.from(modal.querySelectorAll('.edit-form-step')).filter(s => s.dataset.skip !== '1');
+                }
+
                 // Next button click
                 if (nextBtn) {
                     nextBtn.addEventListener('click', async function(e) {
@@ -617,32 +694,78 @@
                     });
                 }
 
-                // Tab click to navigate
-                tabs.forEach((tab, index) => {
-                    tab.addEventListener('click', function() {
-                        showStep(index);
+                // Ensure collections are in sync and attach tab click handlers
+                refreshCollections();
+                function attachTabListeners() {
+                    tabs.forEach((tab, index) => {
+                        tab.onclick = function() { showStep(index); };
                     });
-                });
+                }
+                attachTabListeners();
 
                 // Initialize - show first step
                 showStep(0);
 
                 // Reset to first step when modal is opened
                 modal.addEventListener('shown.bs.modal', function() {
+                    // Before initializing steps, determine which parent/guardian steps should be shown based on living_mode
+                    const livingFatherCheckbox = modal.querySelector("input[name='living_mode[]'][value='Living with Father']");
+                    const livingMotherCheckbox = modal.querySelector("input[name='living_mode[]'][value='Living with Mother']");
+                    const guardianCheckbox = modal.querySelector("input[name='living_mode[]'][value='Living with Other Guardians']");
+
+                    const motherTab = modal.querySelector('.edit-form-tab[data-step="2"]');
+                    const fatherTab = modal.querySelector('.edit-form-tab[data-step="3"]');
+                    const guardianTab = modal.querySelector('.edit-form-tab[data-step="4"]');
+
+                    const motherStep = modal.querySelector('#edit-step-2-{{ $user->id }}');
+                    const fatherStep = modal.querySelector('#edit-step-3-{{ $user->id }}');
+                    const guardianStep = modal.querySelector('#edit-step-4-{{ $user->id }}');
+
+                    // Show/hide mother
+                    if (livingMotherCheckbox && livingMotherCheckbox.checked) {
+                        if (motherTab) { motherTab.style.display = ''; motherTab.dataset.skip = '0'; }
+                        if (motherStep) { motherStep.style.display = ''; motherStep.dataset.skip = '0'; }
+                    } else {
+                        if (motherTab) { motherTab.style.display = 'none'; motherTab.dataset.skip = '1'; }
+                        if (motherStep) { motherStep.style.display = 'none'; motherStep.dataset.skip = '1'; }
+                    }
+
+                    // Show/hide father
+                    if (livingFatherCheckbox && livingFatherCheckbox.checked) {
+                        if (fatherTab) { fatherTab.style.display = ''; fatherTab.dataset.skip = '0'; }
+                        if (fatherStep) { fatherStep.style.display = ''; fatherStep.dataset.skip = '0'; }
+                    } else {
+                        if (fatherTab) { fatherTab.style.display = 'none'; fatherTab.dataset.skip = '1'; }
+                        if (fatherStep) { fatherStep.style.display = 'none'; fatherStep.dataset.skip = '1'; }
+                    }
+
+                    // Show/hide guardian
+                    if (guardianCheckbox && guardianCheckbox.checked) {
+                        if (guardianTab) { guardianTab.style.display = ''; guardianTab.dataset.skip = '0'; }
+                        if (guardianStep) { guardianStep.style.display = ''; guardianStep.dataset.skip = '0'; }
+                    } else {
+                        if (guardianTab) { guardianTab.style.display = 'none'; guardianTab.dataset.skip = '1'; }
+                        if (guardianStep) { guardianStep.style.display = 'none'; guardianStep.dataset.skip = '1'; }
+                    }
+
+                    // Refresh collection arrays and start at first visible step
+                    refreshCollections();
+                    attachTabListeners();
                     showStep(0);
+
                     // Re-add required class to labels when modal opens
                     modal.querySelectorAll("input[required], select[required], textarea[required]").forEach(input => {
                         const label = input.closest(".form-group")?.querySelector("label");
                         if (label) label.classList.add("required");
                     });
-                    
+
                     // Format existing contact numbers to start with "09" if they don't
                     const allContactInputs = [
                         modal.querySelector(`#edit-contact-${userId}`),
                         modal.querySelector(`#edit-father-contact-${userId}`),
                         modal.querySelector(`#edit-mother-contact-${userId}`)
                     ];
-                    
+
                     allContactInputs.forEach(input => {
                         if (input && input.value && !input.value.startsWith('09')) {
                             let value = input.value.replace(/[^0-9]/g, '');
@@ -650,6 +773,70 @@
                                 input.value = '09' + value.replace(/^09/, '').slice(0, 9);
                             }
                         }
+                    });
+
+                    // Also watch for changes to living_mode checkboxes while modal is open to dynamically show/hide parent/guardian steps
+                    const livingCheckboxes = modal.querySelectorAll("input[name='living_mode[]']");
+                    livingCheckboxes.forEach(cb => {
+                        cb.addEventListener('change', function() {
+                            const motherTab = modal.querySelector('.edit-form-tab[data-step="2"]');
+                            const fatherTab = modal.querySelector('.edit-form-tab[data-step="3"]');
+                            const guardianTab = modal.querySelector('.edit-form-tab[data-step="4"]');
+
+                            const motherStep = modal.querySelector('#edit-step-2-{{ $user->id }}');
+                            const fatherStep = modal.querySelector('#edit-step-3-{{ $user->id }}');
+                            const guardianStep = modal.querySelector('#edit-step-4-{{ $user->id }}');
+
+                            if (this.value === 'Living with Mother') {
+                                if (this.checked) { if (motherTab) { motherTab.style.display = ''; motherTab.dataset.skip = '0'; } if (motherStep) { motherStep.style.display = ''; motherStep.dataset.skip = '0'; } }
+                                else { if (motherTab) { motherTab.style.display = 'none'; motherTab.dataset.skip = '1'; } if (motherStep) { motherStep.style.display = 'none'; motherStep.dataset.skip = '1'; } }
+                            }
+
+                            if (this.value === 'Living with Father') {
+                                if (this.checked) { if (fatherTab) { fatherTab.style.display = ''; fatherTab.dataset.skip = '0'; } if (fatherStep) { fatherStep.style.display = ''; fatherStep.dataset.skip = '0'; } }
+                                else { if (fatherTab) { fatherTab.style.display = 'none'; fatherTab.dataset.skip = '1'; } if (fatherStep) { fatherStep.style.display = 'none'; fatherStep.dataset.skip = '1'; } }
+                            }
+
+                            if (this.value === 'Living with Other Guardians') {
+                                if (this.checked) { if (guardianTab) { guardianTab.style.display = ''; guardianTab.dataset.skip = '0'; } if (guardianStep) { guardianStep.style.display = ''; guardianStep.dataset.skip = '0'; } }
+                                else { if (guardianTab) { guardianTab.style.display = 'none'; guardianTab.dataset.skip = '1'; } if (guardianStep) { guardianStep.style.display = 'none'; guardianStep.dataset.skip = '1'; } }
+                            }
+
+                            // Collections updated — refresh handlers and ensure currentStep is valid
+                            refreshCollections();
+                            attachTabListeners();
+                            // If the checkbox was just checked, navigate to the newly added tab so admin can update fields immediately
+                            if (this.checked) {
+                                let targetStep = null;
+                                if (this.value === 'Living with Mother') targetStep = '2';
+                                if (this.value === 'Living with Father') targetStep = '3';
+                                if (this.value === 'Living with Other Guardians') targetStep = '4';
+                                if (targetStep) {
+                                    // find index of the visible tab with the matching data-step
+                                    const visibleTabs = Array.from(modal.querySelectorAll('.edit-form-tab')).filter(t => t.dataset.skip !== '1');
+                                    const idx = visibleTabs.findIndex(t => t.getAttribute('data-step') === targetStep);
+                                    if (idx !== -1) {
+                                        console.log('Showing step for', this.value, 'index', idx);
+                                        showStep(idx);
+                                        // autofocus first input in the newly shown step
+                                        setTimeout(() => {
+                                            refreshCollections();
+                                            const stepEls = steps; // refreshed by refreshCollections/attachTabListeners
+                                            if (stepEls && stepEls[idx]) {
+                                                const firstInput = stepEls[idx].querySelector('input, select, textarea');
+                                                if (firstInput) {
+                                                    try { firstInput.focus(); } catch (e) { /* ignore */ }
+                                                }
+                                            }
+                                        }, 100);
+                                    }
+                                }
+                            } else {
+                                if (currentStep >= steps.length) {
+                                    showStep(Math.max(0, steps.length - 1));
+                                }
+                            }
+                        });
                     });
                 });
             });
@@ -836,8 +1023,9 @@
                                     <span>LEARNER'S INDIVIDUAL INVENTORY RECORD</span>
                                 </td>
                             </tr>
-
+                            
                             <tr>
+                            
                                 <td colspan="3">School Year: ${data.school_year_name || '-'}</td>
                                 <td colspan="3">Curriculum/Program: ${data.curriculum || '-'}</td>
                                 <td colspan="4">Grade & Section: ${data.grade || '-'}/${data.section || '-'}</td>
@@ -873,6 +1061,7 @@
                                 <td colspan="4">${data.nationality || '-'}</td>
                             </tr>
                             
+                            ${data.living_mode && data.living_mode.includes('Living with Father') ? `
                             <tr>
                                 <td class="section-title" colspan="2">Father's Name</td><td colspan="4">${data.father_name || '-'}</td>
                                 <td colspan="1">Age:</td><td colspan="5">${data.father_age || '-'}</td>
@@ -885,7 +1074,9 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.father_place_work || 'N/A'}</td>
                             </tr>
-                            
+                            ` : ''}
+
+                            ${data.living_mode && data.living_mode.includes('Living with Mother') ? `
                             <tr>
                                 <td class="section-title" colspan="2">Mother's Name</td><td colspan="4">${data.mother_name || '-'}</td>
                                 <td colspan="1">Age:</td><td colspan="5">${data.mother_age || '-'}</td>
@@ -898,6 +1089,22 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
                             </tr>
+                            ` : ''}
+
+                            ${data.living_mode && data.living_mode.includes('Living with Other Guardians') ? `
+                            <tr>
+                                <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">${data.guardian_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.guardian_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.guardian_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.guardian_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.guardian_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.guardian_place_work || 'N/A'}</td>
+                            </tr>
+                            ` : ''}
                         </table>
 
                         <!-- Append School Rules and Commitment to the front side -->

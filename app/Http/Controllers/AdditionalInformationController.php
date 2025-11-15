@@ -40,7 +40,7 @@ class AdditionalInformationController extends Controller
 
         $validated = $request->validate([
             'school_year' => 'required|exists:school_years,id',
-            'lrn' => 'required|string|size:12', // Added size validation
+            'lrn' => 'required|string|min:11|max:12', // Allow 11-12 digits
             'sex' => 'required|string',
             'grade' => 'required|string',
             'curriculum' => 'required|string',
@@ -55,6 +55,7 @@ class AdditionalInformationController extends Controller
             'nationality' => 'required|string',
             'fb_messenger' => 'nullable|string',
             'disability' => 'nullable|string', // ✅ ADD VALIDATION
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
 
             // Parents & Guardians
             'father_name' => 'nullable|string',
@@ -69,7 +70,7 @@ class AdditionalInformationController extends Controller
             'mother_place_work' => 'nullable|string',
             'mother_contact' => 'nullable|string',
             'mother_fb' => 'nullable|string',
-            
+
             'guardian_name' => 'nullable|string',
             'guardian_age' => 'nullable|integer|min:1',
             'guardian_occupation' => 'nullable|string',
@@ -101,6 +102,15 @@ class AdditionalInformationController extends Controller
                 return back()->withInput()->withErrors(['unexpected' => 'You have already submitted additional information for this school year.']);
             }
 
+            // Handle profile picture upload
+            $profilePicturePath = null;
+            if ($request->hasFile('profile_picture')) {
+                $file = $request->file('profile_picture');
+                $filename = Auth::id() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('profiles'), $filename);
+                $profilePicturePath = 'profiles/' . $filename;
+            }
+
             AdditionalInformation::create([
                 'school_year_id' => $validated['school_year'],
                 'learner_id' => Auth::id(),
@@ -119,6 +129,7 @@ class AdditionalInformationController extends Controller
                 'nationality' => $validated['nationality'],
                 'fb_messenger' => $validated['fb_messenger'] ?? null,
                 'disability' => $validated['disability'] ?? null, // ✅ ADD THIS FIELD
+                'profile_picture' => $profilePicturePath,
 
                 'father_name' => $validated['father_name'] ?? null,
                 'father_age' => $validated['father_age'] ?? null,
@@ -168,6 +179,23 @@ class AdditionalInformationController extends Controller
             ->exists();
 
         return response()->json(['exists' => $exists]);
+    }
+
+    public function downloadProfilePicture()
+    {
+        $additionalInfo = AdditionalInformation::where('learner_id', Auth::id())->first();
+
+        if (!$additionalInfo || !$additionalInfo->profile_picture) {
+            return redirect()->back()->with('error', 'Profile picture not found.');
+        }
+
+        $path = storage_path('app/public/' . $additionalInfo->profile_picture);
+
+        if (!file_exists($path)) {
+            return redirect()->back()->with('error', 'File not found.');
+        }
+
+        return response()->download($path);
     }
 
 }

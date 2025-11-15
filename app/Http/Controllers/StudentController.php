@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInformation;
+use App\Models\SchoolYear;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
@@ -25,6 +26,9 @@ class StudentController extends Controller
 
     public function dashboard(){
         $user = auth()->user();
+
+        // Get additional information for profile picture
+        $additionalInfo = AdditionalInformation::where('learner_id', $user->id)->latest()->first();
 
         // Get completed test results for the student
         $riasecResult = \App\Models\RiasecResult::where('user_id', $user->id)->latest()->first();
@@ -52,7 +56,7 @@ class StudentController extends Controller
             ];
         }
 
-        return view('student.dashboard', compact('completedTests'));
+        return view('student.dashboard', compact('completedTests', 'additionalInfo'));
     }
 
     public function testing(){
@@ -106,5 +110,63 @@ class StudentController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function viewAdditionalInfo()
+    {
+        $user = auth()->user();
+        $info = AdditionalInformation::where('learner_id', $user->id)->first();
+
+        if (!$info) {
+            return redirect()->route('student.additional-info')->with('error', 'Please submit your additional information first.');
+        }
+
+        
+        $schoolYear = SchoolYear::find($info->school_year_id);
+        $info->school_year_name = $schoolYear ? $schoolYear->school_year : 'N/A';
+
+        if (is_string($info->living_mode)) {
+            $info->living_mode = json_decode($info->living_mode, true);
+        }
+
+        // Add formatted dates for display
+        $info->current_date_formatted = $info->current_date ? $info->current_date->format('F j, Y') : null;
+        $info->birthday_formatted = $info->birthday ? $info->birthday->format('F j, Y') : null;
+
+        return view('student.view-additional-info', compact('info', 'user'));
+    }
+
+    /**
+     * Return additional information as JSON for the authenticated student
+     */
+    public function getAdditionalInfoJson()
+    {
+        $user = auth()->user();
+        $info = AdditionalInformation::where('learner_id', $user->id)->first();
+
+        if (!$info) {
+            return response()->json(['error' => 'No student information found for the current user.']);
+        }
+
+        $schoolYear = SchoolYear::find($info->school_year_id);
+        $info->school_year_name = $schoolYear ? $schoolYear->school_year : 'N/A';
+
+        if (is_string($info->living_mode)) {
+            $info->living_mode = json_decode($info->living_mode, true);
+        }
+
+        // Add formatted dates for display
+        $info->current_date_formatted = $info->current_date ? $info->current_date->format('F j, Y') : null;
+        $info->birthday_formatted = $info->birthday ? $info->birthday->format('F j, Y') : null;
+
+        // Add agreement status
+        $info->agreements = [
+            'student_agreement_1' => $info->student_agreement_1 ?? false,
+            'student_agreement_2' => $info->student_agreement_2 ?? false,
+            'parent_agreement_1' => $info->parent_agreement_1 ?? false,
+            'parent_agreement_2' => $info->parent_agreement_2 ?? false,
+        ];
+
+        return response()->json($info);
     }
 }

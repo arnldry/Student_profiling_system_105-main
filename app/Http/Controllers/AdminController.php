@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\AdditionalInformation;
 use App\Models\SchoolYear;
@@ -345,7 +346,7 @@ class AdminController extends Controller
  *  ------------------------------- */
 public function updateStudentInfo(Request $request, $id)
 {
-        $validated = $request->validate([
+    $baseRules = [
         // Basic Info
         'student_name' => 'required|string|max:255|regex:/^[A-Za-zÑñ\s\-\']+$/u',
         'lrn' => 'required|string|min:11|max:12',
@@ -387,7 +388,41 @@ public function updateStudentInfo(Request $request, $id)
         'guardian_place_work' => 'nullable|string|max:255',
         'guardian_contact' => 'nullable|string|max:50',
         'guardian_fb' => 'nullable|string|max:255',
-    ]);
+        // Profile photo (optional) - allow admin to change student profile image
+        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ];
+
+        // First validate base rules (parent/guardian fields nullable here)
+        $validator = Validator::make($request->all(), $baseRules);
+        $validator->validate();
+        $validated = $validator->validated();
+
+        // Conditional rules: if admin selects Living with X, require key fields for that parent/guardian
+        $livingMode = $request->input('living_mode', []);
+        if (is_string($livingMode)) {
+            $decoded = json_decode($livingMode, true);
+            $livingMode = is_array($decoded) ? $decoded : [$livingMode];
+        }
+
+        $conditional = [];
+        if (in_array('Living with Mother', $livingMode)) {
+            $conditional['mother_name'] = 'required|string|max:255';
+            $conditional['mother_contact'] = 'required|string|max:50';
+        }
+        if (in_array('Living with Father', $livingMode)) {
+            $conditional['father_name'] = 'required|string|max:255';
+            $conditional['father_contact'] = 'required|string|max:50';
+        }
+        if (in_array('Living with Other Guardians', $livingMode)) {
+            $conditional['guardian_name'] = 'required|string|max:255';
+            $conditional['guardian_contact'] = 'required|string|max:50';
+        }
+
+        if (!empty($conditional)) {
+            $v2 = Validator::make($request->all(), $conditional);
+            $v2->validate();
+            $validated = array_merge($validated, $v2->validated());
+        }
 
     // 🔹 Get old values for logging
     $user = \App\Models\User::find($id);
@@ -402,6 +437,19 @@ public function updateStudentInfo(Request $request, $id)
             $user->save();
         }
         unset($validated['student_name']); // remove from $validated so it won't go into AdditionalInformation
+    }
+
+    // Handle profile picture upload separately (so $validated can be filled into model)
+    if ($request->hasFile('profile_picture')) {
+        try {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\.\-\_]/', '_', $file->getClientOriginalName());
+            $file->move(public_path('profiles'), $filename);
+            $validated['profile_picture'] = 'profiles/' . $filename;
+        } catch (\Exception $e) {
+            // If upload fails, ignore and proceed without changing the photo
+            unset($validated['profile_picture']);
+        }
     }
 
     // 🔹 Find or create the additional info record
@@ -440,11 +488,11 @@ public function updateStudentInfo(Request $request, $id)
             'student_id' => $id,
             'old_values' => array_merge(['user_name' => $oldUserName], $oldInfo),
             'new_values' => array_merge(['user_name' => $newUserName], $newInfo),
-        ]);
-    }
+            ]);
+        }
 
-    // 🔹 Redirect back with confirmation
-    return redirect()->back()->with('success', 'Student information updated successfully!');
+        // 🔹 Redirect back with confirmation
+        return redirect()->back()->with('success', 'Student information updated successfully!');
 }
 
     /** -------------------------------

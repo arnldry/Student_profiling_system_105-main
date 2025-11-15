@@ -57,7 +57,11 @@
 				<div class="card-box pd-20 height-100-p mb-30">
 					<div class="row align-items-center">
 						<div class="col-md-4">
-							<img src="../vendors/images/banner-img.png" alt="">
+							@if($additionalInfo && $additionalInfo->profile_picture)
+								<img src="{{ asset($additionalInfo->profile_picture) }}" alt="Profile Picture" class="img-fluid rounded-circle" style="max-width: 200px; max-height: 200px;">
+							@else
+								<img src="../vendors/images/banner-img.png" alt="">
+							@endif
 						</div>
 						<div class="col-md-8">
 							<h4 class="font-20 weight-500 mb-10 text-capitalize">
