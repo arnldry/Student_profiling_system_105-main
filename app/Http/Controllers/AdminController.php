@@ -153,8 +153,17 @@ class AdminController extends Controller
             $info->living_mode = json_decode($info->living_mode, true);
         }
 
-        $info->current_date = $info->current_date ? Carbon::parse($info->current_date)->format('Y-m-d') : '-';
-        $info->birthday = $info->birthday ? Carbon::parse($info->birthday)->format('Y-m-d') : '-';
+        // Add formatted dates for display
+        $info->current_date_formatted = $info->current_date ? $info->current_date->format('F j, Y') : null;
+        $info->birthday_formatted = $info->birthday ? $info->birthday->format('F j, Y') : null;
+
+        // Add agreement status
+        $info->agreements = [
+            'student_agreement_1' => $info->student_agreement_1 ?? false,
+            'student_agreement_2' => $info->student_agreement_2 ?? false,
+            'parent_agreement_1' => $info->parent_agreement_1 ?? false,
+            'parent_agreement_2' => $info->parent_agreement_2 ?? false,
+        ];
 
         return response()->json($info);
     }
@@ -439,8 +448,8 @@ public function updateStudentInfo(Request $request, $id)
 }
 
     /** -------------------------------
-     *  ACTIVITY LOG VIEW
-     *  ------------------------------- */
+      *  ACTIVITY LOG VIEW
+      *  ------------------------------- */
     public function activityLog()
     {
         $logs = ActivityLog::with(['admin', 'student', 'student.additionalInfo'])
@@ -448,6 +457,45 @@ public function updateStudentInfo(Request $request, $id)
             ->get();
 
         return view('admin.activity-log', compact('logs'));
+    }
+
+    /** -------------------------------
+      *  MANAGE TEST VIEW
+      *  ------------------------------- */
+    public function manageTest()
+    {
+        // Get current test status from cache or config
+        $riasecEnabled = \Cache::get('test_riasec_enabled', true);
+        $lifeValuesEnabled = \Cache::get('test_life_values_enabled', true);
+
+        return view('admin.manage-test', compact('riasecEnabled', 'lifeValuesEnabled'));
+    }
+
+    /** -------------------------------
+      *  TOGGLE TEST STATUS
+      *  ------------------------------- */
+    public function toggleTest(Request $request)
+    {
+        $request->validate([
+            'test_type' => 'required|in:riasec,life_values',
+            'enabled' => 'required|boolean'
+        ]);
+
+        $testType = $request->test_type;
+        $enabled = $request->enabled;
+
+        // Store in cache (you could also store in database)
+        $cacheKey = 'test_' . str_replace('_', '_', $testType) . '_enabled';
+        \Cache::put($cacheKey, $enabled, now()->addDays(365)); // Store for 1 year
+
+        // Log the activity
+        ActivityLog::create([
+            'admin_id' => Auth::id(),
+            'action' => 'Toggle Test Status',
+            'description' => ucfirst(str_replace('_', ' ', $testType)) . ' test ' . ($enabled ? 'enabled' : 'disabled'),
+        ]);
+
+        return response()->json(['success' => true, 'message' => ucfirst(str_replace('_', ' ', $testType)) . ' test ' . ($enabled ? 'enabled' : 'disabled') . ' successfully']);
     }
 
 

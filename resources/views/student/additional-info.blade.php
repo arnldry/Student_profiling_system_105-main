@@ -457,7 +457,7 @@
                                 </div>
 
                                 <div class="col-md-6 form-group">
-                                    <label for="father_contact" class="font-weight-bold">Contact Number</label>
+                                    <label for="father_contact" class="font-weight-bold">Mobile Number</label>
                                     <input type="text" name="father_contact" id="father_contact" class="form-control" placeholder="09XXXXXXXXX">
                                 </div>
                                 <div class="col-md-12 form-group">
@@ -498,7 +498,7 @@
                                 </div>
 
                                 <div class="col-md-6 form-group">
-                                    <label for="mother_contact" class="font-weight-bold">Contact Number</label>
+                                    <label for="mother_contact" class="font-weight-bold">Mobile Number</label>
                                     <input type="text" name="mother_contact" id="mother_contact" class="form-control" placeholder="09XXXXXXXXX">
                                 </div>
 
@@ -540,7 +540,7 @@
                                 </div>
 
                                 <div class="col-md-6 form-group">
-                                    <label for="guardian_contact" class="font-weight-bold">Contact Number</label>
+                                    <label for="guardian_contact" class="font-weight-bold">Mobile Number</label>
                                     <input type="text" name="guardian_contact" id="guardian_contact" class="form-control" placeholder="09XXXXXXXXX">
                                 </div>
 

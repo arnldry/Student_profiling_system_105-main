@@ -55,28 +55,115 @@
 			</div>
 
 			<div class="row">
-				<!-- Box 1 -->
-				<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
-					<a href="{{ route('testing.riasec')}}" class="card-box d-block height-100-p text-center shadow">
-					<div class="icon mb-3">
-						<i class="bi bi-journal-text" style="font-size: 40px; color: #007bff;"></i>
-					</div>
-					<h5 class="h5 mb-0">RIASEC TEST</h5>
-					<p class="text-muted">Click to start the Riasec test</p>
-					</a>
-				</div>
+				<!-- RIASEC Test Box -->
+				@php
+					$currentSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->first();
+					if (!$currentSchoolYear) {
+						$currentSchoolYear = \App\Models\SchoolYear::where('archived', 0)
+							->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
+							->first();
+					}
+					$hasAdditionalInfo = $currentSchoolYear ? \App\Models\AdditionalInformation::where('learner_id', Auth::id())
+						->where('school_year_id', $currentSchoolYear->id)
+						->exists() : false;
+					$hasRiasecResult = \App\Models\RiasecResult::where('user_id', Auth::id())->exists();
+					$canTakeRiasec = !$hasAdditionalInfo || !$hasRiasecResult;
+				@endphp
 
-				<!-- Box 2 -->
-					<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
-						<a href="{{ route('testing.life-values-inventory')}}" class="card-box d-block height-100-p text-center shadow">
-						<div class="icon mb-3">
-							<i class="bi bi-clipboard-check" style="font-size: 40px; color: #28a745;"></i>
-						</div>
-						<h5 class="h5 mb-0">LIFE VALUES INVENTORY</h5>
-						<p class="text-muted">Click to start the Life values inventory test</p>
-						</a>
+				@if(\Cache::get('test_riasec_enabled', true))
+				<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
+					@if($canTakeRiasec)
+					<a href="{{ route('testing.riasec')}}" class="card-box d-block height-100-p text-center shadow">
+					@else
+					<div class="card-box d-block height-100-p text-center shadow bg-light">
+					@endif
+					<div class="icon mb-3">
+						<i class="bi bi-journal-text" style="font-size: 40px; color: {{ $canTakeRiasec ? '#007bff' : '#6c757d' }};"></i>
+					</div>
+					<h5 class="h5 mb-0 {{ $canTakeRiasec ? '' : 'text-muted' }}">RIASEC TEST</h5>
+					<p class="text-muted">
+						@if(!$canTakeRiasec)
+							Already taken this school year
+						@elseif($hasRiasecResult)
+							Take test again (next school year)
+						@else
+							Click to start the Riasec test
+						@endif
+					</p>
+					@if($hasRiasecResult)
+						<span class="badge {{ $canTakeRiasec ? 'badge-info' : 'badge-secondary' }}">
+							{{ $canTakeRiasec ? 'Available' : 'Completed' }}
+						</span>
+					@endif
+					@if($canTakeRiasec)
+					</a>
+					@else
+					</div>
+					@endif
+				</div>
+				@else
+				<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
+					<div class="card-box d-block height-100-p text-center shadow bg-light">
+					<div class="icon mb-3">
+						<i class="bi bi-journal-text" style="font-size: 40px; color: #6c757d;"></i>
+					</div>
+					<h5 class="h5 mb-0 text-muted">RIASEC TEST</h5>
+					<p class="text-muted">This test is currently disabled</p>
+					<span class="badge badge-secondary">Disabled</span>
 					</div>
 				</div>
+				@endif
+
+				<!-- Life Values Test Box -->
+				@php
+					$hasLifeValuesResult = \App\Models\LifeValuesResult::where('user_id', Auth::id())->exists();
+					$canTakeLifeValues = !$hasAdditionalInfo || !$hasLifeValuesResult;
+				@endphp
+
+				@if(\Cache::get('test_life_values_enabled', true))
+				<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
+					@if($canTakeLifeValues)
+					<a href="{{ route('testing.life-values-inventory')}}" class="card-box d-block height-100-p text-center shadow">
+					@else
+					<div class="card-box d-block height-100-p text-center shadow bg-light">
+					@endif
+					<div class="icon mb-3">
+						<i class="bi bi-clipboard-check" style="font-size: 40px; color: {{ $canTakeLifeValues ? '#28a745' : '#6c757d' }};"></i>
+					</div>
+					<h5 class="h5 mb-0 {{ $canTakeLifeValues ? '' : 'text-muted' }}">LIFE VALUES INVENTORY</h5>
+					<p class="text-muted">
+						@if(!$canTakeLifeValues)
+							Already taken this school year
+						@elseif($hasLifeValuesResult)
+							Take test again (next school year)
+						@else
+							Click to start the Life values inventory test
+						@endif
+					</p>
+					@if($hasLifeValuesResult)
+						<span class="badge {{ $canTakeLifeValues ? 'badge-info' : 'badge-secondary' }}">
+							{{ $canTakeLifeValues ? 'Available' : 'Completed' }}
+						</span>
+					@endif
+					@if($canTakeLifeValues)
+					</a>
+					@else
+					</div>
+					@endif
+				</div>
+				@else
+				<div class="col-xl-3 col-lg-4 col-md-6 mb-30">
+					<div class="card-box d-block height-100-p text-center shadow bg-light">
+					<div class="icon mb-3">
+						<i class="bi bi-clipboard-check" style="font-size: 40px; color: #6c757d;"></i>
+					</div>
+					<h5 class="h5 mb-0 text-muted">LIFE VALUES INVENTORY</h5>
+					<p class="text-muted">This test is currently disabled</p>
+					<span class="badge badge-secondary">Disabled</span>
+					</div>
+				</div>
+				@endif
+			</div>
 			</div>
 
 		<footer>

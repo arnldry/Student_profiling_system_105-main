@@ -61,7 +61,7 @@
 						</div>
 						<div class="col-md-8">
 							<h4 class="font-20 weight-500 mb-10 text-capitalize">
-									Hello 
+									Hello
 								<div class="weight-600 font-30 text-blue">{{ Auth::user()->name }}!</div>
 							</h4>
 							<p class="font-18 max-width-600">
@@ -71,6 +71,35 @@
 						</div>
 					</div>
 				</div>
+
+				{{-- Test Results Section --}}
+				@if(count($completedTests) > 0)
+				<div class="card-box pd-20 height-100-p mb-30">
+					<h4 class="h4 text-blue mb-20">Your Test Results</h4>
+					<div class="row">
+						@foreach($completedTests as $test)
+						<div class="col-xl-4 col-lg-6 col-md-6 mb-20">
+							<div class="card-box height-100-p p-20 bg-light text-dark" style="background-color:rgb(185, 185, 185) !important;">
+								<div class="d-flex align-items-center mb-15">
+									<div class="icon mr-15">
+										<i class="bi {{ $test['icon'] }}" style="font-size: 40px; color: {{ $test['color'] == 'primary' ? '#007bff' : ($test['color'] == 'success' ? '#28a745' : '#6c757d') }};"></i>
+									</div>
+									<div>
+										<h5 class="mb-5">{{ $test['name'] }}</h5>
+										<div class="font-16 weight-600 text-muted">{{ $test['date'] }}</div>
+									</div>
+								</div>
+								<div class="text-center">
+									<a href="{{ route($test['route']) }}" class="btn btn-{{ $test['color'] }} btn-sm">
+										<i class="bi bi-eye"></i> View Results
+									</a>
+								</div>
+							</div>
+						</div>
+						@endforeach
+					</div>
+				</div>
+				@endif
 			</div>
 		</div>
 

@@ -103,6 +103,10 @@
                                                                 <span class="step-number">3</span>
                                                                 <span class="step-label">Father's Info</span>
                                                             </div>
+                                                            <div class="edit-form-tab" data-step="4">
+                                                                <span class="step-number">4</span>
+                                                                <span class="step-label">Agreements</span>
+                                                            </div>
                                                         </div>
 
                                                         {{-- Step 1: Student Information --}}
@@ -182,7 +186,7 @@
                                                                     <input type="text" name="address" class="form-control" value="{{ $info->address ?? '' }}" required>
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
-                                                                    <label>Contact Number</label>
+                                                                    <label>Mobile Number</label>
                                                                     <input type="text" name="contact_number" id="edit-contact-{{ $user->id }}" class="form-control" value="{{ $info->contact_number ?? '' }}" required>
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
@@ -237,7 +241,7 @@
                                                                     <input type="text" name="mother_place_work" class="form-control" value="{{ $info->mother_place_work ?? '' }}">
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
-                                                                    <label>Contact Number</label>
+                                                                    <label>Mobile Number</label>
                                                                     <input type="text" name="mother_contact" id="edit-mother-contact-{{ $user->id }}" class="form-control" value="{{ $info->mother_contact ?? '' }}">
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
@@ -268,12 +272,58 @@
                                                                     <input type="text" name="father_place_work" class="form-control" value="{{ $info->father_place_work ?? '' }}">
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
-                                                                    <label>Contact Number</label>
+                                                                    <label>Mobile Number</label>
                                                                     <input type="text" name="father_contact" id="edit-father-contact-{{ $user->id }}" class="form-control" value="{{ $info->father_contact ?? '' }}">
                                                                 </div>
                                                                 <div class="col-md-6 form-group">
                                                                     <label>Facebook</label>
                                                                     <input type="text" name="father_fb" class="form-control" value="{{ $info->father_fb ?? '' }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{-- Step 4: Agreements --}}
+                                                        <div class="edit-form-step" id="edit-step-4-{{ $user->id }}">
+                                                            <h6 class="text-primary mb-3"><i class="dw dw-file"></i> Agreements</h6>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="alert alert-info">
+                                                                        <strong>Agreement Status (Submitted on {{ $info->current_date ? $info->current_date->format('Y-m-d') : 'N/A' }}):</strong> These agreements were accepted by the student and parent/guardian during initial registration and cannot be modified.
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Student Agreements --}}
+                                                                <div class="col-md-6 form-group">
+                                                                    <h6 class="text-primary">For Student</h6>
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input" disabled {{ $info->student_agreement_1 ? 'checked' : '' }}>
+                                                                        <label class="form-check-label">
+                                                                            Sumasang-ayon ako sa <strong>Mga Alituntuning Dapat Sundin ng Mag-aaral ng OCNHS</strong>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input" disabled {{ $info->student_agreement_2 ? 'checked' : '' }}>
+                                                                        <label class="form-check-label">
+                                                                            Sumasang-ayon ako sa <strong>Komitment sa Paaralan</strong>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Parent Agreements --}}
+                                                                <div class="col-md-6 form-group">
+                                                                    <h6 class="text-primary">For Parent / Guardian</h6>
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input" disabled {{ $info->parent_agreement_1 ? 'checked' : '' }}>
+                                                                        <label class="form-check-label">
+                                                                            Sumasang-ayon ako sa <strong>Mga Tungkulin ng Magulang / Guardian</strong>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input" disabled {{ $info->parent_agreement_2 ? 'checked' : '' }}>
+                                                                        <label class="form-check-label">
+                                                                            Sumasang-ayon ako sa <strong>Komitment sa Paaralan</strong>
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -812,7 +862,7 @@
                                 <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '-'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.contact_number || '-'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.contact_number || '-'}</td>
                                 <td colspan="2">FB/Messenger:</td>
                                 <td colspan="4">${data.fb_messenger || 'N/A'}</td>
                             </tr>
@@ -829,7 +879,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Occupation/Work:</td><td colspan="4">${data.father_occupation || 'N/A'}</td>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
@@ -842,7 +892,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Occupation/Work:</td><td colspan="4">${data.mother_occupation || 'N/A'}</td>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
@@ -884,22 +934,33 @@
                                          sa akin ayon sa Mga Alituntuning Dapat Sundin ng Mag-aaral ng OCNHS at sa mga batas 
                                          ng DepEd ngayong taong panuruan. Kasihan nawa ako ng Maykapal.
                                     </p>
+                                    <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
+                                        <strong>Submitted:</strong> ${data.current_date_formatted}
+                                    </div>
                                 </td>
                             </tr>
                        
                     
                             <tr>
                                 <td colspan="12" style="text-align: left;">
+                                    <div style="margin-bottom: 10px; font-size: 11px;">
+                                        <strong>Agreement Status:</strong>
+                                        <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                        <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                    </div>
                                     <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 28px;"></div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
                                         </div>
                                     </div>
@@ -943,12 +1004,15 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 28px;"></div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
                                         </div>
                                     </div>
@@ -958,12 +1022,15 @@
                                         <p style="margin: 0; text-align: center; font-size: 12px;"><strong>KOMITMENT SA PAARALAN</strong></p>
                                     </div>
                                     <p style="font-size: 10px; text-align: center; margin: 0;">
-                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma 
-                                        sa ibaba ang aking taos pusong komitment na sumunod 
-                                        sa mga patakarang itinakda sa akin ayon sa Mga Alituntuning Dapat 
-                                        Sundin ng Mag-aaral ng OCNHS at sa mga batas ng DepEd ngayong taong panuruan. 
+                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma
+                                        sa ibaba ang aking taos pusong komitment na sumunod
+                                        sa mga patakarang itinakda sa akin ayon sa Mga Alituntuning Dapat
+                                        Sundin ng Mag-aaral ng OCNHS at sa mga batas ng DepEd ngayong taong panuruan.
                                         Kasihan nawa ako ng Maykapal.
                                     </p>
+                                    <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
+                                        <strong>Submitted:</strong> ${data.current_date_formatted}
+                                    </div>
                                 </td>
                             </tr>
                         </table>

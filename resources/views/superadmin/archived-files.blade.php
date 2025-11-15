@@ -260,7 +260,7 @@
                                 <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '-'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.contact_number || '-'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.contact_number || '-'}</td>
                                 <td colspan="2">FB/Messenger:</td>
                                 <td colspan="4">${data.fb_messenger || 'N/A'}</td>
                             </tr>
@@ -277,7 +277,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Occupation/Work:</td><td colspan="4">${data.father_occupation || 'N/A'}</td>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
@@ -290,7 +290,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Occupation/Work:</td><td colspan="4">${data.mother_occupation || 'N/A'}</td>
-                                <td colspan="2">Contact Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>

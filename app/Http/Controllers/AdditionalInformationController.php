@@ -36,7 +36,7 @@ class AdditionalInformationController extends Controller
     }
     public function store(Request $request)
     {
-       
+
 
         $validated = $request->validate([
             'school_year' => 'required|exists:school_years,id',

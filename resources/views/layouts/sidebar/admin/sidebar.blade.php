@@ -37,6 +37,14 @@
 					</a>
 				</li>
 
+				{{-- Manage Test --}}
+				<li>
+					<a href="{{ route('admin.manage-test') }}" class="dropdown-toggle no-arrow">
+						<span class="micon bi bi-toggle-on"></span>
+						<span class="mtext">Manage Test</span>
+					</a>
+				</li>
+
 				{{-- Activity Log --}}
 				<li>
 					<a href="{{ route('admin.activity-log') }}" class="dropdown-toggle no-arrow">
