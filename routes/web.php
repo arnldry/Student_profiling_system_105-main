@@ -174,6 +174,11 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         // View Student Test Result
         // Admin view specific student's test results
         Route::get('/admin/test-results', [AdminController::class, 'viewTestResults'])->name('admin.test-results');
+
+        // Manage Test
+        Route::get('/admin/manage-test', [AdminController::class, 'manageTest'])->name('admin.manage-test');
+        Route::post('/admin/manage-test/toggle', [AdminController::class, 'toggleTest'])->name('admin.manage-test.toggle');
+
         // Admin: view student's RIASEC result page
 
 

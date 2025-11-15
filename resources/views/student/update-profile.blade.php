@@ -71,7 +71,7 @@
         <div class="pd-ltr-20 xs-pd-20-10">
             <div class="min-height-200px">
                 <div class="page-header">
-                    <h4>Update Profile</h4>
+                    <h4>Change Password</h4>
                 </div>
 
                 <div class="row">
@@ -89,27 +89,23 @@
                     <!-- Update Form -->
                     <div class="col-md-7">
                         <div class="card-box p-4">
-                            <h5 class="mb-3">Update Account</h5>
                             <form id="updateProfileForm" action="{{ route('student.update-profile.update', $user->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
                                 <!-- Name -->
                                 <div class="form-group">
-                                    <label for="name" class="required-label">Name</label>
-                                    <input type="text" name="name" id="name" class="form-control form-control-lg" 
-                                        value="{{ old('name', $user->name ?? '') }}" required>
+                                    <label for="name">Name</label>
+                                    <input type="text" name="name" id="name" class="form-control form-control-lg bg-light"
+                                        value="{{ old('name', $user->name ?? '') }}" readonly>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="form-group">
-                                    <label for="email" class="required-label">Email</label>
-                                    <input type="email" name="email" id="email" 
-                                        class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                        value="{{ old('email', $user->email ?? '') }}" required>
-                                    @error('email')
-                                        <span class="invalid-feedback d-block">{{ $message }}</span>
-                                    @enderror
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" id="email"
+                                        class="form-control form-control-lg bg-light"
+                                        value="{{ old('email', $user->email ?? '') }}" readonly>
                                 </div>
 
                                 <!-- Current Password -->

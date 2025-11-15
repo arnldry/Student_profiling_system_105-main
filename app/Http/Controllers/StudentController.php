@@ -24,7 +24,35 @@ class StudentController extends Controller
     }
 
     public function dashboard(){
-        return view('student.dashboard');
+        $user = auth()->user();
+
+        // Get completed test results for the student
+        $riasecResult = \App\Models\RiasecResult::where('user_id', $user->id)->latest()->first();
+        $lifeValuesResult = \App\Models\LifeValuesResult::where('user_id', $user->id)->latest()->first();
+
+        $completedTests = [];
+
+        if ($riasecResult) {
+            $completedTests[] = [
+                'name' => 'RIASEC Career Test',
+                'date' => $riasecResult->created_at->format('M d, Y'),
+                'route' => 'testing.results.riasec-result',
+                'icon' => 'bi-journal-text',
+                'color' => 'primary'
+            ];
+        }
+
+        if ($lifeValuesResult) {
+            $completedTests[] = [
+                'name' => 'Life Values Inventory',
+                'date' => $lifeValuesResult->created_at->format('M d, Y'),
+                'route' => 'testing.results.life-values-results',
+                'icon' => 'bi-clipboard-check',
+                'color' => 'success'
+            ];
+        }
+
+        return view('student.dashboard', compact('completedTests'));
     }
 
     public function testing(){

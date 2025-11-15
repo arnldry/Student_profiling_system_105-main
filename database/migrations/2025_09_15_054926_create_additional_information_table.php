@@ -41,12 +41,12 @@ return new class extends Migration {
             $table->string('mother_contact')->nullable()    ;
             $table->string('mother_fb') ->nullable();
 
-            // $table->string('guardian_name')->nullable();
-            // $table->integer('guardian_age')->nullable();
-            // $table->string('guardian_occupation')->nullable();
-            // $table->string('guardian_place_work')->nullable();
-            // $table->string('guardian_contact')->nullable();
-            // $table->string('guardian_fb') ->nullable();
+            $table->string('guardian_name')->nullable();
+            $table->integer('guardian_age')->nullable();
+            $table->string('guardian_occupation')->nullable();
+            $table->string('guardian_place_work')->nullable();
+            $table->string('guardian_contact')->nullable();
+            $table->string('guardian_fb') ->nullable();
 
             $table->boolean('student_agreement_1');
             $table->boolean('student_agreement_2');
