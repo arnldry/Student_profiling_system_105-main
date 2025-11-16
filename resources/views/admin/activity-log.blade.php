@@ -47,8 +47,6 @@
                             <tr>
                                 <th>Date & Time</th>
                                 <th>Counselor Name</th>
-                                <th>Student LRN</th>
-                                <th>Student Name</th>
                                 <th>Changes Made</th>
                             </tr>
                         </thead>
@@ -63,12 +61,7 @@
                                         <strong>{{ $log->admin->name ?? 'Unknown' }}</strong><br>
                                         <small class="text-muted">{{ $log->admin->email ?? '' }}</small>
                                     </td>
-                                    <td>
-                                        {{ $log->student && $log->student->additionalInfo ? $log->student->additionalInfo->lrn : 'N/A' }}
-                                    </td>
-                                    <td>
-                                        <strong>{{ $log->student ? $log->student->name : 'N/A' }}</strong>
-                                    </td>
+
                                     <td>
                                         <div class="changes-container">
                                             @if(strpos($log->description, 'Changes:') !== false)

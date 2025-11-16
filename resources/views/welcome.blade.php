@@ -214,7 +214,7 @@
 
 
         <!-- Services Section -->
-        <section id="services" class="services section">
+        <section id="services" class="services section light-background">
 
           <!-- Section Title -->
           <div class="container section-title" data-aos="fade-up">
@@ -330,104 +330,7 @@
               </div><!-- End Service Item -->
         </section><!-- End Services Section -->
 
-        <!-- Team Section -->
-        <section id="team" class="team section light-background">
 
-          <!-- Section Title -->
-          <div class="container section-title aos-init aos-animate" data-aos="fade-up">
-            <h2>Who are we?</h2>
-            <p>The Developers are student of COMTEQ Computer and Business College pursuing a Bachelor of Science degree in Information Technology </p>
-          </div><!-- End Section Title -->
-
-          <div class="container aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
-
-            <div class="row g-5">
-
-              <div class="col-md-6 col-lg-3 aos-init aos-animate" data-aos="zoom-in" data-aos-delay="100">
-                <div class="team-card">
-                  <div class="team-image">
-                    <img src="landing-pages/assets/img/person/lapuz.jpg" class="img-fluid" alt="">
-                    <div class="team-overlay">
-                      <p>Contact Information</p>
-                      <div class="team-social">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arnldrylapuz@gmail.com"><i class="bi bi-envelope"></i></a>
-                        <a href="https://www.facebook.com/arnldry"><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="team-content">
-                    <h4>Arnold Rey S. Lapuz</h4>
-                    <span class="position">Full Stack Developer</span>
-                  </div>
-                </div>
-              </div><!-- End Team Member -->
-
-              <div class="col-md-6 col-lg-3 aos-init aos-animate" data-aos="zoom-in" data-aos-delay="200">
-                <div class="team-card">
-                  <div class="team-image">
-                    <img src="landing-pages/assets/img/person/pinili.jpg" class="img-fluid" alt="">
-                    <div class="team-overlay">
-                      <p>Contact Information</p>
-                      <div class="team-social">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=adrianpinili1997@gmail.com"><i class="bi bi-envelope"></i></a>
-                        <a href="https://www.facebook.com/adrian.christian.ednalan.pinili"><i class="bi bi-facebook"></i></a>
-                        <a href="https://"><i class="bi bi-linkedin"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="team-content">
-                    <h4>Adrian Christian E. Pinili</h4>
-                    <span class="position">Full Stack Developer</span>
-                  </div>
-                </div>
-              </div><!-- End Team Member -->
-
-              <div class="col-md-6 col-lg-3 aos-init aos-animate" data-aos="zoom-in" data-aos-delay="300">
-                <div class="team-card">
-                  <div class="team-image">
-                    <img src="landing-pages/assets/img/person/dela_cruz.jpg" class="img-fluid" alt="">
-                    <div class="team-overlay">
-                      <p>Contact Information</p>
-                      <div class="team-social">
-                        <a href=""><i class="bi bi-envelope"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="team-content">
-                    <h4>Ryan Erich R. Dela Cruz</h4>
-                    <span class="position">Project Manager</span>
-                  </div>
-                </div>
-              </div><!-- End Team Member -->
-
-              <div class="col-md-6 col-lg-3 aos-init aos-animate" data-aos="zoom-in" data-aos-delay="400">
-                <div class="team-card">
-                  <div class="team-image">
-                    <img src="landing-pages/assets/img/person/person-f-3.webp" class="img-fluid" alt="">
-                    <div class="team-overlay">
-                      <p>Contact Information</p>
-                      <div class="team-social">
-                        <a href=""><i class="bi bi-envelope"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="team-content">
-                    <h4>John Carlo Rena</h4>
-                    <span class="position">Researcher</span>
-                  </div>
-                </div>
-              </div><!-- End Team Member -->
-
-            </div>
-
-          </div>
-
-        </section><!-- End Team Section -->
 
 
       </div>

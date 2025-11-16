@@ -81,6 +81,12 @@ Route::middleware(['auth', 'preventBackHistory'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Test Results (accessible to authenticated users)
+    Route::get('/testing/results/riasec-result/{result_id?}', [RiasecController::class, 'result'])
+        ->name('testing.results.riasec-result');
+    Route::get('/testing/results/life-values-result/{result_id?}', [LifeValuesController::class, 'result'])
+        ->name('testing.results.life-values-results');
 });
 
 // ----------------------
@@ -180,11 +186,11 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         Route::post('/admin/manage-test/toggle', [AdminController::class, 'toggleTest'])->name('admin.manage-test.toggle');
 
         // Admin: view student's RIASEC result page
-
-
-        Route::get('/admin/student-riasec/{id}', [AdminController::class, 'viewStudentRiasec'])->name('admin.student-riasec');
+        Route::get('/admin/student-riasec/{id}/{result_id?}', [AdminController::class, 'viewStudentRiasec'])->name('admin.student-riasec');
+        Route::post('/admin/reopen-riasec/{userId}', [RiasecController::class, 'reopenForStudent'])->name('admin.reopen-riasec');
+        Route::post('/admin/reopen-life-values/{userId}', [LifeValuesController::class, 'reopenForStudent'])->name('admin.reopen-life-values');
         // Admin: view student's Life Values result page
-        Route::get('/admin/student-life-values/{id}', [AdminController::class, 'getLifeValuesResult'])->name('admin.student-life-values');
+        Route::get('/admin/student-life-values/{id}/{result_id?}', [AdminController::class, 'getLifeValuesResult'])->name('admin.student-life-values');
 
         // Activity Log
         Route::get('/admin/activity-log', [AdminController::class, 'activityLog'])->name('admin.activity-log');
@@ -212,15 +218,12 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         Route::get('/student/testingdash', [StudentController::class, 'testing'])
         ->name('student.testingdash');
  
-        // Riasec Routes 
+        // Riasec Routes
         Route::get('/student/riasec', [RiasecController::class, 'index'])
         ->name('testing.riasec');
 
         Route::post('/riasec/save', [RiasecController::class, 'store'])
         ->name('riasec.save');
-
-        Route::get('/testing/results/riasec-result', [RiasecController::class, 'result'])
-        ->name('testing.results.riasec-result');
 
 
 
@@ -230,9 +233,6 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
 
         Route::post('/life-values-submit/save', [LifeValuesController::class, 'store'])
             ->name('life-values-submit.save');
-
-        Route::get('/testing/results/life-values-result', [LifeValuesController::class, 'result'])
-        ->name('testing.results.life-values-results');
         
 
 

@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('code',3);
             $table->json('scores');
+            $table->boolean('is_retake')->default(false);
+            $table->foreignId('previous_result_id')->nullable()->constrained('riasec_results')->onDelete('set null');
+            $table->boolean('admin_reopened')->default(false);
             $table->timestamps();
         });
     }

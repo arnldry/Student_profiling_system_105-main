@@ -47,7 +47,9 @@
     }
 
     #riasec_title {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 18px;
       color: #555;
       margin-top: 10px;
@@ -138,6 +140,26 @@
       transform: scale(1.05);
     }
 
+    .nav-link {
+      color: #1cc2f2;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background: #f0f8ff;
+      color: #009ec3;
+    }
+
+    .nav-link.disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
     #text_analysis {
       font-size: 16px;
       margin: 30px 0;
@@ -156,16 +178,28 @@
     }
 
     .careerCard, .related-box {
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
+        background: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .careerCard.highlighted, .related-box.highlighted {
+        background: #e8f4fd;
+        border: 2px solid #1cc2f2;
+        box-shadow: 0 6px 16px rgba(28, 194, 242, 0.2);
+    }
+
+    .careerCard.dimmed, .related-box.dimmed {
+        background: #f5f5f5;
+        border: 1px solid #ccc;
+        opacity: 0.6;
     }
 
     .careerCard:hover, .related-box:hover {
-      transform: translateY(-5px);
+        transform: translateY(-5px);
     }
 
     .careerCard h3, .related-box h3 {
@@ -180,10 +214,51 @@
     }
 
     .careerCard ul, .related-box ul {
-      margin: 0;
-      padding-left: 20px;
-      list-style-type: disc;
-      columns: 2;
+        margin: 0;
+        padding-left: 15px;
+        list-style-type: disc;
+        columns: 2;
+        column-gap: 20px;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .careerCard li, .related-box li {
+        margin-bottom: 3px;
+        break-inside: avoid;
+    }
+
+    .career-content {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+    }
+
+    .career-options {
+        flex: 1;
+    }
+
+    .career-pathways {
+        flex: 1;
+    }
+
+    .career-options ul,
+    .career-pathways ul {
+        columns: 1 !important;
+        padding-left: 15px;
+        margin: 0;
+    }
+
+    .career-pathways p {
+        margin: 0 0 5px 0;
+        font-size: 13px;
+    }
+
+    .career-pathways {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 10px;
     }
 
     @media (max-width: 600px) {
@@ -206,22 +281,128 @@
         print-color-adjust: exact !important;
         margin: 0;
         padding: 0;
+        min-height: auto !important;
+        height: auto !important;
     }
 
     #results {
         width: 100%;
         max-width: 100%;
-        margin: 0 auto;
-        padding: 20px 40px;
+        margin: 0;
+        padding: 10px 15px;
         border: none !important;
         box-shadow: none !important;
         page-break-inside: avoid;
+        font-size: 11px;
+        line-height: 1.2;
     }
 
-    /* Hide buttons */
+    /* RESULT BUBBLE CONTAINER - Ultra compact for print */
+    #results > div:first-of-type {
+        margin: 5px 0 !important;
+        padding: 15px !important;
+        border-radius: 10px !important;
+    }
+
+    /* Hide navigation buttons and other non-essential elements */
+    .nav-link,
     .btn-print,
     .btn-back {
         display: none !important;
+    }
+
+    /* Ultra compact title */
+    #riasec_title {
+        margin-bottom: 10px !important;
+        font-size: 14px !important;
+    }
+
+    /* Compact scores table */
+    #result_3_block {
+        margin: 10px 0 !important;
+    }
+
+    #result_3_block table {
+        font-size: 10px !important;
+    }
+
+    #result_3_block td {
+        padding: 4px 3px !important;
+    }
+
+    /* Compact interest code section */
+    #result_4_block {
+        margin: 10px 0 !important;
+    }
+
+    #myInterest_code {
+        font-size: 12px !important;
+        margin-bottom: 5px !important;
+    }
+
+    #myCodes {
+        gap: 6px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .myCode {
+        font-size: 14px !important;
+        padding: 6px 12px !important;
+        font-weight: bold !important;
+    }
+
+    /* Compact analysis text */
+    #text_analysis {
+        font-size: 11px !important;
+        margin: 15px 0 !important;
+        padding: 8px 12px !important;
+    }
+
+    /* Optimized career grid - 2 columns for print for better text fit */
+    .results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        margin-top: 15px !important;
+    }
+
+    .careerCard, .related-box {
+        padding: 8px !important;
+        margin: 0 0 15px 0 !important;
+    }
+
+    .careerCard h3, .related-box h3 {
+        font-size: 13px !important;
+        margin-bottom: 6px !important;
+        font-weight: bold !important;
+    }
+
+    .careerCard p, .related-box p {
+        font-size: 11px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.3 !important;
+    }
+
+    .career-content {
+        gap: 12px !important;
+        margin-top: 6px !important;
+    }
+
+    .career-options ul,
+    .career-pathways ul {
+        font-size: 10px !important;
+        padding-left: 15px !important;
+        margin: 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    .career-pathways p {
+        font-size: 11px !important;
+        margin: 0 0 4px 0 !important;
+        font-weight: bold !important;
+    }
+
+    .career-pathways {
+        padding: 8px !important;
     }
 
     /* 🩵 Keep colors visible */
@@ -236,20 +417,18 @@
         color: #fff !important;
     }
 
-    /* 🧾 Fit to one clean page */
+    /* 🧾 Full page coverage - fill entire page */
     @page {
         size: A4;
-        margin: 1cm;
+        margin: 0.5cm 0.5cm 0.1cm 0.5cm;
     }
 
-    /* Optional: shrink font slightly to fit all content neatly */
-    body, #results {
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .results-grid {
-        grid-template-columns: repeat(2, 1fr);
+    /* Force single page - prevent any breaks */
+    .results-grid,
+    .careerCard,
+    .related-box,
+    #results > div {
+        page-break-inside: avoid !important;
     }
     }
 
@@ -264,6 +443,13 @@
      </div>
      <div>
          <b>Date Taken:</b> {{ $result->created_at->format('F d, Y')  }}
+         @if($result->is_retake)
+             @if($currentAttempt > 1)
+                 ({{ $currentAttempt }}{{ $currentAttempt == 2 ? 'nd' : ($currentAttempt == 3 ? 'rd' : 'th') }} Retake)
+             @else
+                 (Retake)
+             @endif
+         @endif
      </div>
   </div>
 
@@ -272,57 +458,92 @@
 
     <div id="pathway_title">Which Career Pathway is right for you?</div>
     <hr class="riasec_hr">
-    <div id="riasec_title">RESULTS OF THE RIASEC TEST</div>
+    <!-- RESULT BUBBLE CONTAINER -->
+    <div style="background: #f8f9fa; border-radius: 20px; padding: 30px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 2px solid #e9ecef;">
+        <div id="riasec_title">
+            <span>{{ $result->is_retake ? 'LATEST RESULTS OF THE RIASEC TEST' : 'RESULTS OF THE RIASEC TEST' }}</span>
+            @if($allResults->count() > 1)
+                <div style="display: flex; gap: 8px; margin-left: 20px;">
+                    @if(isset($is_admin) && $is_admin)
+                        @if($prevResult)
+                            <a href="{{ route('admin.student-riasec', [$student->id, $prevResult->id]) }}" class="nav-link">Previous</a>
+                        @else
+                            <span class="nav-link disabled">Previous</span>
+                        @endif
+                        @if($nextResult)
+                            <a href="{{ route('admin.student-riasec', [$student->id, $nextResult->id]) }}" class="nav-link">Next</a>
+                        @else
+                            <span class="nav-link disabled">Next</span>
+                        @endif
+                    @else
+                        @if($prevResult)
+                            <a href="{{ route('testing.results.riasec-result', $prevResult->id) }}" class="nav-link">Previous</a>
+                        @else
+                            <span class="nav-link disabled">Previous</span>
+                        @endif
+                        @if($nextResult)
+                            <a href="{{ route('testing.results.riasec-result', $nextResult->id) }}" class="nav-link">Next</a>
+                        @else
+                            <span class="nav-link disabled">Next</span>
+                        @endif
+                    @endif
+                </div>
+            @endif
+        </div>
 
-    <!-- SCORES -->
-    <div id="result_3_block">
-        <p>Your grand total scores from above has been transferred into the appropriate columns below.</p>
-        <table>
-            <tr>
-                <td class="riasecResult_chars">R</td><td>= Realistic</td>
-                <td>Total:</td><td><b>{{ $scores['R'] ?? 0 }}</b></td>
-            </tr>
-            <tr>
-                <td class="riasecResult_chars">I</td><td>= Investigative</td>
-                <td>Total:</td><td><b>{{ $scores['I'] ?? 0 }}</b></td>
-            </tr>
-            <tr>
-                <td class="riasecResult_chars">A</td><td>= Artistic</td>
-                <td>Total:</td><td><b>{{ $scores['A'] ?? 0 }}</b></td>
-            </tr>
-            <tr>
-                <td class="riasecResult_chars">S</td><td>= Social</td>
-                <td>Total:</td><td><b>{{ $scores['S'] ?? 0 }}</b></td>
-            </tr>
-            <tr>
-                <td class="riasecResult_chars">E</td><td>= Enterprising</td>
-                <td>Total:</td><td><b>{{ $scores['E'] ?? 0 }}</b></td>
-            </tr>
-            <tr>
-                <td class="riasecResult_chars">C</td><td>= Conventional</td>
-                <td>Total:</td><td><b>{{ $scores['C'] ?? 0 }}</b></td>
-            </tr>
-        </table>
-    </div>
+        <!-- SCORES -->
+        <div id="result_3_block">
+            <p>Your grand total scores from above has been transferred into the appropriate columns below.</p>
+            <table>
+                <tr>
+                    <td class="riasecResult_chars">R</td><td>= Realistic</td>
+                    <td>Total:</td><td><b>{{ $scores['R'] ?? 0 }}</b></td>
+                </tr>
+                <tr>
+                    <td class="riasecResult_chars">I</td><td>= Investigative</td>
+                    <td>Total:</td><td><b>{{ $scores['I'] ?? 0 }}</b></td>
+                </tr>
+                <tr>
+                    <td class="riasecResult_chars">A</td><td>= Artistic</td>
+                    <td>Total:</td><td><b>{{ $scores['A'] ?? 0 }}</b></td>
+                </tr>
+                <tr>
+                    <td class="riasecResult_chars">S</td><td>= Social</td>
+                    <td>Total:</td><td><b>{{ $scores['S'] ?? 0 }}</b></td>
+                </tr>
+                <tr>
+                    <td class="riasecResult_chars">E</td><td>= Enterprising</td>
+                    <td>Total:</td><td><b>{{ $scores['E'] ?? 0 }}</b></td>
+                </tr>
+                <tr>
+                    <td class="riasecResult_chars">C</td><td>= Conventional</td>
+                    <td>Total:</td><td><b>{{ $scores['C'] ?? 0 }}</b></td>
+                </tr>
+            </table>
+        </div>
 
-
-    
-    <!-- INTEREST CODE -->
-    <div id="result_4_block">
-        <div id="myInterest_code">MY INTEREST CODE</div>
-        <div id="myCodes">
-            @foreach($top3 as $code => $value)
-                <div class="myCode notranslate">{{ $code }}</div>
-            @endforeach
+        <!-- INTEREST CODE -->
+        <div id="result_4_block">
+            <div id="myInterest_code">MY INTEREST CODE</div>
+            <div id="myCodes">
+                @foreach($top3 as $code => $value)
+                    <div class="myCode notranslate">{{ $code }}</div>
+                @endforeach
+            </div>
         </div>
     </div>
+
 
     <!-- PRINT BUTTON -->
     <div id="result_print">
         <button onclick="window.print()" class="btn-print">
             🖨️ Print Result
         </button>
-        <a href="{{ route('dashboard') }}" class="btn-back">⬅️ Back to Dashboard</a>
+        @if(isset($is_admin) && $is_admin)
+            <a href="{{ route('admin.test-results') }}" class="btn-back">⬅️ Back to Test Results</a>
+        @else
+            <a href="{{ route('dashboard') }}" class="btn-back">⬅️ Back to Dashboard</a>
+        @endif
     </div>
 
     
@@ -341,56 +562,133 @@
 		<div id="resultSection">
 			<h2></h2>
 				<div class="results-grid">
-					<div class="careerCard">
+					<div class="careerCard {{ $top3->has('R') ? 'highlighted' : 'dimmed' }}">
 						<h3>R = Realistic</h3>
-						<p>These people are often good at mechanical or athletic jobs. Good college majors for Realistic people are:</p>
-						<ul>
-							<li>Agriculture</li><li>Health Assistant</li><li>Computers</li>
-							<li>Construction</li><li>Mechanic/Machinist</li><li>Engineering</li><li>Food and Hospitality</li>
-						</ul>
+						<p>These people are often good at mechanical or athletic jobs. Good career options for Realistic people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Agriculture</li><li>Health Assistant</li><li>Computers</li>
+									<li>Construction</li><li>Mechanic/Machinist</li><li>Engineering</li><li>Food and Hospitality</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Agriculture, Food, and Natural Resources</li>
+									<li>Architecture and Construction</li>
+									<li>Manufacturing</li>
+									<li>Transportation, Distribution, and Logistics</li>
+									<li>Health Sciences</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 
-					<div class="related-box">
+					<div class="related-box {{ $top3->has('I') ? 'highlighted' : 'dimmed' }}">
 						<h3>I = Investigative</h3>
-						<p>These people like to watch, learn, analyze, and solve problems. Good college majors for Investigative people are:</p>
-						<ul>
-							<li>Marine Biology</li><li>Engineering</li><li>Chemistry</li>
-							<li>Zoology</li><li>Medicine/Surgery</li><li>Consumer Economics</li><li>Psychology</li>
-						</ul>
+						<p>These people like to watch, learn, analyze, and solve problems. Good career options for Investigative people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Marine Biology</li><li>Engineering</li><li>Chemistry</li>
+									<li>Zoology</li><li>Medicine/Surgery</li><li>Consumer Economics</li><li>Psychology</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Health Sciences</li>
+									<li>Science, Technology, Engineering, and Mathematics</li>
+									<li>Agriculture, Food, and Natural Resources</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 
-					<div class="careerCard">
+					<div class="careerCard {{ $top3->has('A') ? 'highlighted' : 'dimmed' }}">
 						<h3>A = Artistic</h3>
-						<p>These people like to work in unstructured situations where they can use their creativity. Good majors for Artistic people are:</p>
-						<ul>
-							<li>Communications</li><li>Cosmetology</li><li>Fine and Performing Arts</li>
-							<li>Photography</li><li>Radio and TV</li><li>Interior Design</li><li>Architecture</li>
-						</ul>
+						<p>These people like to work in unstructured situations where they can use their creativity. Good career options for Artistic people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Communications</li><li>Cosmetology</li><li>Fine and Performing Arts</li>
+									<li>Photography</li><li>Radio and TV</li><li>Interior Design</li><li>Architecture</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Arts, Audio/Video Technology, and Communications</li>
+									<li>Architecture and Construction</li>
+									<li>Hospitality and Tourism</li>
+								</ul>
+							</div>
+						</div>
 					</div>
-					<div class="related-box">
+					<div class="related-box {{ $top3->has('S') ? 'highlighted' : 'dimmed' }}">
 						<h3>S = Social</h3>
-						<p>These people like to work with other people, rather than things. Good college majors for Social people are:</p>
-						<ul>
-							<li>Counseling</li><li>Nursing</li><li>Physical Therapy</li>
-							<li>Travel</li><li>Advertising</li><li>Public Relations</li><li>Education</li>
-						</ul>	
+						<p>These people like to work with other people, rather than things. Good career options for Social people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Counseling</li><li>Nursing</li><li>Physical Therapy</li>
+									<li>Travel</li><li>Advertising</li><li>Public Relations</li><li>Education</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Health Sciences and Human Services</li>
+									<li>Education</li>
+									<li>Law, Government, and Public Safety</li>
+									<li>Culinary, Hospitality, and Tourism</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 
-					<div class="careerCard">
+					<div class="careerCard {{ $top3->has('E') ? 'highlighted' : 'dimmed' }}">
 						<h3>E = Enterprising</h3>
-						<p>These people like to work with others and enjoy persuading and performing. Good college majors for Enterprising people are:</p>
-						<ul>
-							<li>Fashion Merchandising</li><li>Real Estate</li><li>Marketing/Sales</li>
-							<li>Law</li><li>Political Science</li><li>International Trade</li><li>Banking/Finance</li>
-						</ul>
+						<p>These people like to work with others and enjoy persuading and performing. Good career options for Enterprising people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Fashion Merchandising</li><li>Real Estate</li><li>Marketing/Sales</li>
+									<li>Law</li><li>Political Science</li><li>International Trade</li><li>Banking/Finance</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Business Management and Administration</li>
+									<li>Finance</li>
+									<li>Marketing</li>
+									<li>Law, Government, and Public Safety</li>
+								</ul>
+							</div>
+						</div>
 					</div>
-					<div class="related-box">
+					<div class="related-box {{ $top3->has('C') ? 'highlighted' : 'dimmed' }}">
 						<h3>C = Conventional</h3>
-						<p>These people are very detail-oriented, organized, and like to work with data. Good college majors for Conventional people are:</p>
-						<ul>
-							<li>Accounting</li><li>Court Reporting</li><li>Insurance</li>
-							<li>Administration</li><li>Medical Records</li><li>Banking</li><li>Data Processing</li>
-						</ul>
+						<p>These people are very detail-oriented, organized, and like to work with data. Good career options for Conventional people are:</p>
+						<div class="career-content">
+							<div class="career-options">
+								<ul>
+									<li>Accounting</li><li>Court Reporting</li><li>Insurance</li>
+									<li>Administration</li><li>Medical Records</li><li>Banking</li><li>Data Processing</li>
+								</ul>
+							</div>
+							<div class="career-pathways">
+								<p><strong>Related Pathways:</strong></p>
+								<ul>
+									<li>Business Management and Administration</li>
+									<li>Finance</li>
+									<li>Information Technology</li>
+									<li>Health Sciences</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

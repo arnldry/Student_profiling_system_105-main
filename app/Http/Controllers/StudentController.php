@@ -26,33 +26,32 @@ class StudentController extends Controller
     public function dashboard(){
         $user = auth()->user();
 
-        // Get completed test results for the student
-        $riasecResult = \App\Models\RiasecResult::where('user_id', $user->id)->latest()->first();
-        $lifeValuesResult = \App\Models\LifeValuesResult::where('user_id', $user->id)->latest()->first();
+        // Get RIASEC results for the table
+        $riasecResults = \App\Models\RiasecResult::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $riasecResults = $riasecResults->map(function ($result, $index) use ($riasecResults) {
+            $scores = $result->scores;
+            if (!is_array($scores)) {
+                $scores = is_string($scores) ? json_decode($scores, true) ?? [] : [];
+            }
+            $result->decoded_scores = $scores;
+            $result->top3 = collect($scores)->sortDesc()->take(3)->keys()->implode('');
+            $result->take_number = $riasecResults->count() - $index; // Most recent is highest number
+            return $result;
+        });
 
-        $completedTests = [];
+        // Get Life Values results for the table
+        $lifeValuesResults = \App\Models\LifeValuesResult::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $lifeValuesResults = $lifeValuesResults->map(function ($result, $index) use ($lifeValuesResults) {
+            $scores = $result->scores;
+            if (!is_array($scores)) {
+                $scores = is_string($scores) ? json_decode($scores, true) ?? [] : [];
+            }
+            $result->decoded_scores = $scores;
+            $result->take_number = $lifeValuesResults->count() - $index; // Most recent is highest number
+            return $result;
+        });
 
-        if ($riasecResult) {
-            $completedTests[] = [
-                'name' => 'RIASEC Career Test',
-                'date' => $riasecResult->created_at->format('M d, Y'),
-                'route' => 'testing.results.riasec-result',
-                'icon' => 'bi-journal-text',
-                'color' => 'primary'
-            ];
-        }
-
-        if ($lifeValuesResult) {
-            $completedTests[] = [
-                'name' => 'Life Values Inventory',
-                'date' => $lifeValuesResult->created_at->format('M d, Y'),
-                'route' => 'testing.results.life-values-results',
-                'icon' => 'bi-clipboard-check',
-                'color' => 'success'
-            ];
-        }
-
-        return view('student.dashboard', compact('completedTests'));
+        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults'));
     }
 
     public function testing(){

@@ -231,33 +231,79 @@ class AdminController extends Controller
     }
 
     /** -------------------------------
-     *  LIFE VALUES TEST RESULT VIEW
-     *  ------------------------------- */
-    public function getLifeValuesResult($id)
+      *  LIFE VALUES TEST RESULT VIEW
+      *  ------------------------------- */
+    public function getLifeValuesResult($id, $result_id = null)
     {
-        $result = LifeValuesResult::where('user_id', $id)->latest()->first();
+        $student = User::find($id);
 
-        if (!$result) {
+        // Get all Life Values results for this student, ordered by oldest first (chronological order)
+        $allResults = LifeValuesResult::where('user_id', $id)->orderBy('created_at', 'asc')->get();
+
+        if ($allResults->isEmpty()) {
             return redirect()->back()->with('error', 'No Life Values result found for this student.');
         }
 
-        $student = User::find($id);
+        // Determine which result to show
+        if ($result_id) {
+            $result = $allResults->find($result_id);
+            if (!$result) {
+                return redirect()->route('admin.student-life-values', $id)->with('error', 'Result not found.');
+            }
+        } else {
+            $result = $allResults->last(); // Latest (newest)
+        }
+
         $scores = $result->scores;
-        return view('testing.results.life-values-results', compact('scores', 'id', 'student', 'result'));
+        if (!is_array($scores)) {
+            $scores = is_string($scores) ? json_decode($scores, true) ?? [] : [];
+        }
+
+        // Get previous result for comparison (from the linked previous_result_id)
+        $previousResult = $result->previous_result_id ? LifeValuesResult::find($result->previous_result_id) : null;
+        $previousScores = $previousResult ? $previousResult->scores : [];
+        if (!is_array($previousScores)) {
+            $previousScores = is_string($previousScores) ? json_decode($previousScores, true) ?? [] : [];
+        }
+
+        // Navigation: find current index in allResults (chronological order: 0 = oldest, last = newest)
+        $currentIndex = $allResults->search(function ($item) use ($result) {
+            return $item->id == $result->id;
+        });
+
+        $currentAttempt = $currentIndex + 1;
+
+        // Next = newer result (higher index), Previous = older result (lower index)
+        $nextResult = $currentIndex < $allResults->count() - 1 ? $allResults[$currentIndex + 1] : null;
+        $prevResult = $currentIndex > 0 ? $allResults[$currentIndex - 1] : null;
+
+        return view('testing.results.life-values-results', compact('scores', 'student', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt') + ['is_admin' => true]);
     }
 
     /** -------------------------------
-     *  RIASEC TEST RESULT VIEW
-     *  ------------------------------- */
-    public function viewStudentRiasec($id)
+      *  RIASEC TEST RESULT VIEW
+      *  ------------------------------- */
+    public function viewStudentRiasec($id, $result_id = null)
     {
-        $result = RiasecResult::where('user_id', $id)->latest()->first();
+        $student = User::find($id);
 
-        if (!$result) {
+        // Get all RIASEC results for this student, ordered by oldest first (chronological order)
+        $allResults = RiasecResult::where('user_id', $id)->orderBy('created_at', 'asc')->get();
+
+        if ($allResults->isEmpty()) {
             return redirect()->back()->with('error', 'No RIASEC result found for this student.');
         }
 
-        $student = User::find($id);
+        // Determine which result to show
+        if ($result_id) {
+            $result = $allResults->find($result_id);
+            if (!$result) {
+                return redirect()->route('admin.student-riasec', $id)->with('error', 'Result not found.');
+            }
+        } else {
+            $result = $allResults->last(); // Latest (newest)
+        }
+
         $scores = $result->scores;
         $top3 = collect($scores)->sortDesc()->take(3);
 
@@ -270,7 +316,24 @@ class AdminController extends Controller
             'C' => 'Conventional (Organizers)',
         ];
 
-        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result'));
+        // Get previous result for comparison (from the linked previous_result_id)
+        $previousResult = $result->previous_result_id ? RiasecResult::find($result->previous_result_id) : null;
+        $previousScores = $previousResult ? $previousResult->scores : [];
+        $previousTop3 = collect($previousScores)->sortDesc()->take(3);
+
+        // Navigation: find current index in allResults (chronological order: 0 = oldest, last = newest)
+        $currentIndex = $allResults->search(function ($item) use ($result) {
+            return $item->id == $result->id;
+        });
+    
+        // Next = newer result (higher index), Previous = older result (lower index)
+        $nextResult = $currentIndex < $allResults->count() - 1 ? $allResults[$currentIndex + 1] : null;
+        $prevResult = $currentIndex > 0 ? $allResults[$currentIndex - 1] : null;
+    
+        // Calculate attempt number (1 = oldest/initial, higher numbers = more recent retakes)
+        $currentAttempt = $currentIndex + 1;
+    
+        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt') + ['is_admin' => true]);
     }
 
     /** -------------------------------
@@ -468,7 +531,63 @@ public function updateStudentInfo(Request $request, $id)
         $riasecEnabled = \Cache::get('test_riasec_enabled', true);
         $lifeValuesEnabled = \Cache::get('test_life_values_enabled', true);
 
-        return view('admin.manage-test', compact('riasecEnabled', 'lifeValuesEnabled'));
+        // Get students who have taken RIASEC test
+        $studentsWithRiasec = User::where('role', 'student')
+            ->whereHas('riasecResults')
+            ->with(['riasecResults' => function($query) {
+                $query->latest()->first();
+            }, 'additionalInfo'])
+            ->get()
+            ->map(function ($student) {
+                $latestResult = $student->riasecResults->last();
+                $info = $student->additionalInfo;
+                $lrn = $info ? $info->lrn : null;
+                $grade = $info ? $info->grade : null;
+                $section = $info ? $info->section : null;
+                $curriculum = $info ? $info->curriculum : null;
+
+                return [
+                    'id' => $student->id,
+                    'name' => $student->name,
+                    'lrn' => $lrn,
+                    'grade' => $grade,
+                    'section' => $section,
+                    'curriculum' => $curriculum,
+                    'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
+                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
+                ];
+            });
+
+        // Get students who have taken Life Values test
+        $studentsWithLifeValues = User::where('role', 'student')
+            ->whereHas('lifeValuesResults')
+            ->with(['lifeValuesResults' => function($query) {
+                $query->latest()->first();
+            }, 'additionalInfo'])
+            ->get()
+            ->map(function ($student) {
+                $latestResult = $student->lifeValuesResults->last();
+                $info = $student->additionalInfo;
+                $lrn = $info ? $info->lrn : null;
+                $grade = $info ? $info->grade : null;
+                $section = $info ? $info->section : null;
+                $curriculum = $info ? $info->curriculum : null;
+
+                return [
+                    'id' => $student->id,
+                    'name' => $student->name,
+                    'lrn' => $lrn,
+                    'grade' => $grade,
+                    'section' => $section,
+                    'curriculum' => $curriculum,
+                    'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
+                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
+                ];
+            });
+
+        return view('admin.manage-test', compact('riasecEnabled', 'lifeValuesEnabled', 'studentsWithRiasec', 'studentsWithLifeValues'));
     }
 
     /** -------------------------------
