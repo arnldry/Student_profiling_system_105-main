@@ -78,8 +78,13 @@
                     <!-- User Info -->
                     <div class="col-md-5">
                         <div class="card-box p-4 text-center">
-                            <img src="{{ $user->avatar ?? asset('images/default-image.png') }}" 
-                                alt="User Avatar" class="rounded-circle shadow" width="160" height="200">
+                            @if($additionalInfo && $additionalInfo->profile_picture)
+                                <img id="profile-preview" src="{{ asset($additionalInfo->profile_picture) }}"
+                                    alt="Profile Picture" class="rounded-circle shadow" width="160" height="200">
+                            @else
+                                <img id="profile-preview" src="{{ asset('images/default-image.png') }}"
+                                    alt="Profile Picture" class="rounded-circle shadow" width="160" height="200">
+                            @endif
                             <h5 class="mt-2 font-weight-bold">{{ $user->name }}</h5>
                             <p class="text-muted mb-1">{{ $user->email }}</p>
                             <span class="badge badge-primary text-capitalize px-3 py-2">{{ $user->role }}</span>
@@ -89,7 +94,7 @@
                     <!-- Update Form -->
                     <div class="col-md-7">
                         <div class="card-box p-4">
-                            <form id="updateProfileForm" action="{{ route('student.update-profile.update', $user->id) }}" method="POST">
+                            <form id="updateProfileForm" action="{{ route('student.update-profile.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -106,6 +111,18 @@
                                     <input type="email" name="email" id="email"
                                         class="form-control form-control-lg bg-light"
                                         value="{{ old('email', $user->email ?? '') }}" readonly>
+                                </div>
+
+                                <!-- Profile Picture -->
+                                <div class="form-group">
+                                    <label for="profile_picture">Profile Picture</label>
+                                    <input type="file" name="profile_picture" id="profile_picture"
+                                        class="form-control form-control-lg @error('profile_picture') is-invalid @enderror"
+                                        accept="image/*">
+                                    <small class="form-text text-muted">Upload a new profile picture (optional)</small>
+                                    @error('profile_picture')
+                                        <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <!-- Current Password -->
@@ -238,6 +255,18 @@
             confirmInput.type = type;
             currentPasswordInput.type = type;
         }
+
+        // Image preview functionality
+        document.getElementById('profile_picture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         // SweetAlert confirmation before submitting
         document.getElementById('updateProfileForm').addEventListener('submit', function(e) {

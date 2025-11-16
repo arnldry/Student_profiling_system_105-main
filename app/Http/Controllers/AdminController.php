@@ -388,6 +388,8 @@ public function updateStudentInfo(Request $request, $id)
         'guardian_place_work' => 'nullable|string|max:255',
         'guardian_contact' => 'nullable|string|max:50',
         'guardian_fb' => 'nullable|string|max:255',
+        'guardian_relationship' => 'nullable|string|max:255',
+
         // Profile photo (optional) - allow admin to change student profile image
         'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ];
@@ -397,32 +399,7 @@ public function updateStudentInfo(Request $request, $id)
         $validator->validate();
         $validated = $validator->validated();
 
-        // Conditional rules: if admin selects Living with X, require key fields for that parent/guardian
-        $livingMode = $request->input('living_mode', []);
-        if (is_string($livingMode)) {
-            $decoded = json_decode($livingMode, true);
-            $livingMode = is_array($decoded) ? $decoded : [$livingMode];
-        }
-
-        $conditional = [];
-        if (in_array('Living with Mother', $livingMode)) {
-            $conditional['mother_name'] = 'required|string|max:255';
-            $conditional['mother_contact'] = 'required|string|max:50';
-        }
-        if (in_array('Living with Father', $livingMode)) {
-            $conditional['father_name'] = 'required|string|max:255';
-            $conditional['father_contact'] = 'required|string|max:50';
-        }
-        if (in_array('Living with Other Guardians', $livingMode)) {
-            $conditional['guardian_name'] = 'required|string|max:255';
-            $conditional['guardian_contact'] = 'required|string|max:50';
-        }
-
-        if (!empty($conditional)) {
-            $v2 = Validator::make($request->all(), $conditional);
-            $v2->validate();
-            $validated = array_merge($validated, $v2->validated());
-        }
+        // No conditional requirements for parent/guardian fields
 
     // 🔹 Get old values for logging
     $user = \App\Models\User::find($id);
@@ -454,6 +431,12 @@ public function updateStudentInfo(Request $request, $id)
 
     // 🔹 Find or create the additional info record
     $info = \App\Models\AdditionalInformation::firstOrNew(['learner_id' => $id]);
+    if (!$info->exists) {
+        $activeSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->where('archived', 0)->first();
+        if ($activeSchoolYear) {
+            $info->school_year_id = $activeSchoolYear->id;
+        }
+    }
     $info->fill($validated);
     $info->save();
 
@@ -474,6 +457,14 @@ public function updateStudentInfo(Request $request, $id)
 
         $oldValue = $oldInfo[$key] ?? null;
         $newValue = $value;
+
+        // Convert arrays to string for logging
+        if (is_array($oldValue)) {
+            $oldValue = implode(', ', $oldValue);
+        }
+        if (is_array($newValue)) {
+            $newValue = implode(', ', $newValue);
+        }
 
         if ($oldValue != $newValue) {
             $changes[] = ucfirst(str_replace('_', ' ', $key)) . ": '{$oldValue}' → '{$newValue}'";

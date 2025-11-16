@@ -560,6 +560,10 @@
                                     <label for="guardian_fb" class="font-weight-bold">FB/Messenger</label>
                                     <input type="text" name="guardian_fb" id="guardian_fb" class="form-control" placeholder="Guardian's FB/Messenger / Optional">
                                 </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="guardian_relationship" class="font-weight-bold">Relationship</label>
+                                    <input type="text" name="guardian_relationship" id="guardian_relationship" class="form-control" placeholder="e.g., Aunt, Uncle, Grandparent">
+                                </div>
                             </div>
 
                             <div class="mt-3 d-flex justify-content-between">

@@ -74,8 +74,11 @@ class StudentController extends Controller
      {
          // You can pass any data if needed
          $user = auth()->user(); // Example: currently logged-in superadmin
- 
-         return view('student.update-profile', compact('user'));
+
+         // Get additional information for profile picture
+         $additionalInfo = AdditionalInformation::where('learner_id', $user->id)->latest()->first();
+
+         return view('student.update-profile', compact('user', 'additionalInfo'));
      }
  
      // Handle profile update
@@ -96,8 +99,12 @@ class StudentController extends Controller
             ],
             'current_password' => ['required', 'current_password'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
         ], [
             'email.regex' => 'You must register with a Gmail or Yahoo email address.',
+            'profile_picture.image' => 'The profile picture must be an image.',
+            'profile_picture.mimes' => 'The profile picture must be a file of type: jpeg, png, jpg, gif.',
+            'profile_picture.max' => 'The profile picture may not be greater than 2MB.',
         ]);
 
         $user->name = $request->name;
@@ -108,6 +115,20 @@ class StudentController extends Controller
         }
 
         $user->save();
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('profiles'), $filename);
+            $profilePicturePath = 'profiles/' . $filename;
+
+            // Update or create additional information record
+            $additionalInfo = AdditionalInformation::updateOrCreate(
+                ['learner_id' => $user->id],
+                ['profile_picture' => $profilePicturePath]
+            );
+        }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }

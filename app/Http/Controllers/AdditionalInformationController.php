@@ -77,6 +77,7 @@ class AdditionalInformationController extends Controller
             'guardian_place_work' => 'nullable|string',
             'guardian_contact' => 'nullable|string',
             'guardian_fb' => 'nullable|string',
+            'guardian_relationship' => 'nullable|string',
 
             // Agreements
             'student_agreement_1' => 'accepted',
@@ -151,6 +152,7 @@ class AdditionalInformationController extends Controller
                 'guardian_place_work' => $validated['guardian_place_work'] ?? null,
                 'guardian_contact' => $validated['guardian_contact'] ?? null,
                 'guardian_fb' => $validated['guardian_fb'] ?? null,
+                'guardian_relationship' => $validated['guardian_relationship'] ?? null,
 
                 'student_agreement_1' => true,
                 'student_agreement_2' => true,
