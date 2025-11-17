@@ -133,6 +133,27 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
     Route::get('/archived-students/{id}', [ArchivedStudentDataController::class, 'getArchivedStudent'])->name('superadmin.archived.student.view');
     Route::get('/archived-files', [ArchivedStudentDataController::class, 'archivedFiles'])->name('superadmin.archived-files');
     Route::get('/archived-students/school-year/{schoolYearId}', [ArchivedStudentDataController::class, 'showArchivedStudents'])->name('superadmin.archived.student.ajax');
+
+    // Student Profile
+    Route::get('/student-profile', [SuperAdminController::class, 'studentProfile'])->name('superadmin.student-profile');
+    Route::get('/students/{id}/additional-info', [SuperAdminController::class, 'getAdditionalInfo'])->name('superadmin.students.additional-info');
+    Route::post('/update-student-info/{id}', [SuperAdminController::class, 'updateStudentInfo'])->name('superadmin.update-student-info');
+
+    // Test Results
+    Route::get('/test-results', [SuperAdminController::class, 'viewTestResults'])->name('superadmin.test-results');
+
+    // Manage Test
+    Route::get('/manage-test', [SuperAdminController::class, 'manageTest'])->name('superadmin.manage-test');
+    Route::post('/manage-test/toggle', [SuperAdminController::class, 'toggleTest'])->name('superadmin.manage-test.toggle');
+    Route::post('/reopen-riasec/{userId}', [RiasecController::class, 'reopenForStudent'])->name('superadmin.reopen-riasec');
+    Route::post('/reopen-life-values/{userId}', [LifeValuesController::class, 'reopenForStudent'])->name('superadmin.reopen-life-values');
+
+    // Student Test Results
+    Route::get('/student-riasec/{id}/{result_id?}', [SuperAdminController::class, 'viewStudentRiasec'])->name('superadmin.student-riasec');
+    Route::get('/student-life-values/{id}/{result_id?}', [SuperAdminController::class, 'getLifeValuesResult'])->name('superadmin.student-life-values');
+
+    // Activity Log
+    Route::get('/activity-log', [SuperAdminController::class, 'activityLog'])->name('superadmin.activity-log');
 });
 
     // Admin Routes

@@ -19,7 +19,13 @@
 					</a>
 				</li>
 
-				
+				<!-- Student Profile -->
+				<li>
+					<a href="{{ route('superadmin.student-profile') }}" class="dropdown-toggle no-arrow">
+						<span class="micon bi bi-people"></span>
+						<span class="mtext">Student Profile</span>
+					</a>
+				</li>
 
 				<!-- User Management Section -->
 				<li class="dropdown">
@@ -31,6 +37,26 @@
 						<li><a href="{{ route('superadmin.admin-accounts') }}">Admin Account</a></li>
 						<li><a href="{{ route('superadmin.student-accounts') }}">Student Account</a></li>
 					</ul>
+				</li>
+
+				<!-- Testing Section -->
+				<li class="dropdown">
+					<a href="javascript:;" class="dropdown-toggle">
+						<span class="micon bi bi-clipboard-data"></span>
+						<span class="mtext">Testing</span>
+					</a>
+					<ul class="submenu">
+						<li><a href="{{ route('superadmin.test-results') }}">Test Results</a></li>
+						<li><a href="{{ route('superadmin.manage-test') }}">Manage Test</a></li>
+					</ul>
+				</li>
+
+				<!-- Activity Log -->
+				<li>
+					<a href="{{ route('superadmin.activity-log') }}" class="dropdown-toggle no-arrow">
+						<span class="micon bi bi-journal-text"></span>
+						<span class="mtext">Activity Log</span>
+					</a>
 				</li>
 
 				<!-- Settings Section -->
