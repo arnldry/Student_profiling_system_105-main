@@ -60,9 +60,13 @@
                                             $info = \App\Models\AdditionalInformation::where('learner_id', $user->id)->first();
                                         @endphp
                                         @if($info && $info->profile_picture)
-                                            <img src="{{ asset($info->profile_picture) }}" alt="Profile Picture" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; cursor: pointer;" onclick="viewProfilePicture('{{ asset($info->profile_picture) }}', '{{ $user->name }}', '{{ $info->lrn ?? 'N/A' }}')">
+                                            <div class="profile-pic-container" onclick="viewProfilePicture('{{ asset($info->profile_picture) }}', '{{ $user->name }}', '{{ $info->lrn ?? 'N/A' }}')">
+                                                <img src="{{ asset($info->profile_picture) }}" alt="Profile Picture" class="profile-pic">
+                                            </div>
                                         @else
-                                            <span style="color: #999;">No Image</span>
+                                            <div class="profile-pic-container no-image">
+                                                <i class="dw dw-user"></i>
+                                            </div>
                                         @endif
                                     </td>
                                     <td>{{ $info ? $info->lrn : '-' }}</td>
@@ -827,16 +831,29 @@
 
         function viewProfilePicture(imageSrc, studentName, lrn) {
             Swal.fire({
-                title: `Profile Picture - ${studentName} (LRN: ${lrn})`,
-                imageUrl: imageSrc,
-                imageAlt: 'Profile Picture',
-                imageWidth: 400,
-                imageHeight: 400,
-                imageClass: 'profile-picture-modal',
+                html: `<div class="school-id-card">
+                          <div class="profile-image-container">
+                              <img src="${imageSrc}" alt="Profile Picture" class="profile-picture-modal">
+                          </div>
+                          <div class="student-info">
+                              <h4 class="student-name">${studentName}</h4>
+                              <span class="lrn-badge">LRN: ${lrn}</span>
+                          </div>
+                       </div>`,
                 showCloseButton: true,
                 showConfirmButton: false,
                 customClass: {
                     popup: 'profile-picture-popup'
+                },
+                width: '450px',
+                padding: '0',
+                background: '#fff',
+                backdrop: 'rgba(0,0,0,0.8)',
+                showClass: {
+                    popup: 'animate__animated animate__zoomIn'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__zoomOut'
                 }
             });
         }
@@ -1820,13 +1837,100 @@
         }
 
         .profile-picture-popup {
-            background: rgba(0, 0, 0, 0.9);
+            background: #fff !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
+            border: 2px solid #007bff !important;
+        }
+
+        .school-id-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .profile-image-container {
+            margin-bottom: 25px;
         }
 
         .profile-picture-modal {
-            object-fit: contain;
-            max-width: 90vw;
-            max-height: 80vh;
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .student-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .student-info .student-name {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .student-info .lrn-badge {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Profile Picture Styles */
+        .profile-pic-container {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background: #f8f9fa;
+        }
+
+        .profile-pic-container:hover {
+            border-color: #007bff;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic-container:hover .profile-pic {
+            transform: scale(1.1);
+        }
+
+        .profile-pic-container.no-image {
+            background: #e9ecef;
+            border-color: #dee2e6;
+            color: #6c757d;
+        }
+
+        .profile-pic-container.no-image i {
+            font-size: 24px;
+        }
+
+        .profile-pic-container.no-image:hover {
+            border-color: #6c757d;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
         }
     </style>
 </body>
