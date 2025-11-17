@@ -12,20 +12,28 @@ class StudentController extends Controller
 {
 
    public function __construct()
-    {
-        view()->composer('*', function ($view) {
-            $hasAdditionalInfo = false;
+     {
+         view()->composer('*', function ($view) {
+             $hasAdditionalInfo = false;
+             $additionalInfo = null;
 
-            if (Auth::check() && Auth::user()->role === 'student') {
-                $hasAdditionalInfo = AdditionalInformation::where('learner_id', Auth::id())->exists();
-            }
+             if (Auth::check() && Auth::user()->role === 'student') {
+                 $hasAdditionalInfo = AdditionalInformation::where('learner_id', Auth::id())->exists();
+                 if ($hasAdditionalInfo) {
+                     $additionalInfo = AdditionalInformation::where('learner_id', Auth::id())->latest()->first();
+                 }
+             }
 
-            $view->with('hasAdditionalInfo', $hasAdditionalInfo);
-        });
-    }
+             $view->with('hasAdditionalInfo', $hasAdditionalInfo);
+             $view->with('additionalInfo', $additionalInfo);
+         });
+     }
 
     public function dashboard(){
         $user = auth()->user();
+
+        // Get additional information for profile picture
+        $additionalInfo = AdditionalInformation::where('learner_id', $user->id)->latest()->first();
 
         // Get RIASEC results for the table
         $riasecResults = \App\Models\RiasecResult::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
@@ -52,7 +60,7 @@ class StudentController extends Controller
             return $result;
         });
 
-        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults'));
+        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults', 'additionalInfo'));
     }
 
     public function testing(){

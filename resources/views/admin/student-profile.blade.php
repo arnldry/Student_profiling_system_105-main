@@ -44,6 +44,7 @@
                     <table class="data-table table stripe hover nowrap">
                         <thead>
                             <tr>
+                                <th>Profile Picture</th>
                                 <th>LRN</th>
                                 <th>Student Name</th>
                                 <th>Grade and Section</th>
@@ -58,8 +59,13 @@
                                         @php
                                             $info = \App\Models\AdditionalInformation::where('learner_id', $user->id)->first();
                                         @endphp
-                                        {{ $info ? $info->lrn : '-' }}
+                                        @if($info && $info->profile_picture)
+                                            <img src="{{ asset($info->profile_picture) }}" alt="Profile Picture" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; cursor: pointer;" onclick="viewProfilePicture('{{ asset($info->profile_picture) }}', '{{ $user->name }}', '{{ $info->lrn ?? 'N/A' }}')">
+                                        @else
+                                            <span style="color: #999;">No Image</span>
+                                        @endif
                                     </td>
+                                    <td>{{ $info ? $info->lrn : '-' }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $info ? $info->grade . ' / ' . $info->section : '-' }}</td>
                                     <td>{{ $info ? $info->curriculum : '-' }}</td>
@@ -818,6 +824,22 @@
                 });
             @endif
         });
+
+        function viewProfilePicture(imageSrc, studentName, lrn) {
+            Swal.fire({
+                title: `Profile Picture - ${studentName} (LRN: ${lrn})`,
+                imageUrl: imageSrc,
+                imageAlt: 'Profile Picture',
+                imageWidth: 400,
+                imageHeight: 400,
+                imageClass: 'profile-picture-modal',
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'profile-picture-popup'
+                }
+            });
+        }
     </script>
 
     <script>
@@ -1795,6 +1817,16 @@
 
         .sig-label {
             font-size: 12px;
+        }
+
+        .profile-picture-popup {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .profile-picture-modal {
+            object-fit: contain;
+            max-width: 90vw;
+            max-height: 80vh;
         }
     </style>
 </body>
