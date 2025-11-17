@@ -48,6 +48,18 @@ class StudentController extends Controller
             return $result;
         });
 
+        // Calculate total scores across all RIASEC tests
+        $totalScores = [];
+        if ($riasecResults->count() > 0) {
+            $allScores = $riasecResults->pluck('decoded_scores');
+            foreach (['R', 'I', 'A', 'S', 'E', 'C'] as $letter) {
+                $totalScores[$letter] = $allScores->sum($letter);
+            }
+            $totalScores['total'] = array_sum($totalScores);
+            $totalScores['average'] = count($totalScores) > 0 ? round($totalScores['total'] / 6, 2) : 0;
+            $totalScores['top3'] = collect($totalScores)->except(['total', 'average'])->sortDesc()->take(3)->keys()->implode('');
+        }
+
         // Get Life Values results for the table
         $lifeValuesResults = \App\Models\LifeValuesResult::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         $lifeValuesResults = $lifeValuesResults->map(function ($result, $index) use ($lifeValuesResults) {
@@ -60,7 +72,7 @@ class StudentController extends Controller
             return $result;
         });
 
-        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults', 'additionalInfo'));
+        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults', 'additionalInfo', 'totalScores'));
     }
 
     public function testing(){

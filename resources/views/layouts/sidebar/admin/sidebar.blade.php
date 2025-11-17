@@ -26,7 +26,15 @@
 						<span class="micon bi bi-people"></span>
 						<span class="mtext">Student Profile</span>
 					</a>
-				</li> 
+				</li>
+
+				{{-- Student Accounts --}}
+				<li>
+					<a href="{{ route('admin.student-accounts') }}" class="dropdown-toggle no-arrow">
+						<span class="micon bi bi-person-lines-fill"></span>
+						<span class="mtext">Student Accounts</span>
+					</a>
+				</li>
 
 
 				{{-- Testing --}}

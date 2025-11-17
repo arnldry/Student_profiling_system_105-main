@@ -98,6 +98,8 @@ public function store(Request $request)
         $scores = is_string($scores) ? json_decode($scores, true) ?? [] : [];
     }
     $top3 = collect($scores)->sortDesc()->take(3);
+    $totalScore = array_sum($scores);
+    $averageScore = count($scores) > 0 ? round($totalScore / count($scores), 2) : 0;
 
     $descriptions = [
         'R' => 'Realistic (Doers)',
@@ -127,9 +129,12 @@ public function store(Request $request)
     $nextResult = $currentIndex < $allResults->count() - 1 ? $allResults[$currentIndex + 1] : null;
     $prevResult = $currentIndex > 0 ? $allResults[$currentIndex - 1] : null;
 
+    // Check if this is the latest result
+    $is_latest = ($result->id == $allResults->last()->id);
+
     $student = $user;
 
-    return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'user', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'student'));
+    return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'user', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'student', 'is_latest'));
 }
 
     public function reopenForStudent($userId)

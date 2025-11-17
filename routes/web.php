@@ -146,6 +146,8 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
 
         // Student Accounts Management
         Route::get('/admin/student-profile', [AdminController::class, 'studentProfile'])->name('admin.student-profile');
+        Route::get('/admin/student-accounts', [AdminController::class, 'studentAccounts'])->name('admin.student-accounts');
+        Route::patch('/users/{user}/toggleStatus', [AdminController::class, 'toggleStatus'])->name('admin.users.toggleStatus');
 
         // Fetch curriculum chart data
        Route::get('/admin/students/curriculum-chart-data', [AdminController::class, 'getCurriculumChartData']) ->name('admin.students.curriculum-chart-data');

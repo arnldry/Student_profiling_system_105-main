@@ -118,8 +118,11 @@ class LifeValuesController extends Controller
         $nextResult = $currentIndex < $allResults->count() - 1 ? $allResults[$currentIndex + 1] : null;
         $prevResult = $currentIndex > 0 ? $allResults[$currentIndex - 1] : null;
 
+        // Check if this is the latest result
+        $is_latest = ($result->id == $allResults->last()->id);
+
         $student = $user;
-return view('testing.results.life-values-results', compact('scores', 'top5', 'user', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'student'));
+return view('testing.results.life-values-results', compact('scores', 'top5', 'user', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'student', 'is_latest'));
 }
 
 public function reopenForStudent($userId)

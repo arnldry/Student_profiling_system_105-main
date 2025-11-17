@@ -131,7 +131,7 @@
                                                                     <label>Profile Picture</label><br>
                                                                     <input type="file" name="profile_picture" class="form-control d-inline-block" accept="image/*" style="width: auto; max-width: 300px;">
                                                                     @if($info->profile_picture)
-                                                                        <br><img src="/profiles/{{ $info->profile_picture }}" alt="Current Profile Picture" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px; border-radius: 5px;">
+                                                                        <br><img src="{{ asset($info->profile_picture) }}" alt="Current Profile Picture" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px; border-radius: 5px;">
                                                                     @endif
                                                                 </div>
                                                             </div>
@@ -945,7 +945,12 @@
                             <td colspan="1">  <span>First Name</span>             </td>
                             <td colspan="2" > <span>Middle Name</span></td>
 
-                                <td colspan="2">Disability(if any):</td><td colspan="3"></td>
+                                <td colspan="2">Disability(if any):</td><td colspan="3">${data.disability || 'None'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="12" style="text-align: center; padding: 10px;">
+                                    ${data.profile_picture ? `<img src="/profiles/${data.profile_picture}" alt="Profile Picture" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">` : '<i class="dw dw-user" style="font-size: 50px;"></i>'}
+                                </td>
                             </tr>
 
                             <tr>

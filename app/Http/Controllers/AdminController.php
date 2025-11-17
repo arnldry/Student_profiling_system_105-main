@@ -310,6 +310,8 @@ class AdminController extends Controller
 
         $scores = $result->scores;
         $top3 = collect($scores)->sortDesc()->take(3);
+        $totalScore = array_sum($scores);
+        $averageScore = count($scores) > 0 ? round($totalScore / count($scores), 2) : 0;
 
         $descriptions = [
             'R' => 'Realistic (Doers)',
@@ -656,6 +658,26 @@ public function updateStudentInfo(Request $request, $id)
         ]);
 
         return response()->json(['success' => true, 'message' => ucfirst(str_replace('_', ' ', $testType)) . ' test ' . ($enabled ? 'enabled' : 'disabled') . ' successfully']);
+    }
+
+    /** -------------------------------
+      *  STUDENT ACCOUNTS MANAGEMENT
+      *  ------------------------------- */
+    public function studentAccounts()
+    {
+        $users = User::where('role', 'student')->get();
+        return view('admin.student-accounts', compact('users'));
+    }
+
+    /** -------------------------------
+      *  TOGGLE USER STATUS
+      *  ------------------------------- */
+    public function toggleStatus(User $user)
+    {
+        $user->status = $user->status === 'active' ? 'inactive' : 'active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User status updated successfully!');
     }
 
 
