@@ -137,7 +137,12 @@
 								</a>
 							</div>
 							<div class="col-md-3 col-sm-6 mb-3">
-								<a href="{{ route('admin.test-results') }}" class="btn btn-success btn-block">
+								<a href="{{ route('admin.manage-test') }}" class="btn btn-success btn-block">
+									<i class="fa fa-cogs"></i> Manage Tests
+								</a>
+							</div>
+							<div class="col-md-3 col-sm-6 mb-3">
+								<a href="{{ route('admin.test-results') }}" class="btn btn-info btn-block">
 									<i class="fa fa-clipboard-check"></i> Test Results
 								</a>
 							</div>
@@ -147,7 +152,7 @@
 								</a>
 							</div>
 							<div class="col-md-3 col-sm-6 mb-3">
-								<a href="{{ route('admin.archived-files-data') }}" class="btn btn-info btn-block">
+								<a href="{{ route('admin.archived-files-data') }}" class="btn btn-secondary btn-block">
 									<i class="fa fa-archive"></i> Archived Files
 								</a>
 							</div>

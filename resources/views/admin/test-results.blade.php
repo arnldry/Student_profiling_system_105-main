@@ -49,7 +49,7 @@
                                     <th>Student Name</th>
                                     <th>RIASEC Test</th>
                                     <th>Life Values Test</th>
-                                    <th>Actions</th>
+                                    <th>Test Results</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,21 +64,21 @@
                                     <td>{{ $student['name'] }}</td>
                                     <td>
                                         @if($student['has_riasec'])
-                                            <span class="badge badge-success">Completed</span>
+                                            <span class="text-success">Completed</span>
                                         @else
-                                            <span class="badge badge-secondary">Not Taken</span>
+                                            <span class="text-muted">Not Taken</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($student['has_life_values'])
-                                            <span class="badge badge-success">Completed</span>
+                                            <span class="text-success">Completed</span>
                                         @else
-                                            <span class="badge badge-secondary">Not Taken</span>
+                                            <span class="text-muted">Not Taken</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($student['has_riasec'])
-                                            <a href="{{ route('admin.student-riasec', $student['id']) }}" class="btn btn-sm btn-primary">View RIASEC</a>
+                                            <a href="{{ route('admin.student-riasec', $student['id']) }}" class="btn btn-sm btn-info">View RIASEC</a>
                                         @endif
                                         @if($student['has_life_values'])
                                             <a href="{{ route('admin.student-life-values', $student['id']) }}" class="btn btn-sm btn-success">View Life Values</a>

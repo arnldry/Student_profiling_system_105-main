@@ -500,7 +500,7 @@
    {{-- PAGE 1: SCORING SUMMARY --}}
    <h3 style="color: #004d7a; font-weight: 700; margin-top: 40px; margin-bottom: 20px; text-align: center; padding-bottom: 10px; font-size: 20px;">SCORING SUMMARY</h3>
    <div id="riasec_title" style="display: flex; justify-content: space-between; align-items: center; font-size: 18px; color: #555; margin-bottom: 20px;">
-       <span>{{ $result->is_retake ? 'LATEST RESULTS OF THE LIFE VALUES TEST' : 'RESULTS OF THE LIFE VALUES TEST' }}</span>
+       <span>{{ $is_latest ? 'LATEST RESULTS OF THE LIFE VALUES TEST' : 'RESULTS OF THE LIFE VALUES TEST' }}</span>
        @if($allResults->count() > 1)
            <div style="display: flex; gap: 8px;">
                @if(isset($is_admin) && $is_admin)

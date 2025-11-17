@@ -61,7 +61,6 @@
                         <p class="mb-0" style="font-weight: bold;">Test Availability Settings</p>
                         <p class="mb-0">Control which tests are available to students</p>
                 </div>
-                
 
                     <div class="row" style="margin-bottom: 20px;">
                         <!-- RIASEC Test Toggle -->
@@ -104,6 +103,20 @@
 
                 </div>
 
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h6><i class="fa fa-info-circle"></i> Information</h6>
+                                <ul class="mb-0">
+                                    <li>Students can normally retake the test after 1 year</li>
+                                    <li>Clicking "Allow Retake" immediately enables the student to retake the test</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="test-tables-wrapper">
                 <!-- RIASEC Student List -->
         <div class="card-box mb-30">
                 <div class="pd-20">
@@ -133,11 +146,11 @@
                                     <td>{{ $student['last_taken'] ? \Carbon\Carbon::parse($student['last_taken'])->format('M d, Y') : 'N/A' }}</td>
                                     <td>
                                         @if($student['admin_reopened'])
-                                            <span class="badge badge-success">Retake Allowed</span>
+                                            <span class="text-success">Retake Allowed</span>
                                         @elseif($student['can_retake'])
-                                            <span class="badge badge-warning">Eligible for Retake</span>
+                                            <span class="text-warning">Eligible for Retake</span>
                                         @else
-                                            <span class="badge badge-secondary">Not Eligible</span>
+                                            <span class="text-muted">Not Eligible</span>
                                         @endif
                                     </td>
                                     <td>
@@ -161,18 +174,6 @@
                         </table>
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <h6><i class="fa fa-info-circle"></i> Information</h6>
-                                <ul class="mb-0">
-                                    <li>Students can normally retake the test after 1 year</li>
-                                    <li>Clicking "Allow Retake" immediately enables the student to retake the test</li>
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Life Values Student List -->
@@ -204,11 +205,11 @@
                                     <td>{{ $student['last_taken'] ? \Carbon\Carbon::parse($student['last_taken'])->format('M d, Y') : 'N/A' }}</td>
                                     <td>
                                         @if($student['admin_reopened'])
-                                            <span class="badge badge-success">Retake Allowed</span>
+                                            <span class="text-success">Retake Allowed</span>
                                         @elseif($student['can_retake'])
-                                            <span class="badge badge-warning">Eligible for Retake</span>
+                                            <span class="text-warning">Eligible for Retake</span>
                                         @else
-                                            <span class="badge badge-secondary">Not Eligible</span>
+                                            <span class="text-muted">Not Eligible</span>
                                         @endif
                                     </td>
                                     <td>
@@ -232,19 +233,8 @@
                         </table>
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <h6><i class="fa fa-info-circle"></i> Information</h6>
-                                <ul class="mb-0">
-                                    <li>Students can normally retake the test after 1 year</li>
-                                    <li>Clicking "Allow Retake" immediately enables the student to retake the test</li>
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+                </div> <!-- End test-tables-wrapper -->
             </div>
         </div>
     </div>
@@ -380,6 +370,25 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
+                                    // Update the UI immediately
+                                    const button = document.querySelector(`button[data-student-id="${studentId}"].retake-btn`);
+                                    if (button) {
+                                        // Hide the button
+                                        button.style.display = 'none';
+
+                                        // Update the status badge
+                                        const statusCell = button.closest('tr').querySelector('td:nth-child(6)'); // Status column
+                                        if (statusCell) {
+                                            statusCell.innerHTML = '<span class="badge badge-success">Retake Allowed</span>';
+                                        }
+
+                                        // Update the action cell
+                                        const actionCell = button.closest('td');
+                                        if (actionCell) {
+                                            actionCell.innerHTML = '<span class="text-success"><i class="fa fa-check"></i> Retake Enabled</span>';
+                                        }
+                                    }
+
                                     // Show success message
                                     Swal.fire({
                                         icon: 'success',
@@ -387,9 +396,6 @@
                                         text: data.message || 'RIASEC test has been reopened for the student.',
                                         timer: 2000,
                                         showConfirmButton: false
-                                    }).then(() => {
-                                        // Reload the page to update the table
-                                        location.reload();
                                     });
                                 } else {
                                     throw new Error(data.message || 'Failed to allow retake');
@@ -437,6 +443,25 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
+                                    // Update the UI immediately
+                                    const button = document.querySelector(`button[data-student-id="${studentId}"].life-values-retake-btn`);
+                                    if (button) {
+                                        // Hide the button
+                                        button.style.display = 'none';
+
+                                        // Update the status badge
+                                        const statusCell = button.closest('tr').querySelector('td:nth-child(6)'); // Status column
+                                        if (statusCell) {
+                                            statusCell.innerHTML = '<span class="badge badge-success">Retake Allowed</span>';
+                                        }
+
+                                        // Update the action cell
+                                        const actionCell = button.closest('td');
+                                        if (actionCell) {
+                                            actionCell.innerHTML = '<span class="text-success"><i class="fa fa-check"></i> Retake Enabled</span>';
+                                        }
+                                    }
+
                                     // Show success message
                                     Swal.fire({
                                         icon: 'success',
@@ -444,9 +469,6 @@
                                         text: data.message || 'Life Values test has been reopened for the student.',
                                         timer: 2000,
                                         showConfirmButton: false
-                                    }).then(() => {
-                                        // Reload the page to update the table
-                                        location.reload();
                                     });
                                 } else {
                                     throw new Error(data.message || 'Failed to allow retake');

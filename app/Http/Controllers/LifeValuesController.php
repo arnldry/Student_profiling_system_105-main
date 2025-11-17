@@ -137,7 +137,8 @@ public function reopenForStudent($userId)
         $latestResult = LifeValuesResult::where('user_id', $userId)->latest()->first();
 
         if ($latestResult) {
-            $latestResult->update(['admin_reopened' => true]);
+            $latestResult->admin_reopened = true;
+            $latestResult->save();
 
             // Check if admin is authenticated
             $adminId = Auth::id();

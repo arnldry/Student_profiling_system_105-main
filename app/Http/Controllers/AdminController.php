@@ -278,7 +278,10 @@ class AdminController extends Controller
         $nextResult = $currentIndex < $allResults->count() - 1 ? $allResults[$currentIndex + 1] : null;
         $prevResult = $currentIndex > 0 ? $allResults[$currentIndex - 1] : null;
 
-        return view('testing.results.life-values-results', compact('scores', 'student', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt') + ['is_admin' => true]);
+        // Check if this is the latest result
+        $is_latest = ($result->id == $allResults->last()->id);
+
+        return view('testing.results.life-values-results', compact('scores', 'student', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_admin' => true]);
     }
 
     /** -------------------------------
@@ -333,8 +336,11 @@ class AdminController extends Controller
     
         // Calculate attempt number (1 = oldest/initial, higher numbers = more recent retakes)
         $currentAttempt = $currentIndex + 1;
-    
-        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt') + ['is_admin' => true]);
+
+        // Check if this is the latest result
+        $is_latest = ($result->id == $allResults->last()->id);
+
+        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_admin' => true]);
     }
 
     /** -------------------------------
@@ -573,12 +579,10 @@ public function updateStudentInfo(Request $request, $id)
         // Get students who have taken RIASEC test
         $studentsWithRiasec = User::where('role', 'student')
             ->whereHas('riasecResults')
-            ->with(['riasecResults' => function($query) {
-                $query->latest()->first();
-            }, 'additionalInfo'])
+            ->with(['riasecResults', 'additionalInfo'])
             ->get()
             ->map(function ($student) {
-                $latestResult = $student->riasecResults->last();
+                $latestResult = $student->riasecResults->sortByDesc('created_at')->first();
                 $info = $student->additionalInfo;
                 $lrn = $info ? $info->lrn : null;
                 $grade = $info ? $info->grade : null;
@@ -601,12 +605,10 @@ public function updateStudentInfo(Request $request, $id)
         // Get students who have taken Life Values test
         $studentsWithLifeValues = User::where('role', 'student')
             ->whereHas('lifeValuesResults')
-            ->with(['lifeValuesResults' => function($query) {
-                $query->latest()->first();
-            }, 'additionalInfo'])
+            ->with(['lifeValuesResults', 'additionalInfo'])
             ->get()
             ->map(function ($student) {
-                $latestResult = $student->lifeValuesResults->last();
+                $latestResult = $student->lifeValuesResults->sortByDesc('created_at')->first();
                 $info = $student->additionalInfo;
                 $lrn = $info ? $info->lrn : null;
                 $grade = $info ? $info->grade : null;

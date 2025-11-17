@@ -30,19 +30,19 @@
 
 
 				{{-- Testing --}}
-				<li>
-					<a href="{{ route('admin.test-results') }}" class="dropdown-toggle no-arrow">
-						<span class="micon bi bi-person-lines-fill"></span>
-						<span class="mtext">Test Results</span>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle">
+						<span class="micon bi bi-clipboard-data"></span>
+						<span class="mtext">Testing</span>
 					</a>
-				</li>
-
-				{{-- Manage Test --}}
-				<li>
-					<a href="{{ route('admin.manage-test') }}" class="dropdown-toggle no-arrow">
-						<span class="micon bi bi-toggle-on"></span>
-						<span class="mtext">Manage Test</span>
-					</a>
+					<ul class="submenu">
+						<li>
+							<a href="{{ route('admin.test-results') }}">Test Results</a>
+						</li>
+						<li>
+							<a href="{{ route('admin.manage-test') }}">Manage Test</a>
+						</li>
+					</ul>
 				</li>
 
 				{{-- Activity Log --}}

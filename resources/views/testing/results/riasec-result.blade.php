@@ -461,7 +461,7 @@
     <!-- RESULT BUBBLE CONTAINER -->
     <div style="background: #f8f9fa; border-radius: 20px; padding: 30px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 2px solid #e9ecef;">
         <div id="riasec_title">
-            <span>{{ $result->is_retake ? 'LATEST RESULTS OF THE RIASEC TEST' : 'RESULTS OF THE RIASEC TEST' }}</span>
+            <span>{{ $is_latest ? 'LATEST RESULTS OF THE RIASEC TEST' : 'RESULTS OF THE RIASEC TEST' }}</span>
             @if($allResults->count() > 1)
                 <div style="display: flex; gap: 8px; margin-left: 20px;">
                     @if(isset($is_admin) && $is_admin)
