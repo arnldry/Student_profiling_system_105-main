@@ -57,11 +57,19 @@ $hasAdditionalInfo = $hasAdditionalInfo ?? (
 
                 {{-- Additional Information --}}
                 <li>
-                    <a href="{{ route('student.additional-info') }}"
-                       class="dropdown-toggle no-arrow {{ $hasAdditionalInfo ? 'disabled-link' : '' }}">
-                        <span class="micon dw dw-information"></span>
-                        <span class="mtext">Additional Information</span>
-                    </a>
+                    @if($hasAdditionalInfo)
+                        <a href="{{ route('student.view-additional-info') }}"
+                           class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-information"></span>
+                            <span class="mtext">View Information </span>
+                        </a>
+                    @else
+                        <a href="{{ route('student.additional-info') }}"
+                           class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-information"></span>
+                            <span class="mtext">Additional Information</span>
+                        </a>
+                    @endif
                 </li>
 
                 {{-- Profile --}}

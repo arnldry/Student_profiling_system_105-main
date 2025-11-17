@@ -86,7 +86,7 @@
                                                     </button>
                                                 </div>
 
-                                                <form action="{{ route('admin.update-student-info', $user->id) }}" method="POST" class="edit-student-form" data-user-id="{{ $user->id }}">
+                                                <form action="{{ route('admin.update-student-info', $user->id) }}" method="POST" enctype="multipart/form-data" class="edit-student-form" data-user-id="{{ $user->id }}">
                                                     @csrf
                                                     <div class="modal-body">
                                                         {{-- Step Indicators --}}
@@ -105,6 +105,10 @@
                                                             </div>
                                                             <div class="edit-form-tab" data-step="4">
                                                                 <span class="step-number">4</span>
+                                                                <span class="step-label">Guardian's Info</span>
+                                                            </div>
+                                                            <div class="edit-form-tab" data-step="5">
+                                                                <span class="step-number">5</span>
                                                                 <span class="step-label">Agreements</span>
                                                             </div>
                                                         </div>
@@ -113,11 +117,20 @@
                                                         <div class="edit-form-step active" id="edit-step-1-{{ $user->id }}">
                                                             <h6 class="text-primary mb-3"><i class="dw dw-user"></i> Student Information</h6>
                                                             <div class="row">
+                                                                <div class="col-md-12 form-group text-center">
+                                                                    <label>Profile Picture</label><br>
+                                                                    <input type="file" name="profile_picture" class="form-control d-inline-block" accept="image/*" style="width: auto; max-width: 300px;">
+                                                                    @if($info->profile_picture)
+                                                                        <br><img src="/profiles/{{ $info->profile_picture }}" alt="Current Profile Picture" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px; border-radius: 5px;">
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
                                                                 <div class="col-md-6 form-group">
                                                                     <label>Student Name</label>
-                                                                    <input type="text" name="student_name" id="edit-student-name-{{ $user->id }}" class="form-control" 
-                                                                        value="{{ $user->name ?? '' }}" 
-                                                                        pattern="[A-Za-zÑñ\s\-\']+" 
+                                                                    <input type="text" name="student_name" id="edit-student-name-{{ $user->id }}" class="form-control"
+                                                                        value="{{ $user->name ?? '' }}"
+                                                                        pattern="[A-Za-zÑñ\s\-\']+"
                                                                         title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed"
                                                                         required>
                                                                 </div>
@@ -217,6 +230,7 @@
                                                                     <label>Facebook / Messenger</label>
                                                                     <input type="text" name="fb_messenger" class="form-control" value="{{ $info->fb_messenger ?? '' }}">
                                                                 </div>
+                                                                
                                                             </div>
                                                         </div>
 
@@ -282,7 +296,42 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- Step 4: Agreements --}}
+                                                        {{-- Step 4: Guardian's Information --}}
+                                                        <div class="edit-form-step" id="edit-step-4-{{ $user->id }}">
+                                                            <h6 class="text-primary mb-3"><i class="dw dw-user"></i> Guardian's Information</h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Name</label>
+                                                                    <input type="text" name="guardian_name" class="form-control" value="{{ $info->guardian_name ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Age</label>
+                                                                    <input type="number" name="guardian_age" class="form-control" value="{{ $info->guardian_age ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Occupation</label>
+                                                                    <input type="text" name="guardian_occupation" class="form-control" value="{{ $info->guardian_occupation ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Place of Work</label>
+                                                                    <input type="text" name="guardian_place_work" class="form-control" value="{{ $info->guardian_place_work ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Mobile Number</label>
+                                                                    <input type="text" name="guardian_contact" id="edit-guardian-contact-{{ $user->id }}" class="form-control" value="{{ $info->guardian_contact ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-6 form-group">
+                                                                    <label>Facebook</label>
+                                                                    <input type="text" name="guardian_fb" class="form-control" value="{{ $info->guardian_fb ?? '' }}">
+                                                                </div>
+                                                                <div class="col-md-12 form-group">
+                                                                    <label>Relationship</label>
+                                                                    <input type="text" name="guardian_relationship" class="form-control" value="{{ $info->guardian_relationship ?? '' }}" placeholder="e.g., Aunt, Uncle, Grandparent">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{-- Step 5: Agreements --}}
                                                         <div class="edit-form-step" id="edit-step-4-{{ $user->id }}">
                                                             <h6 class="text-primary mb-3"><i class="dw dw-file"></i> Agreements</h6>
                                                             <div class="row">
@@ -506,11 +555,12 @@
                     });
                 }
                 
-                // Father and Mother contact numbers - auto-start with "09"
+                // Father, Mother, and Guardian contact numbers - auto-start with "09"
                 const fatherContactInput = modal.querySelector(`#edit-father-contact-${userId}`);
                 const motherContactInput = modal.querySelector(`#edit-mother-contact-${userId}`);
-                
-                [fatherContactInput, motherContactInput].forEach(input => {
+                const guardianContactInput = modal.querySelector(`#edit-guardian-contact-${userId}`);
+
+                [fatherContactInput, motherContactInput, guardianContactInput].forEach(input => {
                     if (!input) return;
                     
                     input.addEventListener('focus', function () {
@@ -640,7 +690,8 @@
                     const allContactInputs = [
                         modal.querySelector(`#edit-contact-${userId}`),
                         modal.querySelector(`#edit-father-contact-${userId}`),
-                        modal.querySelector(`#edit-mother-contact-${userId}`)
+                        modal.querySelector(`#edit-mother-contact-${userId}`),
+                        modal.querySelector(`#edit-guardian-contact-${userId}`)
                     ];
                     
                     allContactInputs.forEach(input => {
@@ -854,7 +905,7 @@
                             <td colspan="2"> <span>Family Name</span></td>
                             <td colspan="1">  <span>First Name</span>             </td>
                             <td colspan="2" > <span>Middle Name</span></td>
-                
+
                                 <td colspan="2">Disability(if any):</td><td colspan="3"></td>
                             </tr>
 
@@ -898,6 +949,22 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
                             </tr>
+
+                            <tr>
+                                <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">${data.guardian_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.guardian_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.guardian_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.guardian_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.guardian_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.guardian_place_work || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Relationship:</td><td colspan="10">${data.guardian_relationship || 'N/A'}</td>
+                            </tr>
                         </table>
 
                         <!-- Append School Rules and Commitment to the front side -->
@@ -935,7 +1002,6 @@
                                          ng DepEd ngayong taong panuruan. Kasihan nawa ako ng Maykapal.
                                     </p>
                                     <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
-                                        <strong>Submitted:</strong> ${data.current_date_formatted}
                                     </div>
                                 </td>
                             </tr>
@@ -943,11 +1009,6 @@
                     
                             <tr>
                                 <td colspan="12" style="text-align: left;">
-                                    <div style="margin-bottom: 10px; font-size: 11px;">
-                                        <strong>Agreement Status:</strong>
-                                        <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
-                                        <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
-                                    </div>
                                     <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
@@ -958,7 +1019,11 @@
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 28px;"></div>
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
@@ -1010,7 +1075,11 @@
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 28px;"></div>
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
@@ -1029,7 +1098,6 @@
                                         Kasihan nawa ako ng Maykapal.
                                     </p>
                                     <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
-                                        <strong>Submitted:</strong> ${data.current_date_formatted}
                                     </div>
                                 </td>
                             </tr>
@@ -1111,6 +1179,308 @@
             });
         }
 
+        function printAdditionalInfo(userId, studentName) {
+            // Format the student name
+            let learnerFullName = '-';
+            if (studentName) {
+                let parts = studentName.trim().split(' ');
+                if (parts.length >= 3) {
+                    let lastName = parts[parts.length - 1];
+                    let firstName = parts[0];
+                    let middleName = parts.slice(1, parts.length - 1).join(' ');
+                    learnerFullName = `${lastName}, ${firstName} ${middleName}`;
+                } else if (parts.length === 2) {
+                    learnerFullName = `${parts[1]}, ${parts[0]}`;
+                } else {
+                    learnerFullName = studentName;
+                }
+            }
+
+            fetch(`/admin/students/${userId}/additional-info`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Information',
+                        text: data.error,
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    // Format Birthday and Compute Age
+                    let formattedBirthday = '-';
+                    let formattedAge = '-';
+
+                    if (data.birthday) {
+                        const birthDate = new Date(data.birthday);
+                        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                        formattedBirthday = birthDate.toLocaleDateString('en-US', options);
+
+                        // Compute age
+                        const today = new Date();
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        const m = today.getMonth() - birthDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+                        formattedAge = `${age} yrs old`;
+                    }
+
+                    // Front side - Learner's Individual Inventory Record
+                    const frontContent = `
+                    <div class="record-form front-side">
+                        <div class="form-header">
+                            <img src="/vendors/images/logo-ocnhs.png" class="logo">
+                            <div class="header-text">
+                                <h5>OLONGAPO CITY NATIONAL HIGH SCHOOL</h5>
+                                <h3>Guidance & Counseling Unit</h3>
+                            </div>
+                            <img src="/vendors/images/logo-ocnhs-2.png" class="logo">
+                        </div>
+
+                        <table class="info-table">
+                            <tr>
+                                <td colspan="12" class="section-title" style="position: relative; text-align: center;">
+                                    <span style="position: absolute; left: 5px;">GCU-F1</span>
+                                    <span>LEARNER'S INDIVIDUAL INVENTORY RECORD</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3">School Year: ${data.school_year_name || '-'}</td>
+                                <td colspan="3">Curriculum/Program: ${data.curriculum || '-'}</td>
+                                <td colspan="4">Grade & Section: ${data.grade || '-'}/${data.section || '-'}</td>
+                                <td colspan="2">Sex: ${data.sex || '-'}</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="1" rowspan="2" class="section-title">LEARNER'S NAME</td>
+                                <td colspan="5">${learnerFullName}</td>
+                                <td colspan="2">Mode of Living:</td>
+                                <td colspan="4">${data.living_mode ? data.living_mode.join(', ') : '-'}</td>
+                            </tr>
+                            <tr>
+                            <td colspan="2"> <span>Family Name</span></td>
+                            <td colspan="1">  <span>First Name</span>             </td>
+                            <td colspan="2" > <span>Middle Name</span></td>
+
+                                <td colspan="2">Disability(if any):</td><td colspan="3">${data.disability || 'None'}</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.contact_number || '-'}</td>
+                                <td colspan="2">FB/Messenger:</td>
+                                <td colspan="4">${data.fb_messenger || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Birthday & Age:</td><td colspan="2">${formattedBirthday} (${formattedAge})</td>
+                                <td colspan="1">Religion:</td><td colspan="2">${data.religion || '-'}</td>
+                                <td colspan="1">Nationality:</td>
+                                <td colspan="4">${data.nationality || '-'}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="section-title" colspan="2">Father's Name</td><td colspan="4">${data.father_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.father_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.father_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.father_place_work || 'N/A'}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="section-title" colspan="2">Mother's Name</td><td colspan="4">${data.mother_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.mother_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.mother_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">${data.guardian_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.guardian_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.guardian_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.guardian_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.guardian_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.guardian_place_work || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Relationship:</td><td colspan="10">${data.guardian_relationship || 'N/A'}</td>
+                            </tr>
+                        </table>
+
+                        <!-- Append School Rules and Commitment to the front side -->
+                        <table class="info-table">
+                            <tr>
+                                <td style="width: 85%; vertical-align: top;">
+
+                                <p style="text-align: center; font-size: 12px;"><strong>MGA ALITUNTUNIN DAPAT SUNDIN NG MAG-AARAL NG OCNHS</strong></p>
+
+                                <ol style="text-align: left; padding-left: 10px; margin: 0; font-size: 11px; list-style-position: inside;">
+                                    <li>Maging responsable, palaging dumalo sa takdang araw at oras ng pag-aaral, 'wag lumiban/manhuli/umabs sa klase.</li>
+                                    <li>Aktibong makilahok sa buong panahon ng pag-aaral, kumilos ng maayos at nang may tamang pag-uugali.</li>
+                                    <li>Maging mabuti at magalang sa lahat ng panahon; igalang ang mga guro, mga kawani ng paaralan at kapwa mag-aaral.</li>
+                                    <li>Bawal ang pagmumura, pakikipag-away, rambulan, maglakal, vandalismo, panggugulo at paninira sa paaralan.</li>
+                                    <li>Ipinagbabawal din ang pagdala, paggamit, pagbili o pagbenta ng sigarilyo, vape, alak, droga, baril, banibalnan, kutsilyo o anumang bagay na nakasasakit, pornograpiya at mga katulad ng mga ito.</li>
+                                    <li>Sumunod sa pangkalusugang protocol ng pamahalaan, lalo na sa panahon ng pisikal (face-to-face) na pagpasok sa paaralan (face mask, distancing, handwashing, sanitation), na laging may suot na school ID at tamang uniporme o kasuotan, at magkaroon ng maayos (simpleng) ayos tulad sa babae, "student/crew cut" sa lalaki) at bawal din ang may kulay ang buhok, may make-up, may gata sa kilay at mga accessories. Bawal sa mga lalaki ang magsuot ng hikaw. Maaaring magsuot ang babae ng isang pares at simpleng hikaw lamang sa magkabilang tainga na kaaya-aya.</li>
+                                    <li>Ingatan ang pinahiram na libro, module o anuman gamit ng eskwelahan at isauli din ang mga ito sa takdang panahon.</li>
+                                    <li>Huwag sumama/sumali sa mga masasamang grupo o gang at sa mga ilegal na samahan na wala sa paaralan.</li>
+                                    <li>Makipag-ugnayan sa inyong guro, tagapayo/adviser o school counselor sa inyong mga katanungan.</li>
+                                    <li>Aiming ipatupad ang mga patakaran ng Olongapo City National High School (OCNHS) o ang kurikulum sa pag-aaral at interbensiyon ayon sa mga patakarang pampaaralan at mga batas ng DepEd na:
+                                        <ol type="a" style="padding-left: 20px;">
+                                            <li>Ipatatawag ang magulang/guardian para sa panayam;</li>
+                                            <li>Mabigyan ng karampatang aksyon, interbensiyon o mga paraan mula sa kurikulum/programa; o</li>
+                                            <li>Isangguni sa school counselor para sa counseling o coaching services.</li>
+                                        </ol>
+                                    </li>
+                                </ol>
+                                </td>
+                                <td style="width: 15%; vertical-align: top;">
+                                    <p style="text-align: center; font-size: 12px; "><strong>KOMITMENT SA PAARALAN</strong></p>
+                                    <p style="font-size: 10px; text-align: center;">
+                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma ang
+                                        aking taos pusong komitment na sumunod sa mga patakaran at alituntuning itinakda
+                                        sa akin ayon sa Mga Alituntuning Dapat Sundin ng Mag-aaral ng OCNHS at sa mga batas
+                                        ng DepEd ngayong taong panuruan. Kasihan nawa ako ng Maykapal.
+                                    </p>
+                                    <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="12" style="text-align: left;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                        <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
+                                        <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
+                                            <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
+                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
+                                            </div>
+                                            <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
+                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`;
+
+                    // Back side - School Rules and Commitment
+                    const backContent = `
+                    <div class="record-form back-side">
+                        <table class="info-table">
+
+
+
+                            </tr>
+                            <tr colspan="12">
+                                <td style="width: 85%; vertical-align">
+                                  <div style="text-align: center; margin-bottom: 12px;">
+                                    <strong>MGA TUNGKULIN NG MAGULANG O GUARDIAN</strong><br>(Alinsunod sa Batas Pambansang Blg. 232 at ng DepEd)</div>
+                                    <ol style="text-align: left; padding-left: 20px; margin: 0; font-size: 10px; list-style-position: inside;">
+                                        <li>Maging responsable at pumasok sa takdang araw at oras ng pag-aaral. Hindi umalis, lumiban, o huli sa klase nang walang matibay na dahilan.</li>
+                                        <li>Maging aktibo at makilahok sa klase nang may tamang pag-uugali at asal.</li>
+                                        <li>Igalang ang mga guro, kawani, at kapwa mag-aaral.</li>
+                                        <li>Iwasan ang pagmumura, pananakit, pambubully, paninira ng ari-arian, paninira ng pagkatao, at iba pang masamang asal.</li>
+                                        <li>Ipinagbabawal ang pagdala, paggamit, pagbili, o pagbebenta ng sigarilyo, vape, alak, droga, at sandata (baril, toy gun, kutsilyo, bomba, at iba pang mapanganib na bagay), at pornograpiko o malalaswang materyales.</li>
+                                        <li>Sumunod sa mga health protocols: pagsusuot ng face mask, social distancing, paghuhugas ng kamay, at sanitation. Magsuot ng ID at tamang uniporme. Panatilihing maayos ang buhok (nakatali/nakaklip para sa babae, student cut/crew cut para sa lalaki), walang kulay, walang makeup, walang eyebrow slit, walang accessories (hindi pinapayagan ang lalaki na magsuot ng hikaw, pinapayagan ang babae na isang pares lamang na simpleng hikaw).</li>
+                                        <li>Ingatan at iingatan ang mga hiniram na libro, module, o ari-arian ng paaralan at ibalik sa takdang oras.</li>
+                                        <li>Huwag sumali sa masasamang samahan o gang. Sumali lamang sa mga lehitimong organisasyon ng paaralan.</li>
+                                        <li>Makipag-ugnayan agad sa mga guro, adviser, o school counselor kung may mga katanungan o problema.</li>
+                                        <li>Lahat ng paglabag ay may kaukulang kaparusahan: mula sa pagtawag sa magulang/guardian, iba't ibang interbensyon mula sa curriculum/program, o pagtulong sa school counselor para sa counseling o coaching services.</li>
+
+
+
+
+
+
+                                </ol>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                        <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
+                                        <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
+                                            <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
+                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
+                                            </div>
+                                            <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
+                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="width: 15%; vertical-align: top; padding: 10px;">
+                                    <div style="text-align: center;">
+                                        <p style="margin: 0; text-align: center; font-size: 12px;"><strong>KOMITMENT SA PAARALAN</strong></p>
+                                    </div>
+                                    <p style="font-size: 10px; text-align: center; margin: 0;">
+                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma
+                                        sa ibaba ang aking taos pusong komitment na sumunod
+                                        sa mga patakarang itinakda sa akin ayon sa Mga Alituntuning Dapat
+                                        Sundin ng Mag-aaral ng OCNHS at sa mga batas ng DepEd ngayong taong panuruan.
+                                        Kasihan nawa ako ng Maykapal.
+                                    </p>
+                                    <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="info-table">
+                            <tr>
+                                <td colspan="12">COUNSELOR\'S NOTES:________________________________
+                                ____________________________________________________________________
+                                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`;
+
+                    // Directly print without showing modal
+                    printStudentProfile(frontContent, backContent, learnerFullName);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong while fetching data.' });
+            });
+        }
+
         function printStudentProfile(frontContent, backContent, studentName) {
             // Create a hidden iframe for printing
             const iframe = document.createElement('iframe');
@@ -1142,10 +1512,10 @@
                                 print-color-adjust: exact !important;
                             }
                             .print-page {
-                                /* page-break-after: always; */
+                                page-break-after: always;
                             }
                             .print-page:last-child {
-                                /* page-break-after: auto; */
+                                page-break-after: auto;
                                 margin-bottom: 0;
                             }
                         }

@@ -29,10 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $exception->getStatusCode() === 500) {
                 return response()->view('errors.404', [], 404);
             }
-            // For any other server errors, also return 404
-            if ($exception instanceof \Exception) {
-                return response()->view('errors.404', [], 404);
-            }
+            // Let other exceptions be handled by Laravel's default error handling
         });
     })->create();
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\AdditionalInformation;
 use App\Models\SchoolYear;
@@ -408,7 +409,7 @@ class AdminController extends Controller
  *  ------------------------------- */
 public function updateStudentInfo(Request $request, $id)
 {
-        $validated = $request->validate([
+    $baseRules = [
         // Basic Info
         'student_name' => 'required|string|max:255|regex:/^[A-Za-zÑñ\s\-\']+$/u',
         'lrn' => 'required|string|min:11|max:12',
@@ -450,7 +451,18 @@ public function updateStudentInfo(Request $request, $id)
         'guardian_place_work' => 'nullable|string|max:255',
         'guardian_contact' => 'nullable|string|max:50',
         'guardian_fb' => 'nullable|string|max:255',
-    ]);
+        'guardian_relationship' => 'nullable|string|max:255',
+
+        // Profile photo (optional) - allow admin to change student profile image
+        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ];
+
+        // First validate base rules (parent/guardian fields nullable here)
+        $validator = Validator::make($request->all(), $baseRules);
+        $validator->validate();
+        $validated = $validator->validated();
+
+        // No conditional requirements for parent/guardian fields
 
     // 🔹 Get old values for logging
     $user = \App\Models\User::find($id);
@@ -467,8 +479,27 @@ public function updateStudentInfo(Request $request, $id)
         unset($validated['student_name']); // remove from $validated so it won't go into AdditionalInformation
     }
 
+    // Handle profile picture upload separately (so $validated can be filled into model)
+    if ($request->hasFile('profile_picture')) {
+        try {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\.\-\_]/', '_', $file->getClientOriginalName());
+            $file->move(public_path('profiles'), $filename);
+            $validated['profile_picture'] = 'profiles/' . $filename;
+        } catch (\Exception $e) {
+            // If upload fails, ignore and proceed without changing the photo
+            unset($validated['profile_picture']);
+        }
+    }
+
     // 🔹 Find or create the additional info record
     $info = \App\Models\AdditionalInformation::firstOrNew(['learner_id' => $id]);
+    if (!$info->exists) {
+        $activeSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->where('archived', 0)->first();
+        if ($activeSchoolYear) {
+            $info->school_year_id = $activeSchoolYear->id;
+        }
+    }
     $info->fill($validated);
     $info->save();
 
@@ -490,6 +521,14 @@ public function updateStudentInfo(Request $request, $id)
         $oldValue = $oldInfo[$key] ?? null;
         $newValue = $value;
 
+        // Convert arrays to string for logging
+        if (is_array($oldValue)) {
+            $oldValue = implode(', ', $oldValue);
+        }
+        if (is_array($newValue)) {
+            $newValue = implode(', ', $newValue);
+        }
+
         if ($oldValue != $newValue) {
             $changes[] = ucfirst(str_replace('_', ' ', $key)) . ": '{$oldValue}' → '{$newValue}'";
         }
@@ -503,11 +542,11 @@ public function updateStudentInfo(Request $request, $id)
             'student_id' => $id,
             'old_values' => array_merge(['user_name' => $oldUserName], $oldInfo),
             'new_values' => array_merge(['user_name' => $newUserName], $newInfo),
-        ]);
-    }
+            ]);
+        }
 
-    // 🔹 Redirect back with confirmation
-    return redirect()->back()->with('success', 'Student information updated successfully!');
+        // 🔹 Redirect back with confirmation
+        return redirect()->back()->with('success', 'Student information updated successfully!');
 }
 
     /** -------------------------------

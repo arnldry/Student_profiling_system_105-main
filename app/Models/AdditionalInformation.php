@@ -29,6 +29,7 @@ class AdditionalInformation extends Model
         'fb_messenger',
         'current_date',
         'disability', // ✅ ADD THIS LINE
+        'profile_picture',
 
         'mother_name',
         'mother_age',
@@ -44,12 +45,13 @@ class AdditionalInformation extends Model
         'father_contact',
         'father_fb',
 
-        // 'guardian_name',
-        // 'guardian_age',
-        // 'guardian_occupation',
-        // 'guardian_place_work',
-        // 'guardian_contact',
-        // 'guardian_fb',
+        'guardian_name',
+        'guardian_age',
+        'guardian_occupation',
+        'guardian_place_work',
+        'guardian_contact',
+        'guardian_fb',
+        'guardian_relationship',
 
         'student_agreement_1',
         'student_agreement_2',

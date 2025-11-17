@@ -278,12 +278,22 @@
                         </div>
                     </div>
                     
-                    <form id="multiStepForm" action="{{ route('student.additional-info.store') }}" method="POST">
+                    <form id="multiStepForm" action="{{ route('student.additional-info.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-
+                        
                         <!-- Step 1: Student Info -->
                         <div class="form-step active" id="step-1">
                             <div class="row g-3">
+
+                             <!-- Profile Picture -->
+                             <div class="col-md-12 form-group">
+                                 <label for="profile_picture" class="font-weight-bold">Profile Picture</label>
+                                 <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*" required onchange="previewImage(event)">
+                                 <small class="form-text text-muted">Upload a clear photo of yourself (JPG, PNG, max 2MB)</small>
+                                 <div id="image-preview" class="mt-2" style="display: none;">
+                                     <img id="preview-img" src="" alt="Image Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                 </div>
+                             </div>
                                 <!-- School Year -->
                               <div class="col-md-3 form-group">
                                 <label for="school_year" class="font-weight-bold">School Year</label>
@@ -425,6 +435,8 @@
                                     <input type="text" name="fb_messenger" id="fb_messenger"
                                         class="form-control" placeholder="Enter Facebook or Messenger / Optional">
                                 </div>
+
+                               
                             </div>
 
                             <div class="mt-3 d-flex justify-content-end">
@@ -547,6 +559,10 @@
                                 <div class="col-md-12 form-group">
                                     <label for="guardian_fb" class="font-weight-bold">FB/Messenger</label>
                                     <input type="text" name="guardian_fb" id="guardian_fb" class="form-control" placeholder="Guardian's FB/Messenger / Optional">
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="guardian_relationship" class="font-weight-bold">Relationship</label>
+                                    <input type="text" name="guardian_relationship" id="guardian_relationship" class="form-control" placeholder="e.g., Aunt, Uncle, Grandparent">
                                 </div>
                             </div>
 
@@ -966,6 +982,24 @@ document.addEventListener('DOMContentLoaded', function () {
     activeSteps = getActiveSteps();
     showStep(currentStep);
 });
+
+// Image preview function
+function previewImage(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+    }
+}
 </script>
 
 </body>
