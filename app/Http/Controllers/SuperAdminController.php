@@ -14,17 +14,10 @@ class SuperAdminController extends Controller
         $adminCount = User::where('role', 'admin')->count();
         $studentCount = User::where('role', 'student')->count();
 
-        // Determine active/current school year.
-        // Prefer explicit is_active flag so unarchiving an older year won't make it the displayed current year.
-        $activeSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->orderBy('created_at', 'desc')->first();
-        if (!$activeSchoolYear) {
-            $activeSchoolYear = \App\Models\SchoolYear::where('archived', 0)
-                ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
-                ->first();
-        }
-        if (!$activeSchoolYear) {
-            $activeSchoolYear = \App\Models\SchoolYear::latest()->first();
-        }
+        // Determine active/current school year - must not be archived
+        $activeSchoolYear = \App\Models\SchoolYear::where('is_archived', 0)
+            ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
+            ->first();
 
         return view('superadmin.dashboard', compact('adminCount', 'studentCount', 'activeSchoolYear'));
     }
@@ -594,7 +587,7 @@ class SuperAdminController extends Controller
         // 🔹 Find or create the additional info record
         $info = \App\Models\AdditionalInformation::firstOrNew(['learner_id' => $id]);
         if (!$info->exists) {
-            $activeSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->where('archived', 0)->first();
+            $activeSchoolYear = \App\Models\SchoolYear::where('is_archived', 0)->first();
             if ($activeSchoolYear) {
                 $info->school_year_id = $activeSchoolYear->id;
             }

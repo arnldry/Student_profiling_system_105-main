@@ -61,7 +61,6 @@
 
 
 
-		
 				<!-- Active School Year Card -->
 				<div class="col-xl-3 col-lg-3 col-md-6 mb-20">
 					<div class="card-box height-100-p widget-style3">
@@ -71,7 +70,7 @@
 									@if($activeSchoolYear)
 										{{ $activeSchoolYear->school_year }}
 									@else
-										No Active SY
+										no active school yr
 									@endif
 								</div>
 

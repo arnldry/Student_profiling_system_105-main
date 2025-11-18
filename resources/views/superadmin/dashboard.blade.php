@@ -63,7 +63,7 @@
 										@if($activeSchoolYear)
 											{{ $activeSchoolYear->school_year }}
 										@else
-											No Active SY
+											no active school yr
 										@endif
 									</div>
 

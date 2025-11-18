@@ -153,16 +153,6 @@
     <div class="main-container">
         <div class="pd-ltr-20 xs-pd-20-10">
             <div class="min-height-200px">
-                <div class="page-header text-center">
-                    <div class="row justify-content-center">
-                        <div class="col-md-12">
-                            <div class="title">
-                                <h1>Guidance & Counseling Unit</h1>
-                            </div>
-                            <h4>My Additional Information</h4>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="record-form-container">
                     @php
@@ -208,6 +198,7 @@
                         <table class="info-table">
                             <tr>
                                 <td colspan="12" class="section-title" style="position: relative; text-align: center;">
+                                    <span style="position: absolute; left: 5px;">GCU-F1</span>
                                     <span>LEARNER'S INDIVIDUAL INVENTORY RECORD</span>
                                 </td>
                             </tr>
@@ -230,6 +221,16 @@
                                 <td colspan="1">  <span>First Name</span>             </td>
                                 <td colspan="2" > <span>Middle Name</span></td>
                                 <td colspan="2">Disability(if any):</td><td colspan="3">{{ $info->disability ?: 'None' }}</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="12" style="text-align: center; padding: 10px;">
+                                    @if($info->profile_picture)
+                                        <img src="{{ asset($info->profile_picture) }}" alt="Profile Picture" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                                    @else
+                                        <i class="dw dw-user" style="font-size: 50px;"></i>
+                                    @endif
+                                </td>
                             </tr>
 
                             <tr>
@@ -273,7 +274,6 @@
                                 <td colspan="2">Place of Work:</td><td colspan="4">{{ $info->mother_place_work ?: 'N/A' }}</td>
                             </tr>
 
-                            @if($info->guardian_name)
                             <tr>
                                 <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">{{ $info->guardian_name ?: '-' }}</td>
                                 <td colspan="1">Age:</td><td colspan="5">{{ $info->guardian_age ?: '-' }}</td>
@@ -289,7 +289,6 @@
                             <tr>
                                 <td colspan="2">Relationship:</td><td colspan="10">{{ $info->guardian_relationship ?: 'N/A' }}</td>
                             </tr>
-                            @endif
                         </table>
 
                         <!-- School Rules and Commitment -->
@@ -429,23 +428,6 @@
                         <i class="dw dw-print"></i> Print Profile
                     </button>
                 </div>
-                <div class="row mt-4">
-                        <div class="col-md-12">
-                            <h5>Agreements</h5>
-                            <div class="alert alert-info">
-                                <strong>Student Agreements:</strong>
-                                <ul class="mb-0">
-                                    <li>School Rules Agreement: {{ $info->student_agreement_1 ? 'Accepted' : 'Not Accepted' }}</li>
-                                    <li>School Commitment Agreement: {{ $info->student_agreement_2 ? 'Accepted' : 'Not Accepted' }}</li>
-                                </ul>
-                                <strong>Parent/Guardian Agreements:</strong>
-                                <ul class="mb-0">
-                                    <li>Parent Duties Agreement: {{ $info->parent_agreement_1 ? 'Accepted' : 'Not Accepted' }}</li>
-                                    <li>School Commitment Agreement: {{ $info->parent_agreement_2 ? 'Accepted' : 'Not Accepted' }}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
             </div>
         </div>
     </div>

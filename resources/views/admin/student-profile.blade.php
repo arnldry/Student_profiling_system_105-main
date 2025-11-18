@@ -129,7 +129,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-12 form-group text-center">
                                                                     <label>Profile Picture</label><br>
-                                                                    <input type="file" name="profile_picture" class="form-control d-inline-block" accept="image/*" style="width: auto; max-width: 300px;">
+                                                                    <input type="file" name="profile_picture" class="form-control d-inline-block" accept="image/*" style="width: auto; max-width: 300px;" onchange="validateFileSize(event)">
                                                                     @if($info->profile_picture)
                                                                         <br><img src="{{ asset($info->profile_picture) }}" alt="Current Profile Picture" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px; border-radius: 5px;">
                                                                     @endif
@@ -828,6 +828,30 @@
                 });
             @endif
         });
+
+        // File size validation function
+        function validateFileSize(event) {
+            const file = event.target.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+            if (file && file.size > maxSize) {
+                // Clear the file input
+                event.target.value = '';
+
+                // Show warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'The selected file exceeds the maximum size limit of 10MB. Please choose a smaller image.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+
+                return false;
+            }
+
+            return true;
+        }
 
         function viewProfilePicture(imageSrc, studentName, lrn) {
             Swal.fire({

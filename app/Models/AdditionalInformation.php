@@ -51,7 +51,6 @@ class AdditionalInformation extends Model
         'guardian_place_work',
         'guardian_contact',
         'guardian_fb',
-        'guardian_relationship',
 
         'student_agreement_1',
         'student_agreement_2',

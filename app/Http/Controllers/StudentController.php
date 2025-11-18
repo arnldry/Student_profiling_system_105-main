@@ -115,12 +115,12 @@ class StudentController extends Controller
             ],
             'current_password' => ['required', 'current_password'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // 2MB max
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'], // 10MB max
         ], [
             'email.regex' => 'You must register with a Gmail or Yahoo email address.',
             'profile_picture.image' => 'The profile picture must be an image.',
             'profile_picture.mimes' => 'The profile picture must be a file of type: jpeg, png, jpg, gif.',
-            'profile_picture.max' => 'The profile picture may not be greater than 2MB.',
+            'profile_picture.max' => 'The profile picture may not be greater than 10MB.',
         ]);
 
         $user->name = $request->name;

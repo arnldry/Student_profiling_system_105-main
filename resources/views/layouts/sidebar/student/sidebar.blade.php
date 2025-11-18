@@ -1,6 +1,7 @@
 @php
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInformation;
+use App\Models\SchoolYear;
 
 // Check if the logged-in user has Additional Information
 $hasAdditionalInfo = $hasAdditionalInfo ?? (
@@ -8,6 +9,9 @@ $hasAdditionalInfo = $hasAdditionalInfo ?? (
         ? AdditionalInformation::where('learner_id', Auth::id())->exists()
         : false
 );
+
+// Check if there's an active (non-archived) school year
+$hasActiveSchoolYear = SchoolYear::where('is_archived', 0)->exists();
 @endphp
 
 <style>
@@ -56,6 +60,7 @@ $hasAdditionalInfo = $hasAdditionalInfo ?? (
                 </li>
 
                 {{-- Additional Information --}}
+                @if($hasActiveSchoolYear)
                 <li>
                     @if($hasAdditionalInfo)
                         <a href="{{ route('student.view-additional-info') }}"
@@ -67,10 +72,11 @@ $hasAdditionalInfo = $hasAdditionalInfo ?? (
                         <a href="{{ route('student.additional-info') }}"
                            class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-information"></span>
-                            <span class="mtext">Additional Information</span>
+                            <span class="mtext">Personal Information</span>
                         </a>
                     @endif
                 </li>
+                @endif
 
                 {{-- Profile --}}
                 <li>

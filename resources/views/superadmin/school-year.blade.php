@@ -58,16 +58,21 @@
                                         <option value="">Select School Year</option>
                                         @php
                                             $currentYear = date('Y');
+                                            $existingSchoolYears = \App\Models\SchoolYear::pluck('school_year')->toArray();
                                             for ($i = 0; $i < 5; $i++) {
                                                 $startYear = $currentYear + $i;
                                                 $endYear = $startYear + 1;
                                                 $schoolYear = $startYear . '-' . $endYear;
+                                                // Skip if school year already exists
+                                                if (in_array($schoolYear, $existingSchoolYears)) {
+                                                    continue;
+                                                }
                                                 $selected = old('school_year') == $schoolYear ? 'selected' : '';
                                                 echo "<option value=\"$schoolYear\" $selected>$schoolYear</option>";
                                             }
                                         @endphp
                                     </select>
-                                    <small class="text-muted">Note: School year options update annually to show the next 5 years.</small>
+                                    <small class="text-muted">Note: Shows the next 5 available school years that haven't been created yet.</small>
                                     @error('school_year')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror

@@ -29,17 +29,9 @@ class AdminController extends Controller
             ->pluck('school_year_id');
 
         // Get active (non-archived) school years
-        $activeSchoolYear = SchoolYear::where('is_active', 1)
-            ->where('archived', 0)
-            ->orderBy('created_at', 'desc')
+        $activeSchoolYear = SchoolYear::where('is_archived', 0)
+            ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
             ->first();
-
-        // If no active, try latest non-archived
-        if (!$activeSchoolYear) {
-            $activeSchoolYear = SchoolYear::where('archived', 0)
-                ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
-                ->first();
-        }
 
         // If everything is archived, set both to null and 0
         if (!$activeSchoolYear) {
@@ -459,10 +451,9 @@ public function updateStudentInfo(Request $request, $id)
         'guardian_place_work' => 'nullable|string|max:255',
         'guardian_contact' => 'nullable|string|max:50',
         'guardian_fb' => 'nullable|string|max:255',
-        'guardian_relationship' => 'nullable|string|max:255',
 
         // Profile photo (optional) - allow admin to change student profile image
-        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
     ];
 
         // First validate base rules (parent/guardian fields nullable here)
@@ -470,7 +461,20 @@ public function updateStudentInfo(Request $request, $id)
         $validator->validate();
         $validated = $validator->validated();
 
-        // No conditional requirements for parent/guardian fields
+        // Custom validation: Make parent/guardian fields required only when living mode is selected
+        $livingMode = $validated['living_mode'];
+
+        if (in_array('Living with Father', $livingMode) && empty($validated['father_name'])) {
+            return back()->withInput()->withErrors(['father_name' => 'Father name is required when "Living with Father" is selected.']);
+        }
+
+        if (in_array('Living with Mother', $livingMode) && empty($validated['mother_name'])) {
+            return back()->withInput()->withErrors(['mother_name' => 'Mother name is required when "Living with Mother" is selected.']);
+        }
+
+        if (in_array('Living with Other Guardians', $livingMode) && empty($validated['guardian_name'])) {
+            return back()->withInput()->withErrors(['guardian_name' => 'Guardian name is required when "Living with Other Guardians" is selected.']);
+        }
 
     // 🔹 Get old values for logging
     $user = \App\Models\User::find($id);
@@ -503,7 +507,7 @@ public function updateStudentInfo(Request $request, $id)
     // 🔹 Find or create the additional info record
     $info = \App\Models\AdditionalInformation::firstOrNew(['learner_id' => $id]);
     if (!$info->exists) {
-        $activeSchoolYear = \App\Models\SchoolYear::where('is_active', 1)->where('archived', 0)->first();
+        $activeSchoolYear = \App\Models\SchoolYear::where('is_archived', 0)->first();
         if ($activeSchoolYear) {
             $info->school_year_id = $activeSchoolYear->id;
         }

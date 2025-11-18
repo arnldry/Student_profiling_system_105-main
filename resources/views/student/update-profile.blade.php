@@ -118,8 +118,8 @@
                                     <label for="profile_picture">Profile Picture</label>
                                     <input type="file" name="profile_picture" id="profile_picture"
                                         class="form-control form-control-lg @error('profile_picture') is-invalid @enderror"
-                                        accept="image/*">
-                                    <small class="form-text text-muted">Upload a new profile picture (optional)</small>
+                                        accept="image/*" onchange="validateFileSize(event)">
+                                    <small class="form-text text-muted">Upload a new profile picture (optional, max 10MB)</small>
                                     @error('profile_picture')
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
                                     @enderror
@@ -254,6 +254,30 @@
             passwordInput.type = type;
             confirmInput.type = type;
             currentPasswordInput.type = type;
+        }
+
+        // File size validation function
+        function validateFileSize(event) {
+            const file = event.target.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+            if (file && file.size > maxSize) {
+                // Clear the file input
+                event.target.value = '';
+
+                // Show warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'The selected file exceeds the maximum size limit of 10MB. Please choose a smaller image.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+
+                return false;
+            }
+
+            return true;
         }
 
         // Image preview functionality

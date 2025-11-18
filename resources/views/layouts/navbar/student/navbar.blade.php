@@ -9,7 +9,7 @@
 			<div class="dropdown">
 				<a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
 					<span class="user-icon" style="background: transparent; border: none; display: inline-block;">
-						@if($additionalInfo && $additionalInfo->profile_picture)
+						@if(isset($additionalInfo) && $additionalInfo && $additionalInfo->profile_picture)
 							<img src="{{ asset($additionalInfo->profile_picture) }}" alt="Profile Picture" style="width: 52px; height: 52px; object-fit: cover;">
 						@else
 							<i class="bi bi-person-circle" style="color:black"></i>

@@ -877,7 +877,7 @@
                 }
             }
 
-            fetch(`/admin/students/${userId}/additional-info`)
+            fetch(`/superadmin/students/${userId}/additional-info`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {

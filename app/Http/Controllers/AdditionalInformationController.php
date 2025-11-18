@@ -15,19 +15,12 @@ class AdditionalInformationController extends Controller
 {
     public function additionalInfo()
     {
-    
 
-        // Determine current school year consistent with dashboards:
-        // FIXED: look for is_active = 0 instead of 1
-        $currentSchoolYear = SchoolYear::where('is_active', 0)->orderBy('created_at', 'desc')->first();
-        if (! $currentSchoolYear) {
-            $currentSchoolYear = SchoolYear::where('archived', 0)
-                ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
-                ->first();
-        }
-        if (! $currentSchoolYear) {
-            $currentSchoolYear = SchoolYear::latest()->first();
-        }
+
+        // Determine current school year - must not be archived
+        $currentSchoolYear = SchoolYear::where('is_archived', 0)
+            ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
+            ->first();
 
         // Get active curricula
         $curriculums = Curriculum::where('is_archived', 0)->get();
@@ -36,7 +29,14 @@ class AdditionalInformationController extends Controller
     }
     public function store(Request $request)
     {
+        // Check if there's an active (non-archived) school year before processing
+        $currentSchoolYear = SchoolYear::where('is_archived', 0)
+            ->orderByRaw("CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED) DESC")
+            ->first();
 
+        if (!$currentSchoolYear) {
+            return back()->withInput()->withErrors(['school_year' => 'No active school year found. Please contact the administrator or guidance counselor.']);
+        }
 
         $validated = $request->validate([
             'school_year' => 'required|exists:school_years,id',
@@ -55,9 +55,9 @@ class AdditionalInformationController extends Controller
             'nationality' => 'required|string',
             'fb_messenger' => 'nullable|string',
             'disability' => 'nullable|string', // ✅ ADD VALIDATION
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:10240', // 10MB max
 
-            // Parents & Guardians
+            // Parents & Guardians - All nullable, validation logic below
             'father_name' => 'nullable|string',
             'father_age' => 'nullable|integer|min:1',
             'father_occupation' => 'nullable|string',
@@ -77,7 +77,6 @@ class AdditionalInformationController extends Controller
             'guardian_place_work' => 'nullable|string',
             'guardian_contact' => 'nullable|string',
             'guardian_fb' => 'nullable|string',
-            'guardian_relationship' => 'nullable|string',
 
             // Agreements
             'student_agreement_1' => 'accepted',
@@ -85,6 +84,21 @@ class AdditionalInformationController extends Controller
             'parent_agreement_1' => 'accepted',
             'parent_agreement_2' => 'accepted',
         ]);
+
+        // Custom validation: Make parent/guardian fields required only when living mode is selected
+        $livingMode = $validated['living_mode'];
+
+        if (in_array('Living with Father', $livingMode) && empty($validated['father_name'])) {
+            return back()->withInput()->withErrors(['father_name' => 'Father name is required when "Living with Father" is selected.']);
+        }
+
+        if (in_array('Living with Mother', $livingMode) && empty($validated['mother_name'])) {
+            return back()->withInput()->withErrors(['mother_name' => 'Mother name is required when "Living with Mother" is selected.']);
+        }
+
+        if (in_array('Living with Other Guardians', $livingMode) && empty($validated['guardian_name'])) {
+            return back()->withInput()->withErrors(['guardian_name' => 'Guardian name is required when "Living with Other Guardians" is selected.']);
+        }
 
         // Prevent duplicate LRN for the same learner
         if (AdditionalInformation::where('lrn', $validated['lrn'])
@@ -94,15 +108,6 @@ class AdditionalInformationController extends Controller
         }
 
         try {
-            // Check if user already has additional info for this school year
-            $existingInfo = AdditionalInformation::where('learner_id', Auth::id())
-                ->where('school_year_id', $validated['school_year'])
-                ->first();
-
-            if ($existingInfo) {
-                return back()->withInput()->withErrors(['unexpected' => 'You have already submitted additional information for this school year.']);
-            }
-
             // Handle profile picture upload
             $profilePicturePath = null;
             if ($request->hasFile('profile_picture')) {
@@ -112,7 +117,8 @@ class AdditionalInformationController extends Controller
                 $profilePicturePath = 'profiles/' . $filename;
             }
 
-            AdditionalInformation::create([
+            // Prepare data for saving
+            $data = [
                 'school_year_id' => $validated['school_year'],
                 'learner_id' => Auth::id(),
                 'lrn' => $validated['lrn'],
@@ -121,7 +127,7 @@ class AdditionalInformationController extends Controller
                 'grade' => $validated['grade'],
                 'curriculum' => $validated['curriculum'],
                 'section' => $validated['section'],
-                'living_mode' => $validated['living_mode'], // ✅ Let Eloquent handle the casting
+                'living_mode' => $validated['living_mode'],
                 'address' => $validated['address'],
                 'contact_number' => $validated['contact_number'],
                 'birthday' => $validated['birthday'],
@@ -129,7 +135,7 @@ class AdditionalInformationController extends Controller
                 'religion' => $validated['religion'],
                 'nationality' => $validated['nationality'],
                 'fb_messenger' => $validated['fb_messenger'] ?? null,
-                'disability' => $validated['disability'] ?? null, // ✅ ADD THIS FIELD
+                'disability' => $validated['disability'] ?? null,
                 'profile_picture' => $profilePicturePath,
 
                 'father_name' => $validated['father_name'] ?? null,
@@ -152,13 +158,28 @@ class AdditionalInformationController extends Controller
                 'guardian_place_work' => $validated['guardian_place_work'] ?? null,
                 'guardian_contact' => $validated['guardian_contact'] ?? null,
                 'guardian_fb' => $validated['guardian_fb'] ?? null,
-                'guardian_relationship' => $validated['guardian_relationship'] ?? null,
 
                 'student_agreement_1' => true,
                 'student_agreement_2' => true,
                 'parent_agreement_1' => true,
                 'parent_agreement_2' => true,
-            ]);
+            ];
+
+            // Check if user already has additional info for this school year
+            $existingInfo = AdditionalInformation::where('learner_id', Auth::id())
+                ->where('school_year_id', $validated['school_year'])
+                ->first();
+
+            if ($existingInfo) {
+                // Update existing record (keep existing profile picture if not uploading new one)
+                if (!$profilePicturePath) {
+                    unset($data['profile_picture']);
+                }
+                $existingInfo->update($data);
+            } else {
+                // Create new record
+                AdditionalInformation::create($data);
+            }
 
         } catch (\Exception $e) {
             Log::error('Error saving additional info: ' . $e->getMessage());
@@ -166,7 +187,7 @@ class AdditionalInformationController extends Controller
             return back()->withInput()->withErrors(['unexpected' => 'Something went wrong while saving your information. Please try again.']);
         }
 
-        return redirect()->route('student.dashboard')->with('success', 'Additional Information saved successfully!');
+        return redirect()->route('student.view-additional-info')->with('success', 'Additional Information saved successfully!');
     }
 
     // Add this method to check LRN uniqueness

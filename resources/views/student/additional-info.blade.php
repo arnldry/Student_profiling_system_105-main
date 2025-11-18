@@ -228,7 +228,23 @@
                     <div class="clearfix mb-30">
                         <h4 class="text-blue h4">Student Information Form</h4>
                     </div>
+
+                    @if(!$currentSchoolYear)
+                        <div class="alert alert-danger">
+                            <strong>No Active School Year</strong><br>
+                            No active school year found. Please contact the administrator or guidance counselor.
+                        </div>
+                    @elseif($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     
+                    @if($currentSchoolYear)
                     <!-- UPDATED: Responsive Tab Navigation -->
                     <div class="form-tabs">
                         <div class="form-tab first current">
@@ -288,8 +304,8 @@
                              <!-- Profile Picture -->
                              <div class="col-md-12 form-group">
                                  <label for="profile_picture" class="font-weight-bold">Profile Picture</label>
-                                 <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*" required onchange="previewImage(event)">
-                                 <small class="form-text text-muted">Upload a clear photo of yourself (JPG, PNG, max 2MB)</small>
+                                 <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*" required onchange="validateFileSize(event); previewImage(event)">
+                                 <small class="form-text text-muted">Upload a clear photo of yourself (JPG, PNG, max 10MB)</small>
                                  <div id="image-preview" class="mt-2" style="display: none;">
                                      <img id="preview-img" src="" alt="Image Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
                                  </div>
@@ -374,13 +390,13 @@
                                 <div class="col-md-12 form-group">
                                     <label class="font-weight-bold">Living with</label>
                                     <div class="form-check">
-                                        <input type="checkbox" name="living_mode[]" value="Living with Father" class="form-check-input"> Father
+                                        <input type="checkbox" name="living_mode[]" value="Living with Father" class="form-check-input living-mode-checkbox" data-target="father"> Father
                                     </div>
                                     <div class="form-check">
-                                        <input type="checkbox" name="living_mode[]" value="Living with Mother" class="form-check-input"> Mother
-                                    </div>										
+                                        <input type="checkbox" name="living_mode[]" value="Living with Mother" class="form-check-input living-mode-checkbox" data-target="mother"> Mother
+                                    </div>
                                     <div class="form-check">
-                                        <input type="checkbox" name="living_mode[]" value="Living with Other Guardians" class="form-check-input"> Guardians
+                                        <input type="checkbox" name="living_mode[]" value="Living with Other Guardians" class="form-check-input living-mode-checkbox" data-target="guardian"> Guardians
                                     </div>
                                 </div>
 
@@ -628,6 +644,7 @@
                             </div>
                         </div>
                     </form>
+                    @endif
                 </div>
             </div>
         </div>
@@ -736,6 +753,8 @@ document.addEventListener('DOMContentLoaded', function () {
     nextBtns.forEach(btn => {
         btn.addEventListener("click", async function (e) {
             e.preventDefault();
+            // Update required fields before validation
+            updateRequiredFields();
             const currentStepEl = document.getElementById(activeSteps[currentStep]);
             if (!await validateStep(currentStepEl)) return;
             if (currentStep === 0) {
@@ -907,8 +926,11 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             return;
         }
-        
+
         e.preventDefault();
+
+        // Update required fields before validation
+        updateRequiredFields();
 
         // Validate all active steps before showing confirmation
         for (let i = 0; i < activeSteps.length; i++) {
@@ -981,7 +1003,85 @@ document.addEventListener('DOMContentLoaded', function () {
     // 🔹 Initialize - show first step
     activeSteps = getActiveSteps();
     showStep(currentStep);
+
+    // 🔹 Handle dynamic required fields based on living mode
+    function updateRequiredFields() {
+        const fatherChecked = document.querySelector("input[name='living_mode[]'][value='Living with Father']").checked;
+        const motherChecked = document.querySelector("input[name='living_mode[]'][value='Living with Mother']").checked;
+        const guardianChecked = document.querySelector("input[name='living_mode[]'][value='Living with Other Guardians']").checked;
+
+        // Father fields - only name is required
+        const fatherNameField = document.getElementById('father_name');
+        if (fatherNameField) {
+            fatherNameField.required = fatherChecked;
+            const label = fatherNameField.closest('.form-group').querySelector('label');
+            if (label) {
+                label.classList.toggle('required', fatherChecked);
+            }
+        }
+
+        // Mother fields - only name is required
+        const motherNameField = document.getElementById('mother_name');
+        if (motherNameField) {
+            motherNameField.required = motherChecked;
+            const label = motherNameField.closest('.form-group').querySelector('label');
+            if (label) {
+                label.classList.toggle('required', motherChecked);
+            }
+        }
+
+        // Guardian fields - name and relationship are required
+        const guardianRequiredFields = ['guardian_name', 'guardian_relationship'];
+        guardianRequiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.required = guardianChecked;
+                const label = field.closest('.form-group').querySelector('label');
+                if (label) {
+                    label.classList.toggle('required', guardianChecked);
+                }
+            }
+        });
+    }
+
+    // Add event listeners to living mode checkboxes
+    document.querySelectorAll('.living-mode-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateRequiredFields);
+    });
+
+    // Initial update
+    updateRequiredFields();
 });
+
+// File size validation function
+function validateFileSize(event) {
+    const file = event.target.files[0];
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (file && file.size > maxSize) {
+        // Clear the file input
+        event.target.value = '';
+
+        // Hide preview if it was shown
+        const preview = document.getElementById('image-preview');
+        if (preview) {
+            preview.style.display = 'none';
+        }
+
+        // Show warning
+        Swal.fire({
+            icon: 'warning',
+            title: 'File Too Large',
+            text: 'The selected file exceeds the maximum size limit of 10MB. Please choose a smaller image.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+
+        return false;
+    }
+
+    return true;
+}
 
 // Image preview function
 function previewImage(event) {
