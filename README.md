@@ -25,9 +25,6 @@
 
 
 
-
-
-
 .htaccess
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
@@ -61,7 +58,6 @@
 
 
 
-
 httpd-vhosts.conf
 <VirtualHost *:80>
      ServerAdmin webmaster@dummy-host2.example.com
@@ -70,10 +66,6 @@ httpd-vhosts.conf
      ErrorLog "logs/dummy-host2.example.com-error.log"
      CustomLog "logs/dummy-host2.example.com-access.log" common
  </VirtualHost>
-
-
-
-
 
 
 
@@ -372,9 +364,4 @@ CustomLog "C:/xampp/apache/logs/ssl_request.log" \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
 </VirtualHost>                                  
-
-
-
-
-
 
