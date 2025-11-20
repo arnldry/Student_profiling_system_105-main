@@ -52,6 +52,7 @@ class ArchivedStudentDataController extends Controller
                     'religion'           => $student->religion,
                     'nationality'        => $student->nationality,
                     'fb_messenger'       => $student->fb_messenger,
+                    'current_date'       => $student->current_date,
                     'profile_picture'    => $student->profile_picture,
                     'father_name'        => $student->father_name,
                     'father_age'         => $student->father_age,

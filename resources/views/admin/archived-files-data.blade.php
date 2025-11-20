@@ -45,7 +45,7 @@
 
             <!-- Archived School Years Buttons -->
             <div class="title pb-20">
-                <h2 class="h3 mb-0">Archived Student Data by School Year</h2>
+                <h2 class="h3 mb-0">Archived Student List</h2>
             </div>
             <div class="card-box mb-30">
                 <div class="pb-20 p-3">
@@ -62,11 +62,10 @@
             <!-- Archived Students Table -->
             <div class="card-box mb-30 student-table-wrapper" style="display:none;">
                 <div class="pd-20">
-                    <h4 class="text-blue h4">Archived Students</h4>
-                    <p class="mb-0 text-muted">List of students under the selected school year</p>
+                    <p class="mb-0">Archived students list here.</p>
                 </div>
 
-                <div class="pb-20 px-3">
+                <div class="pb-20">
                     <table class="data-table table stripe hover nowrap" id="archivedStudentsTable" style="width:100%;">
                         <thead>
                             <tr>
@@ -83,6 +82,334 @@
                 </div>
             </div>
 
+            {{-- 🔹 Edit Archived Student Modal (Multi-Step Version) --}}
+            @foreach($archivedSchoolYears as $sy)
+                @php
+                    $archivedStudents = \App\Models\ArchivedStudentInformation::where('school_year_id', $sy->id)->get();
+                @endphp
+                @foreach($archivedStudents as $archivedStudent)
+                    <div class="modal fade" id="editArchivedModal{{ $archivedStudent->id }}" tabindex="-1" aria-labelledby="editArchivedModalLabel{{ $archivedStudent->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header bg-white border-bottom">
+                                    <h5 class="modal-title text-primary">
+                                        <i class="dw dw-edit2 mr-2"></i> Edit Archived Student Info - {{ $archivedStudent->user ? $archivedStudent->user->name : 'N/A' }}
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+
+                                <form action="{{ route('admin.update-archived-student-info', $archivedStudent->id) }}" method="POST" enctype="multipart/form-data" class="edit-archived-form" data-archived-id="{{ $archivedStudent->id }}">
+                                     @csrf
+                                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                                        {{-- Step Indicators --}}
+                                        <div class="edit-form-tabs mb-4">
+                                            <div class="edit-form-tab active" data-step="1">
+                                                <span class="step-number">1</span>
+                                                <span class="step-label">Student Info</span>
+                                            </div>
+                                            <div class="edit-form-tab" data-step="2">
+                                                <span class="step-number">2</span>
+                                                <span class="step-label">Mother's Info</span>
+                                            </div>
+                                            <div class="edit-form-tab" data-step="3">
+                                                <span class="step-number">3</span>
+                                                <span class="step-label">Father's Info</span>
+                                            </div>
+                                            <div class="edit-form-tab" data-step="4">
+                                                <span class="step-number">4</span>
+                                                <span class="step-label">Guardian's Info</span>
+                                            </div>
+                                            <div class="edit-form-tab" data-step="5">
+                                                <span class="step-number">5</span>
+                                                <span class="step-label">Agreements</span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Step 1: Student Information --}}
+                                        <div class="edit-form-step active" id="edit-archived-step-1-{{ $archivedStudent->id }}">
+                                            <h6 class="text-primary mb-3"><i class="dw dw-user"></i> Student Information</h6>
+                                            <div class="row">
+                                                <div class="col-md-12 form-group text-center">
+                                                    <label>Profile Picture</label><br>
+                                                    <input type="file" name="profile_picture" class="form-control d-inline-block" accept="image/*" style="width: auto; max-width: 300px;" onchange="validateFileSize(event)">
+                                                    @if($archivedStudent->profile_picture)
+                                                        <br><img src="{{ asset($archivedStudent->profile_picture) }}" alt="Current Profile Picture" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px; border-radius: 5px;">
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Student Name</label>
+                                                    <input type="text" name="student_name" id="edit-archived-student-name-{{ $archivedStudent->id }}" class="form-control"
+                                                        value="{{ $archivedStudent->user ? $archivedStudent->user->name : '' }}"
+                                                        pattern="[A-Za-zÑñ\s\-\']+"
+                                                        title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed"
+                                                        required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>School Year</label>
+                                                    <input type="text" name="school_year" class="form-control"
+                                                        value="{{ $archivedStudent->schoolYear ? $archivedStudent->schoolYear->school_year : 'N/A' }}" readonly required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>LRN</label>
+                                                    <input type="text" name="lrn" id="edit-archived-lrn-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->lrn ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Sex</label>
+                                                    <select name="sex" class="form-control" required>
+                                                        <option value="">Select</option>
+                                                        <option value="Male" {{ ($archivedStudent->sex ?? '') == 'Male' ? 'selected' : '' }}>Male</option>
+                                                        <option value="Female" {{ ($archivedStudent->sex ?? '') == 'Female' ? 'selected' : '' }}>Female</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Grade</label>
+                                                    <select name="grade" class="form-control" required>
+                                                        <option value="">Select Grade</option>
+                                                        @for($i = 7; $i <= 12; $i++)
+                                                            <option value="{{ $i }}" {{ ($archivedStudent->grade ?? '') == $i ? 'selected' : '' }}>Grade {{ $i }}</option>
+                                                        @endfor
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Curriculum / Program</label>
+                                                    <select name="curriculum" class="form-control" required>
+                                                        <option value="">Select Curriculum</option>
+                                                        @foreach($curriculums as $curriculum)
+                                                            <option value="{{ $curriculum->name }}" {{ ($archivedStudent->curriculum ?? '') == $curriculum->name ? 'selected' : '' }}>
+                                                                {{ $curriculum->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Section</label>
+                                                    <input type="text" name="section" class="form-control" value="{{ $archivedStudent->section ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Disability (if any)</label>
+                                                    <input type="text" name="disability" class="form-control" value="{{ $archivedStudent->disability ?? '' }}" placeholder="Enter Disability (if any)">
+                                                </div>
+                                                <div class="col-md-12 form-group">
+                                                    <label class="font-weight-bold">Living with</label>
+                                                    @php
+                                                        $livingMode = is_array($archivedStudent->living_mode ?? null) ? $archivedStudent->living_mode : [];
+                                                    @endphp
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="living_mode[]" value="Living with Father" class="form-check-input" {{ in_array('Living with Father', $livingMode) ? 'checked' : '' }}> Father
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="living_mode[]" value="Living with Mother" class="form-check-input" {{ in_array('Living with Mother', $livingMode) ? 'checked' : '' }}> Mother
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="living_mode[]" value="Living with Other Guardians" class="form-check-input" {{ in_array('Living with Other Guardians', $livingMode) ? 'checked' : '' }}> Guardians
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 form-group">
+                                                    <label>Address</label>
+                                                    <input type="text" name="address" class="form-control" value="{{ $archivedStudent->address ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Mobile Number</label>
+                                                    <input type="text" name="contact_number" id="edit-archived-contact-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->contact_number ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Birthday</label>
+                                                    <input
+                                                        type="date"
+                                                        name="birthday"
+                                                        id="edit-archived-birthday-{{ $archivedStudent->id }}"
+                                                        class="form-control"
+                                                        value="{{ $archivedStudent && $archivedStudent->birthday ? \Carbon\Carbon::parse($archivedStudent->birthday)->format('Y-m-d') : '' }}"
+                                                        required
+                                                        onchange="calculateArchivedEditAge({{ $archivedStudent->id }})"
+                                                    >
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Age</label>
+                                                    <input type="number" name="age" id="edit-archived-age-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->age ?? '' }}" readonly required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Religion</label>
+                                                    <input type="text" name="religion" class="form-control" value="{{ $archivedStudent->religion ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Nationality</label>
+                                                    <input type="text" name="nationality" class="form-control" value="{{ $archivedStudent->nationality ?? '' }}" required>
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Facebook / Messenger</label>
+                                                    <input type="text" name="fb_messenger" class="form-control" value="{{ $archivedStudent->fb_messenger ?? '' }}">
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        {{-- Step 2: Mother's Information --}}
+                                        <div class="edit-form-step" id="edit-archived-step-2-{{ $archivedStudent->id }}">
+                                            <h6 class="text-primary mb-3"><i class="dw dw-woman"></i> Mother's Information</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Name</label>
+                                                    <input type="text" name="mother_name" class="form-control" value="{{ $archivedStudent->mother_name ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Age</label>
+                                                    <input type="number" name="mother_age" class="form-control" value="{{ $archivedStudent->mother_age ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Occupation</label>
+                                                    <input type="text" name="mother_occupation" class="form-control" value="{{ $archivedStudent->mother_occupation ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Place of Work</label>
+                                                    <input type="text" name="mother_place_work" class="form-control" value="{{ $archivedStudent->mother_place_work ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Mobile Number</label>
+                                                    <input type="text" name="mother_contact" id="edit-archived-mother-contact-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->mother_contact ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Facebook</label>
+                                                    <input type="text" name="mother_fb" class="form-control" value="{{ $archivedStudent->mother_fb ?? '' }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Step 3: Father's Information --}}
+                                        <div class="edit-form-step" id="edit-archived-step-3-{{ $archivedStudent->id }}">
+                                            <h6 class="text-primary mb-3"><i class="dw dw-man"></i> Father's Information</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Name</label>
+                                                    <input type="text" name="father_name" class="form-control" value="{{ $archivedStudent->father_name ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Age</label>
+                                                    <input type="number" name="father_age" class="form-control" value="{{ $archivedStudent->father_age ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Occupation</label>
+                                                    <input type="text" name="father_occupation" class="form-control" value="{{ $archivedStudent->father_occupation ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Place of Work</label>
+                                                    <input type="text" name="father_place_work" class="form-control" value="{{ $archivedStudent->father_place_work ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Mobile Number</label>
+                                                    <input type="text" name="father_contact" id="edit-archived-father-contact-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->father_contact ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Facebook</label>
+                                                    <input type="text" name="father_fb" class="form-control" value="{{ $archivedStudent->father_fb ?? '' }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Step 4: Guardian's Information --}}
+                                        <div class="edit-form-step" id="edit-archived-step-4-{{ $archivedStudent->id }}">
+                                            <h6 class="text-primary mb-3"><i class="dw dw-user"></i> Guardian's Information</h6>
+                                            <div class="row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Name</label>
+                                                    <input type="text" name="guardian_name" class="form-control" value="{{ $archivedStudent->guardian_name ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Age</label>
+                                                    <input type="number" name="guardian_age" class="form-control" value="{{ $archivedStudent->guardian_age ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Occupation</label>
+                                                    <input type="text" name="guardian_occupation" class="form-control" value="{{ $archivedStudent->guardian_occupation ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Place of Work</label>
+                                                    <input type="text" name="guardian_place_work" class="form-control" value="{{ $archivedStudent->guardian_place_work ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Mobile Number</label>
+                                                    <input type="text" name="guardian_contact" id="edit-archived-guardian-contact-{{ $archivedStudent->id }}" class="form-control" value="{{ $archivedStudent->guardian_contact ?? '' }}">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Facebook</label>
+                                                    <input type="text" name="guardian_fb" class="form-control" value="{{ $archivedStudent->guardian_fb ?? '' }}">
+                                                </div>
+                                                <div class="col-md-12 form-group">
+                                                    <label>Relationship</label>
+                                                    <input type="text" name="guardian_relationship" class="form-control" value="{{ $archivedStudent->guardian_relationship ?? '' }}" placeholder="e.g., Aunt, Uncle, Grandparent">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Step 5: Agreements --}}
+                                        <div class="edit-form-step" id="edit-archived-step-5-{{ $archivedStudent->id }}">
+                                            <h6 class="text-primary mb-3"><i class="dw dw-file"></i> Agreements</h6>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="alert alert-info">
+                                                        <strong>Agreement Status (Submitted on {{ $archivedStudent->current_date ? $archivedStudent->current_date->format('Y-m-d') : 'N/A' }}):</strong> These agreements were accepted by the student and parent/guardian during initial registration and cannot be modified.
+                                                    </div>
+                                                </div>
+
+                                                {{-- Student Agreements --}}
+                                                <div class="col-md-6 form-group">
+                                                    <h6 class="text-primary">For Student</h6>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" disabled {{ $archivedStudent->student_agreement_1 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">
+                                                            Sumasang-ayon ako sa <strong>Mga Alituntuning Dapat Sundin ng Mag-aaral ng OCNHS</strong>
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" disabled {{ $archivedStudent->student_agreement_2 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">
+                                                            Sumasang-ayon ako sa <strong>Komitment sa Paaralan</strong>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Parent Agreements --}}
+                                                <div class="col-md-6 form-group">
+                                                    <h6 class="text-primary">For Parent / Guardian</h6>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" disabled {{ $archivedStudent->parent_agreement_1 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">
+                                                            Sumasang-ayon ako sa <strong>Mga Tungkulin ng Magulang / Guardian</strong>
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" disabled {{ $archivedStudent->parent_agreement_2 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">
+                                                            Sumasang-ayon ako sa <strong>Komitment sa Paaralan</strong>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary edit-archived-prev-btn" style="display: none;">
+                                            <i class="dw dw-left-arrow2"></i> Previous
+                                        </button>
+                                        <button type="button" class="btn btn-primary edit-archived-next-btn">
+                                            Next <i class="dw dw-right-arrow2"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success edit-archived-submit-btn" style="display: none;">
+                                            <i class="dw dw-diskette"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endforeach
+
         </div>
     </div>
 
@@ -98,6 +425,400 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add red asterisk for required labels in archived modals
+            document.querySelectorAll('.modal input[required], .modal select[required], .modal textarea[required]').forEach(input => {
+                const label = input.closest(".form-group")?.querySelector("label");
+                if (label) label.classList.add("required");
+            });
+
+            // Initialize multi-step forms for archived modals
+            document.querySelectorAll('.edit-archived-form').forEach(form => {
+                const modal = form.closest('.modal');
+                const archivedId = form.getAttribute('data-archived-id');
+                const tabs = modal.querySelectorAll('.edit-form-tab');
+                const steps = modal.querySelectorAll('.edit-form-step');
+                const nextBtn = modal.querySelector('.edit-archived-next-btn');
+                const prevBtn = modal.querySelector('.edit-archived-prev-btn');
+                const submitBtn = modal.querySelector('.edit-archived-submit-btn');
+                let currentStep = 0;
+
+                // Contact number restrictions - auto-start with "09"
+                const contactInput = modal.querySelector(`#edit-archived-contact-${archivedId}`);
+                if (contactInput) {
+                    // Auto-start with "09" when field is focused and empty
+                    contactInput.addEventListener('focus', function () {
+                        if (this.value === '' || this.value.length === 0) {
+                            this.value = '09';
+                        } else if (!this.value.startsWith('09')) {
+                            // If existing value doesn't start with 09, prepend it
+                            this.value = '09' + this.value.replace(/[^0-9]/g, '').replace(/^09/, '');
+                        }
+                    });
+
+                    // Ensure it always starts with "09"
+                    contactInput.addEventListener('input', function () {
+                        let value = this.value.replace(/[^0-9]/g, '');
+
+                        // If it doesn't start with 09, prepend it
+                        if (!value.startsWith('09')) {
+                            value = '09' + value.replace(/^09/, '');
+                        }
+
+                        // Limit to 11 digits (09 + 9 more digits)
+                        this.value = value.slice(0, 11);
+                    });
+
+                    // Prevent typing if already at max length
+                    contactInput.addEventListener('keypress', function (e) {
+                        if (!/[0-9]/.test(e.key) || this.value.length >= 11) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    // Ensure "09" prefix on blur if field is not empty
+                    contactInput.addEventListener('blur', function () {
+                        if (this.value && !this.value.startsWith('09')) {
+                            let value = this.value.replace(/[^0-9]/g, '');
+                            this.value = '09' + value.replace(/^09/, '').slice(0, 9);
+                        }
+                    });
+                }
+
+                // Father, Mother, and Guardian contact numbers - auto-start with "09"
+                const fatherContactInput = modal.querySelector(`#edit-archived-father-contact-${archivedId}`);
+                const motherContactInput = modal.querySelector(`#edit-archived-mother-contact-${archivedId}`);
+                const guardianContactInput = modal.querySelector(`#edit-archived-guardian-contact-${archivedId}`);
+
+                [fatherContactInput, motherContactInput, guardianContactInput].forEach(input => {
+                    if (!input) return;
+
+                    input.addEventListener('focus', function () {
+                        if (this.value === '' || this.value.length === 0) {
+                            this.value = '09';
+                        } else if (!this.value.startsWith('09')) {
+                            this.value = '09' + this.value.replace(/[^0-9]/g, '').replace(/^09/, '');
+                        }
+                    });
+
+                    input.addEventListener('input', function () {
+                        let value = this.value.replace(/[^0-9]/g, '');
+                        if (!value.startsWith('09')) {
+                            value = '09' + value.replace(/^09/, '');
+                        }
+                        this.value = value.slice(0, 11);
+                    });
+
+                    input.addEventListener('keypress', function (e) {
+                        if (!/[0-9]/.test(e.key) || this.value.length >= 11) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    input.addEventListener('blur', function () {
+                        if (this.value && !this.value.startsWith('09')) {
+                            let value = this.value.replace(/[^0-9]/g, '');
+                            this.value = '09' + value.replace(/^09/, '').slice(0, 9);
+                        }
+                    });
+                });
+
+                // LRN validation
+                const lrnInput = modal.querySelector(`#edit-archived-lrn-${archivedId}`);
+                if (lrnInput) {
+                    lrnInput.addEventListener("input", function () {
+                        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 12);
+                    });
+                }
+
+                // Student name validation - only letters (including Ñ/ñ), spaces, hyphens, and apostrophes
+                const studentNameInput = modal.querySelector(`#edit-archived-student-name-${archivedId}`);
+                if (studentNameInput) {
+                    studentNameInput.addEventListener("input", function () {
+                        // Allow only letters (including Ñ/ñ), spaces, and common name characters (hyphens, apostrophes)
+                        this.value = this.value.replace(/[^A-Za-zÑñ\s\-\']/g, '');
+                    });
+                    studentNameInput.addEventListener("keypress", function (e) {
+                        // Allow letters (including Ñ/ñ), spaces, hyphens, apostrophes, and backspace/delete
+                        const char = String.fromCharCode(e.which || e.keyCode);
+                        if (!/[A-Za-zÑñ\s\-\']/.test(char) && !e.ctrlKey && !e.metaKey && e.keyCode !== 8 && e.keyCode !== 46) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+
+                // Function to show a specific step
+                function showArchivedStep(stepIndex) {
+                    // Hide all steps
+                    steps.forEach((step, index) => {
+                        step.classList.toggle('active', index === stepIndex);
+                    });
+
+                    // Update tabs
+                    tabs.forEach((tab, index) => {
+                        tab.classList.toggle('active', index === stepIndex);
+                    });
+
+                    // Update buttons
+                    if (stepIndex === 0) {
+                        prevBtn.style.display = 'none';
+                        nextBtn.style.display = 'inline-block';
+                        submitBtn.style.display = 'none';
+                    } else if (stepIndex === steps.length - 1) {
+                        prevBtn.style.display = 'inline-block';
+                        nextBtn.style.display = 'none';
+                        submitBtn.style.display = 'inline-block';
+                    } else {
+                        prevBtn.style.display = 'inline-block';
+                        nextBtn.style.display = 'inline-block';
+                        submitBtn.style.display = 'none';
+                    }
+
+                    currentStep = stepIndex;
+                }
+
+                // Next button click
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        if (!await validateArchivedStep(steps[currentStep], archivedId)) return;
+                        if (currentStep < steps.length - 1) {
+                            showArchivedStep(currentStep + 1);
+                        }
+                    });
+                }
+
+                // Previous button click
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function() {
+                        if (currentStep > 0) {
+                            showArchivedStep(currentStep - 1);
+                        }
+                    });
+                }
+
+                // Tab click to navigate
+                tabs.forEach((tab, index) => {
+                    tab.addEventListener('click', function() {
+                        showArchivedStep(index);
+                    });
+                });
+
+                // Initialize - show first step
+                showArchivedStep(0);
+
+                // Reset to first step when modal is opened
+                modal.addEventListener('shown.bs.modal', function() {
+                    showArchivedStep(0);
+                    // Re-add required class to labels when modal opens
+                    modal.querySelectorAll("input[required], select[required], textarea[required]").forEach(input => {
+                        const label = input.closest(".form-group")?.querySelector("label");
+                        if (label) label.classList.add("required");
+                    });
+
+                    // Format existing contact numbers to start with "09" if they don't
+                    const allContactInputs = [
+                        modal.querySelector(`#edit-archived-contact-${archivedId}`),
+                        modal.querySelector(`#edit-archived-father-contact-${archivedId}`),
+                        modal.querySelector(`#edit-archived-mother-contact-${archivedId}`),
+                        modal.querySelector(`#edit-archived-guardian-contact-${archivedId}`)
+                    ];
+
+                    allContactInputs.forEach(input => {
+                        if (input && input.value && !input.value.startsWith('09')) {
+                            let value = input.value.replace(/[^0-9]/g, '');
+                            if (value) {
+                                input.value = '09' + value.replace(/^09/, '').slice(0, 9);
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Validate archived step function
+            async function validateArchivedStep(stepElement, archivedId) {
+                const inputs = stepElement.querySelectorAll("input[required], select[required], textarea[required]");
+                for (let input of inputs) {
+                    if (!input.checkValidity()) {
+                        input.reportValidity();
+                        return false;
+                    }
+                }
+
+                // Validate LRN
+                const lrnInput = stepElement.querySelector(`#edit-archived-lrn-${archivedId}`);
+                if (lrnInput) {
+                    const lrn = lrnInput.value.trim();
+                    if (lrn === '' || lrn.length < 11 || lrn.length > 12) {
+                        await Swal.fire({
+                            icon: 'warning',
+                            title: 'Invalid LRN',
+                            text: 'LRN must be 11–12 digits long.'
+                        });
+                        return false;
+                    }
+                }
+
+                // Validate Mode of Living (at least one checkbox must be checked)
+                if (stepElement.id.includes('edit-archived-step-1')) {
+                    const checkboxes = stepElement.querySelectorAll("input[name='living_mode[]']");
+                    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    if (!anyChecked) {
+                        await Swal.fire({
+                            icon: 'warning',
+                            title: 'Oops!',
+                            text: 'Please select at least one Mode of Living.'
+                        });
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            // Calculate age function for archived
+            window.calculateArchivedEditAge = function(archivedId) {
+                const birthday = document.querySelector(`#edit-archived-birthday-${archivedId}`).value;
+                if (birthday) {
+                    const birthDate = new Date(birthday);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+                    document.querySelector(`#edit-archived-age-${archivedId}`).value = age;
+                }
+            };
+
+            // Form submission with confirmation for archived
+            document.querySelectorAll('.edit-archived-form').forEach(form => {
+                const handleSubmit = async function (e) {
+                    e.preventDefault();
+
+                    const modal = form.closest('.modal');
+                    const archivedId = form.getAttribute('data-archived-id');
+                    const steps = modal.querySelectorAll('.edit-form-step');
+
+                    // Validate all steps before submission
+                    for (let step of steps) {
+                        if (!await validateArchivedStep(step, archivedId)) {
+                            // Show the step that failed validation
+                            const stepIndex = Array.from(steps).indexOf(step);
+                            const tabs = modal.querySelectorAll('.edit-form-tab');
+                            steps.forEach((s, i) => {
+                                s.classList.toggle('active', i === stepIndex);
+                            });
+                            tabs.forEach((t, i) => {
+                                t.classList.toggle('active', i === stepIndex);
+                            });
+                            return;
+                        }
+                    }
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you want to save these changes to the archived student?",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, save it!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Submit via AJAX
+                            const formData = new FormData(form);
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: data.message,
+                                        confirmButtonColor: '#28a745'
+                                    }).then(() => {
+                                        // Reload the table if there's an active school year
+                                        const activeYearBtn = document.querySelector('.show-students.active-year');
+                                        if (activeYearBtn) {
+                                            activeYearBtn.click();
+                                        }
+                                        // Close the modal
+                                        const modal = form.closest('.modal');
+                                        if (modal) {
+                                            $(modal).modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    let message = data.message || 'An error occurred while saving.';
+                                    if (data.errors) {
+                                        let errorMessages = [];
+                                        for (let field in data.errors) {
+                                            errorMessages.push(...data.errors[field]);
+                                        }
+                                        message += '<br>' + errorMessages.join('<br>');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        html: message
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An error occurred while saving.'
+                                });
+                            });
+                        }
+                    });
+                };
+                form.addEventListener('submit', handleSubmit);
+            });
+
+            // Success alert after saving archived student
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session("success") }}',
+                    confirmButtonColor: '#28a745'
+                });
+            @endif
+        });
+
+        // File size validation function
+        function validateFileSize(event) {
+            const file = event.target.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+            if (file && file.size > maxSize) {
+                // Clear the file input
+                event.target.value = '';
+
+                // Show warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'The selected file exceeds the maximum size limit of 10MB. Please choose a smaller image.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+
+                return false;
+            }
+
+            return true;
+        }
+
         $(document).ready(function () {
             let table = $('#archivedStudentsTable').DataTable({
                 responsive: true,
@@ -140,17 +861,18 @@
 
                         data.forEach(student => {
                             table.row.add({
-                                profile_picture: student.profile_picture ? `<div class="profile-pic-container" onclick="viewProfilePicture('${student.profile_picture}', '${student.user ? student.user.name : 'N/A'}', '${student.lrn || 'N/A'}')"><img src="${student.profile_picture}" alt="Profile Picture" class="profile-pic"></div>` : '<div class="profile-pic-container no-image"><i class="dw dw-user"></i></div>',
+                                profile_picture: student.profile_picture ? `<div class="profile-pic-container" onclick="viewProfilePicture('/${student.profile_picture}', '${student.user ? student.user.name : 'N/A'}', '${student.lrn || 'N/A'}')"><img src="/${student.profile_picture}" alt="Profile Picture" class="profile-pic"></div>` : '<div class="profile-pic-container no-image"><i class="dw dw-user"></i></div>',
                                 lrn: student.lrn,
                                 name: student.user ? student.user.name : 'N/A',
                                 grade_section: `${student.grade} / ${student.section}`,
                                 curriculum: student.curriculum,
                                 action: `<button class="btn btn-info btn-sm" onclick="viewArchivedInfo(${student.id}, '${student.user ? student.user.name : ''}')">
-                                            <i class="dw dw-eye"></i> View
+                                           <i class="dw dw-eye"></i> View
                                          </button>
-                                         <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editArchivedModal${student.id}">
-                                            <i class="dw dw-edit2"></i> Edit
-                                         </button>`
+                                         <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editArchivedModal${student.id}">
+                                           <i class="dw dw-edit2"></i> Edit
+                                         </button>`,
+                                profile_picture_url: student.profile_picture ? `/${student.profile_picture}` : null
                             });
                         });
 
@@ -250,7 +972,7 @@
                             <td colspan="1">  <span>First Name</span>             </td>
                             <td colspan="2" > <span>Middle Name</span></td>
                 
-                                <td colspan="2">Disability(if any):</td><td colspan="3"></td>
+                                <td colspan="2">Disability(if any):</td><td colspan="3">${data.disability || 'None'}</td>
                             </tr>
 
                             <tr>
@@ -292,6 +1014,21 @@
                             <tr>
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">${data.guardian_name || '-'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.guardian_age || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.guardian_occupation || 'N/A'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.guardian_contact || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.guardian_fb || 'N/A'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.guardian_place_work || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Relationship:</td><td colspan="10">${data.guardian_relationship || 'N/A'}</td>
                             </tr>
                         </table>
 
@@ -339,12 +1076,19 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng magulang/guardian</div>
                                             </div>
                                         </div>
                                     </div>
@@ -354,6 +1098,7 @@
                     </div>`;
 
                     // Back side - School Rules and Commitment
+                    
                     const backContent = `
                     <div class="record-form back-side">
                         <table class="info-table">
@@ -388,12 +1133,19 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
                                         </div>
                                     </div>
@@ -474,7 +1226,7 @@
                                     printBtn.onclick = function(e) {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        printStudentProfile(frontContent, backContent);
+                                        printStudentProfile(frontContent, backContent, learnerFullName);
                                         return false;
                                     };
                                 }
@@ -518,7 +1270,7 @@
             });
         }
 
-        function printStudentProfile(frontContent, backContent) {
+        function printStudentProfile(frontContent, backContent, studentName) {
             // Create a hidden iframe for printing
             const iframe = document.createElement('iframe');
             iframe.style.position = 'absolute';
@@ -535,7 +1287,7 @@
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Student Profile - Print</title>
+                    <title>${studentName}_Student_Profile</title>
                     <style>
                         @media print {
                             @page {
@@ -660,6 +1412,73 @@
     </script>
 
 <style>
+        /* Multi-step form styles */
+        .edit-form-tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .edit-form-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .edit-form-tab.active {
+            background: #e8f0fe;
+            border: 2px solid #007bff;
+        }
+
+        .edit-form-tab .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .edit-form-tab.active .step-number {
+            background: #007bff;
+            color: white;
+        }
+
+        .edit-form-tab .step-label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .edit-form-tab.active .step-label {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .edit-form-step {
+            display: none;
+        }
+
+        .edit-form-step.active {
+            display: block;
+        }
+
+        label.required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+
         .swal-form-popup {
             background: #fff;
             font-family: 'Arial', sans-serif;

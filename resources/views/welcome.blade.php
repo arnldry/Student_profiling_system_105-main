@@ -12,7 +12,7 @@
 
   <!-- Favicons -->
    
-  <link href="landing-pages/assets/img/logo-ocnhs.png" rel="icon">
+  <link href="landing-pages/assets/img/logo-ocnhs-removebg-preview.png" rel="icon">
 
 
   <!-- Fonts -->
@@ -44,7 +44,7 @@
 
       <a href="#" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="landing-pages/assets/img/logo.webp" alt=""> -->
+        <img src="landing-pages/assets/img/logo-ocnhs-removebg-preview.png" alt="OCNHS Logo" class="responsive-logo">
         <h1 class="sitename">Guidance Department</h1>
       </a>
 

@@ -151,21 +151,33 @@ class SuperAdminController extends Controller
     {
         $user = auth()->user();
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email,' . $user->id, // exclude current user
-                'regex:/^[\w.%+-]+@(gmail|yahoo)\.com$/i', // restrict to Gmail or Yahoo
-            ],
-            'current_password' => ['required', 'current_password'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-        ], [
-            'email.regex' => 'You must register with a Gmail or Yahoo email address.',
-        ]);
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    'unique:users,email,' . $user->id, // exclude current user
+                    'regex:/^[\w.%+-]+@(gmail|yahoo)\.com$/i', // restrict to Gmail or Yahoo
+                ],
+                'current_password' => ['required', 'current_password'],
+                'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+                'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
+            ], [
+                'email.regex' => 'You must register with a Gmail or Yahoo email address.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        }
 
         $user->name = $request->name;
         $user->email = $request->email;
@@ -174,7 +186,26 @@ class SuperAdminController extends Controller
             $user->password = Hash::make($request->password);
         }
 
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            try {
+                $file = $request->file('profile_picture');
+                $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\.\-\_]/', '_', $file->getClientOriginalName());
+                $file->move(public_path('profiles'), $filename);
+                $user->profile_picture = 'profiles/' . $filename;
+            } catch (\Exception $e) {
+                // If upload fails, ignore and proceed without changing the photo
+            }
+        }
+
         $user->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully!'
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }

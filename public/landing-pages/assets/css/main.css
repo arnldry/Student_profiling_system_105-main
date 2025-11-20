@@ -146,7 +146,7 @@ h6 {
   --background-color: rgba(255, 255, 255, 0);
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 30px 0;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -156,8 +156,31 @@ h6 {
 }
 
 .header .logo img {
-  max-height: 36px;
   margin-right: 8px;
+}
+
+.header .logo .responsive-logo {
+  width: 100px;
+  height: 100px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+  .header .logo .responsive-logo {
+    width: 70px;
+    height: 70px;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header .logo .responsive-logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+  }
 }
 
 .header .logo h1 {

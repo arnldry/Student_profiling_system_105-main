@@ -185,6 +185,10 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         Route::post('/admin/update-student-info/{id}', [App\Http\Controllers\AdminController::class, 'updateStudentInfo'])
     ->name('admin.update-student-info');
 
+        // ✅ Update Archived Student Info
+        Route::post('/admin/update-archived-student-info/{id}', [App\Http\Controllers\AdminArchivedStudentController::class, 'updateArchivedStudentInfo'])
+    ->name('admin.update-archived-student-info');
+
         Route::get('admin/archived-student-data', [AdminArchivedStudentController::class, 'studentData'])
             ->name('admin.archived-student-data');
 

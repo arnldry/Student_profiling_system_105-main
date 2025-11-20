@@ -805,13 +805,54 @@
                         cancelButtonText: 'Cancel'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Remove event listener to allow submission
-                            form.removeEventListener('submit', handleSubmit);
-                            if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                            } else {
-                                form.submit();
-                            }
+                            // Submit via AJAX
+                            const formData = new FormData(form);
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: data.message,
+                                        confirmButtonColor: '#28a745'
+                                    }).then(() => {
+                                        // Close the modal
+                                        const modal = form.closest('.modal');
+                                        if (modal) {
+                                            $(modal).modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    let message = data.message || 'An error occurred while saving.';
+                                    if (data.errors) {
+                                        let errorMessages = [];
+                                        for (let field in data.errors) {
+                                            errorMessages.push(...data.errors[field]);
+                                        }
+                                        message += '<br>' + errorMessages.join('<br>');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        html: message
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An error occurred while saving.'
+                                });
+                            });
                         }
                     });
                 };
@@ -1461,7 +1502,7 @@
                         <table class="info-table">
 
 
-
+                        
                             </tr>
                             <tr colspan="12">
                                 <td style="width: 85%; vertical-align">

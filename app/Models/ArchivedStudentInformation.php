@@ -28,6 +28,7 @@ class ArchivedStudentInformation extends Model
         'religion',
         'nationality',
         'fb_messenger',
+        'current_date',
         'profile_picture',
         'father_name',
         'father_age',
@@ -57,6 +58,12 @@ class ArchivedStudentInformation extends Model
 
     protected $casts = [
         'living_mode' => 'array',
+        'birthday' => 'date',
+        'current_date' => 'date',
+        'student_agreement_1' => 'boolean',
+        'student_agreement_2' => 'boolean',
+        'parent_agreement_1' => 'boolean',
+        'parent_agreement_2' => 'boolean',
     ];
 
     // 🔗 Relationships

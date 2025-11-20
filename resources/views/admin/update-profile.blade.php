@@ -78,8 +78,13 @@
                     <!-- User Info -->
                     <div class="col-md-5">
                         <div class="card-box p-4 text-center">
-                            <img src="{{ $user->avatar ?? asset('images/default-image.png') }}" 
-                                alt="User Avatar" class="rounded-circle shadow" width="160" height="200">
+                            @if($user->profile_picture)
+                                <img id="profile-preview" src="{{ asset($user->profile_picture) }}"
+                                    alt="Profile Picture" class="rounded-circle shadow" width="160" height="200">
+                            @else
+                                <img id="profile-preview" src="{{ asset('images/default-image.png') }}"
+                                    alt="Profile Picture" class="rounded-circle shadow" width="160" height="200">
+                            @endif
                             <h5 class="mt-2 font-weight-bold">{{ $user->name }}</h5>
                             <p class="text-muted mb-1">{{ $user->email }}</p>
                             <span class="badge badge-primary text-capitalize px-3 py-2">{{ $user->role }}</span>
@@ -104,10 +109,22 @@
                                 <!-- Email -->
                                 <div class="form-group">
                                     <label for="email" class="required-label">Email</label>
-                                    <input type="email" name="email" id="email" 
+                                    <input type="email" name="email" id="email"
                                         class="form-control form-control-lg @error('email') is-invalid @enderror"
                                         value="{{ old('email', $user->email ?? '') }}" required>
                                     @error('email')
+                                        <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Profile Picture -->
+                                <div class="form-group">
+                                    <label for="profile_picture">Profile Picture</label>
+                                    <input type="file" name="profile_picture" id="profile_picture"
+                                        class="form-control form-control-lg @error('profile_picture') is-invalid @enderror"
+                                        accept="image/*" onchange="validateFileSize(event)">
+                                    <small class="form-text text-muted">Upload a new profile picture (optional, max 10MB)</small>
+                                    @error('profile_picture')
                                         <span class="invalid-feedback d-block">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -263,9 +280,89 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    e.target.submit();
+                    // Submit via AJAX
+                    const formData = new FormData(e.target);
+                    fetch(e.target.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: data.message,
+                                confirmButtonColor: '#28a745'
+                            }).then(() => {
+                                // Reload the page to show updated data
+                                window.location.reload();
+                            });
+                        } else {
+                            let message = data.message || 'An error occurred while saving.';
+                            if (data.errors) {
+                                let errorMessages = [];
+                                for (let field in data.errors) {
+                                    errorMessages.push(...data.errors[field]);
+                                }
+                                message += '<br>' + errorMessages.join('<br>');
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                html: message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while saving.'
+                        });
+                    });
                 }
             });
+        });
+
+        // File size validation function
+        function validateFileSize(event) {
+            const file = event.target.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+            if (file && file.size > maxSize) {
+                // Clear the file input
+                event.target.value = '';
+
+                // Show warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'The selected file exceeds the maximum size limit of 10MB. Please choose a smaller image.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // Update profile picture preview when file is selected
+        document.getElementById('profile_picture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         });
         </script>
 

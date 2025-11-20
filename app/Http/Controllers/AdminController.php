@@ -66,21 +66,33 @@ class AdminController extends Controller
     {
         $user = auth()->user();
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email,' . $user->id,
-                'regex:/^[\w.%+-]+@(gmail|yahoo)\.com$/i',
-            ],
-            'current_password' => ['required', 'current_password'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-        ], [
-            'email.regex' => 'You must register with a Gmail or Yahoo email address.',
-        ]);
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    'unique:users,email,' . $user->id,
+                    'regex:/^[\w.%+-]+@(gmail|yahoo)\.com$/i',
+                ],
+                'current_password' => ['required', 'current_password'],
+                'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+                'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
+            ], [
+                'email.regex' => 'You must register with a Gmail or Yahoo email address.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        }
 
         $user->name = $request->name;
         $user->email = $request->email;
@@ -89,7 +101,26 @@ class AdminController extends Controller
             $user->password = Hash::make($request->password);
         }
 
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            try {
+                $file = $request->file('profile_picture');
+                $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\.\-\_]/', '_', $file->getClientOriginalName());
+                $file->move(public_path('profiles'), $filename);
+                $user->profile_picture = 'profiles/' . $filename;
+            } catch (\Exception $e) {
+                // If upload fails, ignore and proceed without changing the photo
+            }
+        }
+
         $user->save();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully!'
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
@@ -465,15 +496,36 @@ public function updateStudentInfo(Request $request, $id)
         $livingMode = $validated['living_mode'];
 
         if (in_array('Living with Father', $livingMode) && empty($validated['father_name'])) {
-            return back()->withInput()->withErrors(['father_name' => 'Father name is required when "Living with Father" is selected.']);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Father name is required when "Living with Father" is selected.'
+                ], 422);
+            } else {
+                return back()->withInput()->withErrors(['father_name' => 'Father name is required when "Living with Father" is selected.']);
+            }
         }
 
         if (in_array('Living with Mother', $livingMode) && empty($validated['mother_name'])) {
-            return back()->withInput()->withErrors(['mother_name' => 'Mother name is required when "Living with Mother" is selected.']);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mother name is required when "Living with Mother" is selected.'
+                ], 422);
+            } else {
+                return back()->withInput()->withErrors(['mother_name' => 'Mother name is required when "Living with Mother" is selected.']);
+            }
         }
 
         if (in_array('Living with Other Guardians', $livingMode) && empty($validated['guardian_name'])) {
-            return back()->withInput()->withErrors(['guardian_name' => 'Guardian name is required when "Living with Other Guardians" is selected.']);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Guardian name is required when "Living with Other Guardians" is selected.'
+                ], 422);
+            } else {
+                return back()->withInput()->withErrors(['guardian_name' => 'Guardian name is required when "Living with Other Guardians" is selected.']);
+            }
         }
 
     // 🔹 Get old values for logging
@@ -557,8 +609,15 @@ public function updateStudentInfo(Request $request, $id)
             ]);
         }
 
-        // 🔹 Redirect back with confirmation
-        return redirect()->back()->with('success', 'Student information updated successfully!');
+        // 🔹 Redirect back with confirmation or return JSON for AJAX
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Student information updated successfully!'
+            ]);
+        } else {
+            return redirect()->back()->with('success', 'Student information updated successfully!');
+        }
 }
 
     /** -------------------------------
