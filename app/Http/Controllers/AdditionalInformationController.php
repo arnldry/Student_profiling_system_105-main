@@ -38,6 +38,13 @@ class AdditionalInformationController extends Controller
             return back()->withInput()->withErrors(['school_year' => 'No active school year found. Please contact the administrator or guidance counselor.']);
         }
 
+        // Check if there's an active curriculum before processing
+        $activeCurricula = Curriculum::where('is_archived', 0)->exists();
+
+        if (!$activeCurricula) {
+            return back()->withInput()->withErrors(['curriculum' => 'No active curriculum found. Please contact the administrator or guidance counselor.']);
+        }
+
         $validated = $request->validate([
             'school_year' => 'required|exists:school_years,id',
             'lrn' => 'required|string|min:11|max:12', // Allow 11-12 digits
@@ -187,7 +194,7 @@ class AdditionalInformationController extends Controller
             return back()->withInput()->withErrors(['unexpected' => 'Something went wrong while saving your information. Please try again.']);
         }
 
-        return redirect()->route('student.view-additional-info')->with('success', 'Additional Information saved successfully!');
+        return redirect()->route('student.dashboard')->with('success', 'Additional Information saved successfully!');
     }
 
     // Add this method to check LRN uniqueness

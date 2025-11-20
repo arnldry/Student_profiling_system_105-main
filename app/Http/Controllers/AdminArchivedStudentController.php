@@ -50,11 +50,14 @@ class AdminArchivedStudentController extends Controller
      */
     public function getArchivedStudent($id)
     {
-        $student = ArchivedStudentInformation::with('user')->find($id);
+        $student = ArchivedStudentInformation::with('user', 'schoolYear')->find($id);
 
         if (!$student) {
             return response()->json(['error' => 'Archived student not found.'], 404);
         }
+
+        // Add school_year_name for easier access in JS
+        $student->school_year_name = $student->schoolYear->school_year ?? '-';
 
         return response()->json($student);
     }

@@ -177,10 +177,10 @@
                         $formattedAge = '-';
                         if ($info->birthday) {
                             $birthDate = \Carbon\Carbon::parse($info->birthday);
-                            $formattedBirthday = $birthDate->format('M j, Y');
+                            $formattedBirthday = $birthDate->format('F j, Y');
                             $today = \Carbon\Carbon::now();
-                            $age = $today->diffInYears($birthDate);
-                            $formattedAge = "{$age} yrs old";
+                            $age = $birthDate->age;
+                            $formattedAge = "{$age} years old";
                         }
                     @endphp
 

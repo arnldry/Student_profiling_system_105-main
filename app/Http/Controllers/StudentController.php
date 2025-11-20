@@ -24,8 +24,11 @@ class StudentController extends Controller
                  }
              }
 
+             $hasActiveCurricula = \App\Models\Curriculum::where('is_archived', 0)->exists();
+
              $view->with('hasAdditionalInfo', $hasAdditionalInfo);
              $view->with('additionalInfo', $additionalInfo);
+             $view->with('hasActiveCurricula', $hasActiveCurricula);
          });
      }
 
@@ -72,7 +75,19 @@ class StudentController extends Controller
             return $result;
         });
 
-        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults', 'additionalInfo', 'totalScores'));
+        // Calculate total scores across all Life Values tests
+        $totalLifeValuesScores = [];
+        if ($lifeValuesResults->count() > 0) {
+            $allLifeValuesScores = $lifeValuesResults->pluck('decoded_scores');
+            foreach (range('A', 'N') as $letter) {
+                $totalLifeValuesScores[$letter] = $allLifeValuesScores->sum($letter);
+            }
+            $totalLifeValuesScores['total'] = array_sum($totalLifeValuesScores);
+            $totalLifeValuesScores['average'] = count($totalLifeValuesScores) > 0 ? round($totalLifeValuesScores['total'] / 14, 2) : 0;
+            $totalLifeValuesScores['top3'] = collect($totalLifeValuesScores)->except(['total', 'average'])->sortDesc()->take(3)->keys()->implode('');
+        }
+
+        return view('student.dashboard', compact('riasecResults', 'lifeValuesResults', 'additionalInfo', 'totalScores', 'totalLifeValuesScores'));
     }
 
     public function testing(){

@@ -70,12 +70,12 @@
                     <table class="data-table table stripe hover nowrap" id="archivedStudentsTable" style="width:100%;">
                         <thead>
                             <tr>
+                                <th>Profile Picture</th>
                                 <th>LRN</th>
                                 <th>Student Name</th>
-                                <th>Grade Level</th>
-                                <th>Section</th>
+                                <th>Grade and Section</th>
                                 <th>Curriculum</th>
-                                <th class>Action</th>
+                                <th class="datatable-nosort">Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -102,10 +102,10 @@
             let table = $('#archivedStudentsTable').DataTable({
                 responsive: true,
                 columns: [
+                    { data: 'profile_picture', orderable: false, searchable: false },
                     { data: 'lrn' },
                     { data: 'name' },
-                    { data: 'grade' },
-                    { data: 'section' },
+                    { data: 'grade_section' },
                     { data: 'curriculum' },
                     { data: 'action', orderable: false, searchable: false }
                 ]
@@ -115,6 +115,7 @@
 
             $('.show-students').click(function () {
                 let schoolYearId = $(this).data('id');
+                let schoolYearText = $(this).text().trim();
 
                 $('.show-students').removeClass('active-year');
                 $(this).addClass('active-year');
@@ -139,13 +140,16 @@
 
                         data.forEach(student => {
                             table.row.add({
+                                profile_picture: student.profile_picture ? `<div class="profile-pic-container" onclick="viewProfilePicture('${student.profile_picture}', '${student.user ? student.user.name : 'N/A'}', '${student.lrn || 'N/A'}')"><img src="${student.profile_picture}" alt="Profile Picture" class="profile-pic"></div>` : '<div class="profile-pic-container no-image"><i class="dw dw-user"></i></div>',
                                 lrn: student.lrn,
                                 name: student.user ? student.user.name : 'N/A',
-                                grade: student.grade,
-                                section: student.section,
+                                grade_section: `${student.grade} / ${student.section}`,
                                 curriculum: student.curriculum,
-                                action: `<button class="btn btn-info btn-sm" onclick="viewArchivedInfo(${student.id})">
+                                action: `<button class="btn btn-info btn-sm" onclick="viewArchivedInfo(${student.id}, '${student.user ? student.user.name : ''}')">
                                             <i class="dw dw-eye"></i> View
+                                         </button>
+                                         <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editArchivedModal${student.id}">
+                                            <i class="dw dw-edit2"></i> Edit
                                          </button>`
                             });
                         });
@@ -485,6 +489,35 @@
             });
         }
 
+        function viewProfilePicture(imageSrc, studentName, lrn) {
+            Swal.fire({
+                html: `<div class="school-id-card">
+                          <div class="profile-image-container">
+                              <img src="${imageSrc}" alt="Profile Picture" class="profile-picture-modal">
+                          </div>
+                          <div class="student-info">
+                              <h4 class="student-name">${studentName}</h4>
+                              <span class="lrn-badge">LRN: ${lrn}</span>
+                          </div>
+                       </div>`,
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'profile-picture-popup'
+                },
+                width: '450px',
+                padding: '0',
+                background: '#fff',
+                backdrop: 'rgba(0,0,0,0.8)',
+                showClass: {
+                    popup: 'animate__animated animate__zoomIn'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__zoomOut'
+                }
+            });
+        }
+
         function printStudentProfile(frontContent, backContent) {
             // Create a hidden iframe for printing
             const iframe = document.createElement('iframe');
@@ -799,6 +832,103 @@
 
         .sig-label {
             font-size: 12px;
+        }
+
+        .profile-picture-popup {
+            background: #fff !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
+            border: 2px solid #007bff !important;
+        }
+
+        /* Profile Picture Styles */
+        .profile-pic-container {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background: #f8f9fa;
+        }
+
+        .profile-pic-container:hover {
+            border-color: #007bff;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic-container:hover .profile-pic {
+            transform: scale(1.1);
+        }
+
+        .profile-pic-container.no-image {
+            background: #e9ecef;
+            border-color: #dee2e6;
+            color: #6c757d;
+        }
+
+        .profile-pic-container.no-image i {
+            font-size: 24px;
+        }
+
+        .profile-pic-container.no-image:hover {
+            border-color: #6c757d;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        .school-id-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .profile-image-container {
+            margin-bottom: 25px;
+        }
+
+        .profile-picture-modal {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .student-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .student-info .student-name {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .student-info .lrn-badge {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
         }
     </style>
 

@@ -234,7 +234,14 @@
                             <strong>No Active School Year</strong><br>
                             No active school year found. Please contact the administrator or guidance counselor.
                         </div>
-                    @elseif($errors->any())
+                    @endif
+                    @if($curriculums->isEmpty())
+                        <div class="alert alert-danger">
+                            <strong>No Active Curriculum</strong><br>
+                            No active curriculum found. Please contact the administrator or guidance counselor.
+                        </div>
+                    @endif
+                    @if($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
                                 @foreach($errors->all() as $error)
@@ -243,8 +250,8 @@
                             </ul>
                         </div>
                     @endif
-                    
-                    @if($currentSchoolYear)
+
+                    @if($currentSchoolYear && !$curriculums->isEmpty())
                     <!-- UPDATED: Responsive Tab Navigation -->
                     <div class="form-tabs">
                         <div class="form-tab first current">

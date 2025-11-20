@@ -12,6 +12,9 @@ $hasAdditionalInfo = $hasAdditionalInfo ?? (
 
 // Check if there's an active (non-archived) school year
 $hasActiveSchoolYear = SchoolYear::where('is_archived', 0)->exists();
+
+// Check if there's an active curriculum
+$hasActiveCurricula = $hasActiveCurricula ?? \App\Models\Curriculum::where('is_archived', 0)->exists();
 @endphp
 
 <style>
@@ -60,7 +63,6 @@ $hasActiveSchoolYear = SchoolYear::where('is_archived', 0)->exists();
                 </li>
 
                 {{-- Additional Information --}}
-                @if($hasActiveSchoolYear)
                 <li>
                     @if($hasAdditionalInfo)
                         <a href="{{ route('student.view-additional-info') }}"
@@ -69,14 +71,20 @@ $hasActiveSchoolYear = SchoolYear::where('is_archived', 0)->exists();
                             <span class="mtext">View Information </span>
                         </a>
                     @else
+                        @if($hasActiveSchoolYear && $hasActiveCurricula)
                         <a href="{{ route('student.additional-info') }}"
                            class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-information"></span>
                             <span class="mtext">Personal Information</span>
                         </a>
+                        @else
+                        <a class="dropdown-toggle no-arrow disabled-link">
+                            <span class="micon dw dw-information"></span>
+                            <span class="mtext">Personal Information</span>
+                        </a>
+                        @endif
                     @endif
                 </li>
-                @endif
 
                 {{-- Profile --}}
                 <li>

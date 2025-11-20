@@ -14,10 +14,6 @@
 					<span class="user-name">{{ Auth::user()->name }}!</span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-					<a class="dropdown-item" href="{{ route('superadmin.update-profile') }}">
-						<i class="dw dw-user1"></i> Profile
-					</a>
-
 					<a href="#" id="headerLogout" class="dropdown-item">
 						<i class="dw dw-logout"></i> Logout
 					</a>

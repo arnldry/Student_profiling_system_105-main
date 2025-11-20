@@ -240,6 +240,59 @@
 				</div>
 				@endif
 
+				{{-- Life Values Total Scores Summary --}}
+				@if(isset($totalLifeValuesScores) && !empty($totalLifeValuesScores))
+				<div class="card-box pd-20 height-100-p mb-30">
+					<div class="d-flex justify-content-between align-items-center mb-20">
+						<h4 class="h4 text-blue mb-0">Your Total Life Values Scores (Across All Tests)</h4>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>A</th>
+									<th>B</th>
+									<th>C</th>
+									<th>D</th>
+									<th>E</th>
+									<th>F</th>
+									<th>G</th>
+									<th>H</th>
+									<th>I</th>
+									<th>J</th>
+									<th>K</th>
+									<th>L</th>
+									<th>M</th>
+									<th>N</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ $totalLifeValuesScores['A'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['B'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['C'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['D'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['E'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['F'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['G'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['H'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['I'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['J'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['K'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['L'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['M'] ?? 0 }}</td>
+									<td>{{ $totalLifeValuesScores['N'] ?? 0 }}</td>
+									<td>
+										<button class="btn btn-success btn-sm" onclick="viewTotalLifeValuesScores()">View</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				@endif
+
 				{{-- Life Values Test Results --}}
 				@if($lifeValuesResults && $lifeValuesResults->count() > 0)
 				<div class="card-box pd-20 height-100-p mb-30">
@@ -1044,6 +1097,65 @@
 		<script>
 			function viewTotalScores() {
 				$('#totalScoresModal').modal('show');
+			}
+		</script>
+
+		{{-- Modal for Total Life Values Scores --}}
+		<div class="modal fade" id="totalLifeValuesScoresModal" tabindex="-1" role="dialog" aria-labelledby="totalLifeValuesScoresModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document" style="max-width: 90%; margin: 30px auto;">
+				<div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+					<div class="modal-header" style="background: linear-gradient(135deg, #28a745, #004d7a); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 20px 30px;">
+						<h4 class="modal-title" id="totalLifeValuesScoresModalLabel" style="font-weight: 700; font-size: 24px;">Your Total Life Values Scores</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+							<span aria-hidden="true" style="font-size: 28px;">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" style="padding: 30px; background: #f8f9fa;">
+						<div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px;">
+							<h5 style="text-align: center; color: #004d7a; font-weight: 600; margin-bottom: 20px; font-size: 20px;">TOTAL SCORES ACROSS ALL TESTS</h5>
+
+							<!-- SCORES TABLE -->
+							<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+								@php
+									$valueDescriptions = [
+										'A' => 'ACHIEVEMENT',
+										'B' => 'BELONGING',
+										'C' => 'CONCERN FOR THE ENVIRONMENT',
+										'D' => 'CONCERN FOR OTHERS',
+										'E' => 'CREATIVITY',
+										'F' => 'FINANCIAL PROSPERITY',
+										'G' => 'HEALTH AND ACTIVITY',
+										'H' => 'HUMILITY',
+										'I' => 'INDEPENDENCE',
+										'J' => 'LOYALTY TO FAMILY OR GROUP',
+										'K' => 'PRIVACY',
+										'L' => 'RESPONSIBILITY',
+										'M' => 'SCIENTIFIC UNDERSTANDING',
+										'N' => 'SPIRITUALITY'
+									];
+								@endphp
+								@foreach(range('A', 'N') as $letter)
+									<tr style="border-bottom: 1px solid #eee;">
+										<td style="padding: 12px 15px; font-weight: bold; font-size: 20px; color: #28a745; width: 50px; text-align: center;">{{ $letter }}</td>
+										<td style="padding: 12px 15px; font-size: 16px; color: #555;">= {{ $valueDescriptions[$letter] ?? $letter }}</td>
+										<td style="padding: 12px 15px; font-size: 16px; font-weight: 600; color: #004d7a; text-align: right;">{{ $totalLifeValuesScores[$letter] ?? 0 }}</td>
+									</tr>
+								@endforeach
+							</table>
+
+						</div>
+
+					</div>
+					<div class="modal-footer" style="border-top: none; padding: 20px 30px; background: #f8f9fa; border-radius: 0 0 20px 20px;">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #6c757d; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 500;">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function viewTotalLifeValuesScores() {
+				$('#totalLifeValuesScoresModal').modal('show');
 			}
 		</script>
 
