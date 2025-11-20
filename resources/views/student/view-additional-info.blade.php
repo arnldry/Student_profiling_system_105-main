@@ -223,15 +223,6 @@
                                 <td colspan="2">Disability(if any):</td><td colspan="3">{{ $info->disability ?: 'None' }}</td>
                             </tr>
 
-                            <tr>
-                                <td colspan="12" style="text-align: center; padding: 10px;">
-                                    @if($info->profile_picture)
-                                        <img src="{{ asset($info->profile_picture) }}" alt="Profile Picture" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
-                                    @else
-                                        <i class="dw dw-user" style="font-size: 50px;"></i>
-                                    @endif
-                                </td>
-                            </tr>
 
                             <tr>
                                 <td colspan="2">Complete Address:</td><td colspan="10">{{ $info->address ?: '-' }}</td>

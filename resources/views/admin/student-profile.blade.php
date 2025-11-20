@@ -971,12 +971,7 @@
 
                                 <td colspan="2">Disability(if any):</td><td colspan="3">${data.disability || 'None'}</td>
                             </tr>
-                            <tr>
-                                <td colspan="12" style="text-align: center; padding: 10px;">
-                                    ${data.profile_picture ? `<img src="/profiles/${data.profile_picture}" alt="Profile Picture" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">` : '<i class="dw dw-user" style="font-size: 50px;"></i>'}
-                                </td>
-                            </tr>
-
+   
                             <tr>
                                 <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '-'}</td>
                             </tr>
