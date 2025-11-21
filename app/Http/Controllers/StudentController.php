@@ -149,6 +149,10 @@ class StudentController extends Controller
 
         // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
+            // Get old profile picture path
+            $oldAdditionalInfo = AdditionalInformation::where('learner_id', $user->id)->first();
+            $oldProfilePicture = $oldAdditionalInfo ? $oldAdditionalInfo->profile_picture : null;
+
             $file = $request->file('profile_picture');
             $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('profiles'), $filename);
@@ -159,6 +163,14 @@ class StudentController extends Controller
                 ['learner_id' => $user->id],
                 ['profile_picture' => $profilePicturePath]
             );
+
+            // Delete old profile picture file if it exists and is different
+            if ($oldProfilePicture && $oldProfilePicture !== $profilePicturePath && file_exists(public_path($oldProfilePicture))) {
+                unlink(public_path($oldProfilePicture));
+                \Log::info('Profile update: Deleted old profile picture for user ' . $user->id . ': ' . $oldProfilePicture);
+            }
+
+            \Log::info('Profile update: Updated profile picture for user ' . $user->id . ' from ' . ($oldProfilePicture ?? 'none') . ' to ' . $profilePicturePath);
         }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
