@@ -63,17 +63,22 @@
         .is-invalid {
             border-color: #dc3545 !important;
         }
+
+        /* Increase login box width */
+        .login-box {
+            max-width: 900px;
+        }
     </style>
 </head>
 <body class="login-page">
 <div class="login-wrap d-flex align-items-center flex-wrap justify-content-center">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-6 col-lg-7">
-                <img src="/vendors/images/register-page-img.png" alt="" />
-            </div>
-            <div class="col-md-6 col-lg-5">
+            <div class="col-12">
                 <div class="login-box bg-white box-shadow border-radius-10">
+                    <div class="text-center mb-3">
+                        <img src="landing-pages/assets/img/logo-ocnhs.png" alt="OCNHS Logo" style="max-width: 150px; height: auto;">
+                    </div>
                     <div class="login-title mb-30">
                         <h2 class="text-center text-primary">
                             @if(session('success'))
@@ -140,71 +145,84 @@
                     <form id="registerForm" method="POST" action="{{ route('register') }}">
                         @csrf
 
-                        <!-- First Name -->
-                        <label for="first_name">First Name</label>
-                        <div class="input-group custom mb-3">
-                            <input type="text" id="first_name" name="first_name" class="form-control form-control-lg @error('first_name') is-invalid @enderror" placeholder="First Name" value="{{ old('first_name') }}" pattern="[A-Za-zÑñ\s\-\']+" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" required autofocus />
-                            <div class="input-group-append custom">
-                                <span class="input-group-text"><i class="dw dw-user1"></i></span>
-                            </div>
-                            @error('first_name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- First Name -->
+                                <label for="first_name">First Name</label>
+                                <div class="input-group custom mb-3">
+                                    <input type="text" id="first_name" name="first_name" class="form-control form-control-lg @error('first_name') is-invalid @enderror" placeholder="First Name" value="{{ old('first_name') }}" pattern="[A-Za-zÑñ\s\-\']+" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" required autofocus />
+                                    <div class="input-group-append custom">
+                                        <span class="input-group-text"><i class="dw dw-user1"></i></span>
+                                    </div>
+                                    @error('first_name')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
-                            @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Last Name -->
+                                <label for="last_name">Last Name</label>
+                                <div class="input-group custom mb-3">
+                                    <input type="text" id="last_name" name="last_name" class="form-control form-control-lg @error('last_name') is-invalid @enderror" placeholder="Last Name" value="{{ old('last_name') }}" pattern="[A-Za-zÑñ\s\-\']+" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" required />
+                                    <div class="input-group-append custom">
+                                        <span class="input-group-text"><i class="dw dw-user1"></i></span>
+                                    </div>
+                                    @error('last_name')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Last Name -->
-                        <label for="last_name">Last Name</label>
-                        <div class="input-group custom mb-3">
-                            <input type="text" id="last_name" name="last_name" class="form-control form-control-lg @error('last_name') is-invalid @enderror" placeholder="Last Name" value="{{ old('last_name') }}" pattern="[A-Za-zÑñ\s\-\']+" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" required />
-                            <div class="input-group-append custom">
-                                <span class="input-group-text"><i class="dw dw-user1"></i></span>
-                            </div>
-                            @error('last_name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Middle Name -->
+                                <label for="middle_name">Middle Name (Optional)</label>
+                                <div class="input-group custom mb-3">
+                                    <input type="text" id="middle_name" name="middle_name" class="form-control form-control-lg @error('middle_name') is-invalid @enderror" placeholder="Middle Name (Optional)" value="{{ old('middle_name') }}" pattern="[A-Za-zÑñ\s\-\']*" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" />
+                                    <div class="input-group-append custom">
+                                        <span class="input-group-text"><i class="dw dw-user1"></i></span>
+                                    </div>
+                                    @error('middle_name')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
-                            @enderror
-                        </div>
-
-                        <!-- Middle Name -->
-                        <label for="middle_name">Middle Name (Optional)</label>
-                        <div class="input-group custom mb-3">
-                            <input type="text" id="middle_name" name="middle_name" class="form-control form-control-lg @error('middle_name') is-invalid @enderror" placeholder="Middle Name (Optional)" value="{{ old('middle_name') }}" pattern="[A-Za-zÑñ\s\-\']*" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" />
-                            <div class="input-group-append custom">
-                                <span class="input-group-text"><i class="dw dw-user1"></i></span>
                             </div>
-                            @error('middle_name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                            <div class="col-md-6">
+                                <!-- Suffix -->
+                                <label for="suffix">Suffix (Optional)</label>
+                                <div class="input-group custom mb-3">
+                                    <input type="text" id="suffix" name="suffix" class="form-control form-control-lg @error('suffix') is-invalid @enderror" placeholder="Suffix (Optional)" value="{{ old('suffix') }}" pattern="[A-Za-zÑñ\s\-\']*" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" />
+                                    <div class="input-group-append custom">
+                                        <span class="input-group-text"><i class="dw dw-user1"></i></span>
+                                    </div>
+                                    @error('suffix')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
-                            @enderror
-                        </div>
-
-                        <!-- Suffix -->
-                        <label for="suffix">Suffix (Optional)</label>
-                        <div class="input-group custom mb-3">
-                            <input type="text" id="suffix" name="suffix" class="form-control form-control-lg @error('suffix') is-invalid @enderror" placeholder="Suffix (Optional)" value="{{ old('suffix') }}" pattern="[A-Za-zÑñ\s\-\']*" title="Only letters (including Ñ/ñ), spaces, hyphens, and apostrophes are allowed" />
-                            <div class="input-group-append custom">
-                                <span class="input-group-text"><i class="dw dw-user1"></i></span>
                             </div>
-                            @error('suffix')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
 
                         <!-- Email -->
-                        <label for="email">Email Address</label>
-                            <div class="input-group custom mb-3">
-                                <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="Email Address" value="{{ old('email') }}" required />
-                                <div class="input-group-append custom">
-                                    <span class="input-group-text"><i class="dw dw-email"></i></span>
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="email">Email Address</label>
+                                <div class="input-group custom mb-3">
+                                    <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="Email Address" value="{{ old('email') }}" required />
+                                    <div class="input-group-append custom">
+                                        <span class="input-group-text"><i class="dw dw-email"></i></span>
+                                    </div>
                                 </div>
-
                             </div>
+                        </div>
 
                         <!-- Information about email verification -->
                         <div class="alert alert-info mb-3">
