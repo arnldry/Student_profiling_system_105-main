@@ -9,7 +9,11 @@
 			<div class="dropdown">
 				<a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
 					<span class="user-icon" style="background: transparent; border: none; display: inline-block;">
-						<i class="bi bi-person-circle" style="color:black"></i>
+						@if(Auth::user()->profile_picture)
+							<img src="{{ asset(Auth::user()->profile_picture) }}" alt="Profile Picture" style="width: 52px; height: 52px; object-fit: cover;">
+						@else
+							<i class="bi bi-person-circle" style="color:black"></i>
+						@endif
 					</span>
 					<span class="user-name">{{ Auth::user()->name }}!</span>
 				</a>
