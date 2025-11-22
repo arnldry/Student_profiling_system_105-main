@@ -216,8 +216,10 @@
                 <div class="page-header text-center">
                     <div class="row justify-content-center">
                         <div class="col-md-12">
-                            <div class="title">
-                                <h1>Guidance & Counseling Unit</h1>
+                            <div class="title" style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                                <img src="/vendors/images/logo-ocnhs.png" alt="OCNHS Logo Left" style="max-width: 80px; height: auto;">
+                                <h1 style="margin: 0;">Guidance & Counseling Unit</h1>
+                                <img src="/vendors/images/logo-ocnhs-2.png" alt="OCNHS Logo Right" style="max-width: 80px; height: auto;">
                             </div>
                             <h4>Learner's Individual Inventory Record</h4>
                         </div>
@@ -442,7 +444,7 @@
                                         <option value="Buddhist">Buddhist</option>
                                         <option value="Hindu">Hindu</option>
                                         <option value="Atheist">Atheist</option>
-                                        <option value="Others">Others</option>
+                                        
                                     </select>
                                 </div>
 
@@ -597,6 +599,9 @@
 
                         <!-- Step 5: Agreements -->
                         <div class="form-step" id="step-5">
+                            <div class="alert alert-warning mb-3">
+                                <strong>Note:</strong> Please read all agreements carefully before proceeding.
+                            </div>
                             <!-- Student and Parent Agreement Section -->
                             <div class="row g-3">
                                 <!-- For Student -->
@@ -673,6 +678,16 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+// Debug: Check if OCNHS logos load
+const logoImgs = document.querySelectorAll('img[alt*="OCNHS Logo"]');
+logoImgs.forEach((img, index) => {
+    img.addEventListener('load', () => console.log(`OCNHS Logo ${index + 1} loaded successfully`));
+    img.addEventListener('error', () => console.log(`OCNHS Logo ${index + 1} failed to load - check path: ` + img.src));
+});
+if (logoImgs.length === 0) {
+    console.log('OCNHS Logo images not found in DOM');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const tabs = document.querySelectorAll(".form-tab");
     const steps = document.querySelectorAll(".form-step");

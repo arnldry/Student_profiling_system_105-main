@@ -151,4 +151,6 @@ class AuthenticatedSessionController extends Controller
     {
         return strtolower($request->input('email')).'|'.$request->ip();
     }
+
+
 }
