@@ -22,11 +22,11 @@
 	<div class="login-wrap d-flex align-items-center flex-wrap justify-content-center">
 		<div class="container">
 			<div class="row align-items-center">
-				<div class="col-md-6">
-					<img src="{{ asset('vendors/images/forgot-password.png') }}" alt="Forgot Password" />
-				</div>
-				<div class="col-md-6">
+				<div class="col-md-6 col-lg-5 mx-auto">
 					<div class="login-box bg-white box-shadow border-radius-10">
+						<div class="text-center mb-3">
+							<img src="{{ asset('vendors/images/logo-ocnhs.png') }}" alt="OCNHS Logo" style="max-width: 150px;" />
+						</div>
 						<div class="login-title">
 							<h2 class="text-center text-primary">Forgot Password</h2>
 						</div>

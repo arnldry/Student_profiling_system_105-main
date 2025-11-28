@@ -56,11 +56,11 @@
 <div class="login-wrap d-flex align-items-center flex-wrap justify-content-center">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-6 col-lg-7">
-                <img src="/vendors/images/register-page-img.png" alt="" />
-            </div>
-            <div class="col-md-6 col-lg-5">
+            <div class="col-md-6 col-lg-5 mx-auto">
                 <div class="login-box bg-white box-shadow border-radius-10">
+                    <div class="text-center mb-3">
+                        <img src="/vendors/images/logo-ocnhs.png" alt="OCNHS Logo" style="max-width: 150px;" />
+                    </div>
                     <div class="login-title mb-30">
                         <h2 class="text-center text-primary">Create Your Password</h2>
                         <p class="text-center text-muted">Welcome {{ $pendingUser->name }}!</p>
