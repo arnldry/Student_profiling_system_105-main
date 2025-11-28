@@ -29,6 +29,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $exception->getStatusCode() === 500) {
                 return response()->view('errors.404', [], 404);
             }
+            // Check for database connection errors
+            if (str_contains($exception->getMessage(), 'Unknown database')) {
+                return response()->view('errors.404', [], 404);
+            }
             // Let other exceptions be handled by Laravel's default error handling
         });
     })->create();

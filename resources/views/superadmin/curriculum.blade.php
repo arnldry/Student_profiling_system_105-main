@@ -44,7 +44,7 @@
 
                 <div class="collapse @error('name') show @enderror" id="addCurriculumForm">
                     <div class="pd-20">
-                        <form action="{{ route('superadmin.curriculum.store') }}" method="POST">
+                        <form action="{{ route('superadmin.curriculum.store') }}" method="POST" id="addCurriculumFormElement">
                             @csrf
                             <div class="form-group">
                                 <label for="name">Curriculum Name</label>
@@ -126,7 +126,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form action="{{ route('superadmin.curriculum.update', $curriculum->id) }}" method="POST">
+                                            <form action="{{ route('superadmin.curriculum.update', $curriculum->id) }}" method="POST" id="editCurriculumForm{{ $curriculum->id }}">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-body">
@@ -219,6 +219,44 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            // SweetAlert confirmation for Add Curriculum
+            document.getElementById('addCurriculumFormElement').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Add Curriculum?',
+                    text: "Are you sure you want to add this curriculum?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, add it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+
+            // SweetAlert confirmation for Edit Curriculum
+            document.querySelectorAll('[id^="editCurriculumForm"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Update Curriculum?',
+                        text: "Are you sure you want to update this curriculum?",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, update it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.submit();
+                        }
+                    });
+                });
+            });
+
             // SweetAlert confirmation for Archive
             document.querySelectorAll('.archive-form').forEach(form => {
                 form.addEventListener('submit', function(e) {

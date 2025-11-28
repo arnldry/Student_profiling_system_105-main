@@ -10,13 +10,11 @@ class CheckDatabase
 {
     public function handle(Request $request, Closure $next)
     {
-        $databaseName = config('database.connections.mysql.database');
-
         try {
-            DB::connection()->getPdo();
+            DB::select('SELECT 1');
         } catch (\Exception $e) {
-            // If database doesn't exist, show recovery view
-            return response()->view('system.recovery', compact('databaseName'));
+            // If database doesn't exist or connection fails, return 404
+            abort(404);
         }
 
         return $next($request);
