@@ -717,9 +717,9 @@
                     const fatherTab = modal.querySelector('.edit-form-tab[data-step="3"]');
                     const guardianTab = modal.querySelector('.edit-form-tab[data-step="4"]');
 
-                    const motherStep = modal.querySelector('#edit-step-2-{{ $user->id }}');
-                    const fatherStep = modal.querySelector('#edit-step-3-{{ $user->id }}');
-                    const guardianStep = modal.querySelector('#edit-step-4-{{ $user->id }}');
+                    const motherStep = modal.querySelector('#edit-step-2-' + userId);
+                    const fatherStep = modal.querySelector('#edit-step-3-' + userId);
+                    const guardianStep = modal.querySelector('#edit-step-4-' + userId);
 
                     // Show/hide mother
                     if (livingMotherCheckbox && livingMotherCheckbox.checked) {
@@ -783,9 +783,9 @@
                             const fatherTab = modal.querySelector('.edit-form-tab[data-step="3"]');
                             const guardianTab = modal.querySelector('.edit-form-tab[data-step="4"]');
 
-                            const motherStep = modal.querySelector('#edit-step-2-{{ $user->id }}');
-                            const fatherStep = modal.querySelector('#edit-step-3-{{ $user->id }}');
-                            const guardianStep = modal.querySelector('#edit-step-4-{{ $user->id }}');
+                            const motherStep = modal.querySelector('#edit-step-2-' + userId);
+                            const fatherStep = modal.querySelector('#edit-step-3-' + userId);
+                            const guardianStep = modal.querySelector('#edit-step-4-' + userId);
 
                             if (this.value === 'Living with Mother') {
                                 if (this.checked) { if (motherTab) { motherTab.style.display = ''; motherTab.dataset.skip = '0'; } if (motherStep) { motherStep.style.display = ''; motherStep.dataset.skip = '0'; } }
