@@ -1,3 +1,8 @@
+<h1>git reset --hard number nung gusto mong ibalik</h1>
+<h1>git push --force </h1>
+
+
+
 APP_NAME="Guidance and Counseling"
 APP_ENV=local
 APP_KEY=base64:kTUSGoz11Qb10VzsFtC5Zuv9rXUTsjCo1JMGfrTXLmc=

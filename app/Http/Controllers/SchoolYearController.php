@@ -27,10 +27,10 @@ class SchoolYearController extends Controller
         $currentYear = date('Y');
 
         // // Allow archiving only if the end year is less than or equal to current year
-        // if ((int)$endYear > $currentYear) {
-        //     return redirect()->route('superadmin.school-year')
-        //         ->with('error', 'Cannot archive a school year that is still ongoing!');
-        // }
+        if ((int)$endYear > $currentYear) {
+            return redirect()->route('superadmin.school-year')
+                ->with('error', 'Cannot archive a school year that is still ongoing!');
+        }
 
         $schoolYear->update(['is_archived' => true]);
 
