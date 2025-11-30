@@ -1,12 +1,14 @@
 @php
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInformation;
+use App\Models\ArchivedStudentInformation;
 use App\Models\SchoolYear;
 
-// Check if the logged-in user has Additional Information
+// Check if the logged-in user has Additional Information (active or archived)
 $hasAdditionalInfo = $hasAdditionalInfo ?? (
     Auth::check() && Auth::user()->role === 'student'
-        ? AdditionalInformation::where('learner_id', Auth::id())->exists()
+        ? (AdditionalInformation::where('learner_id', Auth::id())->exists() ||
+           ArchivedStudentInformation::where('learner_id', Auth::id())->exists())
         : false
 );
 
@@ -68,21 +70,15 @@ $hasActiveCurricula = $hasActiveCurricula ?? \App\Models\Curriculum::where('is_a
                         <a href="{{ route('student.view-additional-info') }}"
                            class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-information"></span>
-                            <span class="mtext">View Information </span>
+                            <span class="mtext">View Information</span>
                         </a>
-                    @else
-                        @if($hasActiveSchoolYear && $hasActiveCurricula)
+                    @endif
+                    @if(!$hasAdditionalInfo && $hasActiveSchoolYear && $hasActiveCurricula)
                         <a href="{{ route('student.additional-info') }}"
                            class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-information"></span>
                             <span class="mtext">Personal Information</span>
                         </a>
-                        @else
-                        <a class="dropdown-toggle no-arrow disabled-link">
-                            <span class="micon dw dw-information"></span>
-                            <span class="mtext">Personal Information</span>
-                        </a>
-                        @endif
                     @endif
                 </li>
 
