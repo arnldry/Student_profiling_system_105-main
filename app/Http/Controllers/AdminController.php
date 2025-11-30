@@ -130,28 +130,11 @@ class AdminController extends Controller
      *  ------------------------------- */
     public function studentProfile()
     {
-        $activeSchoolYearIds = DB::table('additional_information')
-            ->select('school_year_id')
-            ->distinct()
-            ->pluck('school_year_id');
-
-        $archivedSchoolYearIds = DB::table('archived_student_information')
-            ->select('school_year_id')
-            ->distinct()
-            ->pluck('school_year_id');
-
-        // If all school years are archived
-        if ($activeSchoolYearIds->diff($archivedSchoolYearIds)->isEmpty()) {
-            $users = collect(); // empty collection
-        } else {
-            $users = User::where('role', 'student')
-                ->whereIn('id', function ($query) use ($activeSchoolYearIds, $archivedSchoolYearIds) {
-                    $query->select('learner_id')
-                        ->from('additional_information')
-                        ->whereIn('school_year_id', $activeSchoolYearIds->diff($archivedSchoolYearIds));
-                })
-                ->get();
-        }
+        // Get all students with additional information, regardless of archived status
+        $users = User::where('role', 'student')
+            ->whereHas('additionalInfo')
+            ->with('additionalInfo')
+            ->get();
 
         // Get active curriculums
         $curriculums = Curriculum::where('is_archived', 0)->get();
@@ -178,7 +161,7 @@ class AdminController extends Controller
         }
 
         // Add formatted dates for display
-        $info->current_date_formatted = $info->current_date ? $info->current_date->format('F j, Y') : null;
+        $info->current_date_formatted = $info->created_at ? $info->created_at->format('F j, Y') : null;
         $info->birthday_formatted = $info->birthday ? $info->birthday->format('F j, Y') : null;
 
         // Add agreement status

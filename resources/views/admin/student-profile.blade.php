@@ -44,6 +44,7 @@
                     <table class="data-table table stripe hover nowrap">
                         <thead>
                             <tr>
+                                <th>Profile</th>
                                 <th>LRN</th>
                                 <th>Student Name</th>
                                 <th>Grade and Section</th>
@@ -57,7 +58,11 @@
                                     <td>
                                         @php
                                             $info = \App\Models\AdditionalInformation::where('learner_id', $user->id)->first();
+                                            $profileSrc = ($info && $info->profile_picture) ? asset($info->profile_picture) : '/vendors/images/logo-ocnhs.png';
                                         @endphp
+                                        <img src="{{ $profileSrc }}" alt="Profile" style="width:50px;height:50px;object-fit:cover;border-radius:50%;border:1px solid #ddd;">
+                                    </td>
+                                    <td>
                                         {{ $info ? $info->lrn : '-' }}
                                     </td>
                                     <td>{{ $user->name }}</td>
@@ -1061,7 +1066,6 @@
                                 <td colspan="4">${data.nationality || '-'}</td>
                             </tr>
                             
-                            ${data.living_mode && data.living_mode.includes('Living with Father') ? `
                             <tr>
                                 <td class="section-title" colspan="2">Father's Name</td><td colspan="4">${data.father_name || '-'}</td>
                                 <td colspan="1">Age:</td><td colspan="5">${data.father_age || '-'}</td>
@@ -1074,9 +1078,7 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.father_place_work || 'N/A'}</td>
                             </tr>
-                            ` : ''}
 
-                            ${data.living_mode && data.living_mode.includes('Living with Mother') ? `
                             <tr>
                                 <td class="section-title" colspan="2">Mother's Name</td><td colspan="4">${data.mother_name || '-'}</td>
                                 <td colspan="1">Age:</td><td colspan="5">${data.mother_age || '-'}</td>
@@ -1089,9 +1091,7 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
                             </tr>
-                            ` : ''}
 
-                            ${data.living_mode && data.living_mode.includes('Living with Other Guardians') ? `
                             <tr>
                                 <td class="section-title" colspan="2">Guardian's Name</td><td colspan="4">${data.guardian_name || '-'}</td>
                                 <td colspan="1">Age:</td><td colspan="5">${data.guardian_age || '-'}</td>
@@ -1104,7 +1104,6 @@
                                 <td colspan="2">FB/Messenger:</td><td colspan="4">${data.guardian_fb || 'N/A'}</td>
                                 <td colspan="2">Place of Work:</td><td colspan="4">${data.guardian_place_work || 'N/A'}</td>
                             </tr>
-                            ` : ''}
                         </table>
 
                         <!-- Append School Rules and Commitment to the front side -->
@@ -1133,16 +1132,18 @@
                                     </li>
                                 </ol>
                                 </td>
-                                <td style="width: 15%; vertical-align: top;">
-                                    <p style="text-align: center; font-size: 12px; "><strong>KOMITMENT SA PAARALAN</strong></p>
-                                    <p style="font-size: 10px; text-align: center;">
-                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma ang 
-                                        aking taos pusong komitment na sumunod sa mga patakaran at alituntuning itinakda
-                                         sa akin ayon sa Mga Alituntuning Dapat Sundin ng Mag-aaral ng OCNHS at sa mga batas 
-                                         ng DepEd ngayong taong panuruan. Kasihan nawa ako ng Maykapal.
+                                <td style="width: 15%; vertical-align: top; padding: 10px;">
+                                    <div style="text-align: center;">
+                                        <p style="margin: 0; text-align: center; font-size: 12px;"><strong>KOMITMENT SA PAARALAN</strong></p>
+                                    </div>
+                                    <p style="font-size: 10px; text-align: center; margin: 0;">
+                                        Akin pong ipinapahayag sa OCNHS sa pamamagitan ng aking pirma
+                                        sa ibaba ang aking taos pusong komitment na sumunod
+                                        sa mga patakarang itinakda sa akin ayon sa Mga Alituntuning Dapat
+                                        Sundin ng Mag-aaral ng OCNHS at sa mga batas ng DepEd ngayong taong panuruan.
+                                        Kasihan nawa ako ng Maykapal.
                                     </p>
                                     <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
-                                        <strong>Submitted:</strong> ${data.current_date_formatted}
                                     </div>
                                 </td>
                             </tr>
@@ -1150,22 +1151,21 @@
                     
                             <tr>
                                 <td colspan="12" style="text-align: left;">
-                                    <div style="margin-bottom: 10px; font-size: 11px;">
-                                        <strong>Agreement Status:</strong>
-                                        <span style="margin-left: 10px;">Student Agreements: ${data.agreements.student_agreement_1 && data.agreements.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
-                                        <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
-                                    </div>
                                     <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 10px;"></div>
+                                                <div style="height: 20px;"></div>
                                                 <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 28px;"></div>
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 2px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Student Agreements: {{ $info->student_agreement_1 && $info->student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted' }}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
@@ -1211,13 +1211,17 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 10px;"></div>
-                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
+                                                <div style="height: 20px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">{{ $info->current_date_formatted }}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
-                                                <div style="height: 28px;"></div>
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 2px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Parent Agreements: {{ $info->parent_agreement_1 && $info->parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted' }}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
@@ -1236,7 +1240,6 @@
                                         Kasihan nawa ako ng Maykapal.
                                     </p>
                                     <div style="margin-top: 40px; font-size: 14px; text-align: center; border-top: 1px solid #000; padding-top: 5px;">
-                                        <strong>Submitted:</strong> ${data.current_date_formatted}
                                     </div>
                                 </td>
                             </tr>
