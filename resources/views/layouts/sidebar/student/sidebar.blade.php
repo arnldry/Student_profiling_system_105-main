@@ -87,7 +87,7 @@ $hasActiveCurricula = $hasActiveCurricula ?? \App\Models\Curriculum::where('is_a
                     <a href="{{ route('student.update-profile') }}"
                        class="dropdown-toggle no-arrow {{ !$hasAdditionalInfo ? 'disabled-link' : '' }}">
                         <span class="micon bi bi-person-circle"></span>
-                        <span class="mtext">Change Password</span>
+                        <span class="mtext">Update Profile</span>
                     </a>
                 </li>
 
