@@ -57,7 +57,7 @@
                                 <tr>
                                     <td>
                                         @php
-                                            $info = \App\Models\AdditionalInformation::where('learner_id', $user->id)->first();
+                                            $info = $user->additionalInfo;
                                             $profileSrc = ($info && $info->profile_picture) ? asset($info->profile_picture) : '/vendors/images/logo-ocnhs.png';
                                         @endphp
                                         <img src="{{ $profileSrc }}" alt="Profile" style="width:50px;height:50px;object-fit:cover;border-radius:50%;border:1px solid #ddd;">
@@ -1164,7 +1164,7 @@
                                                 <div style="height: 5px;"></div>
                                                 <div style="margin-bottom: 2px; font-size: 11px;">
                                                     <strong>Agreement Status:</strong>
-                                                    <span style="margin-left: 10px;">Student Agreements: {{ $info->student_agreement_1 && $info->student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted' }}</span>
+                                                    <span style="margin-left: 10px;">Student Agreements: ${data.student_agreement_1 && data.student_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
                                                 </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
@@ -1212,7 +1212,7 @@
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
                                                 <div style="height: 20px;"></div>
-                                                <div style="font-size: 14px; margin-bottom: 1px;">{{ $info->current_date_formatted }}</div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
@@ -1220,7 +1220,7 @@
                                                 <div style="height: 5px;"></div>
                                                 <div style="margin-bottom: 2px; font-size: 11px;">
                                                     <strong>Agreement Status:</strong>
-                                                    <span style="margin-left: 10px;">Parent Agreements: {{ $info->parent_agreement_1 && $info->parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted' }}</span>
+                                                    <span style="margin-left: 10px;">Parent Agreements: ${data.parent_agreement_1 && data.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
                                                 </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>

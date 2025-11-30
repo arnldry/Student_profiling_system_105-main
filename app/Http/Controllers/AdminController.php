@@ -126,15 +126,30 @@ class AdminController extends Controller
     }
 
     /** -------------------------------
-     *  STUDENT PROFILE LIST
-     *  ------------------------------- */
+      *  STUDENT PROFILE LIST
+      *  ------------------------------- */
     public function studentProfile()
     {
-        // Get all students with additional information, regardless of archived status
-        $users = User::where('role', 'student')
-            ->whereHas('additionalInfo')
-            ->with('additionalInfo')
-            ->get();
+        // Get all school year IDs that have students in additional_information
+        $activeSchoolYearIds = AdditionalInformation::select('school_year_id')->distinct()->pluck('school_year_id');
+
+        // Get all archived school year IDs
+        $archivedSchoolYearIds = DB::table('archived_student_information')->select('school_year_id')->distinct()->pluck('school_year_id');
+
+        // If all school years are archived, return empty collection
+        if ($activeSchoolYearIds->diff($archivedSchoolYearIds)->isEmpty()) {
+            $users = collect();
+        } else {
+            // Get students whose additional info is not in archived school years
+            $users = User::where('role', 'student')
+                ->whereIn('id', function ($query) use ($activeSchoolYearIds, $archivedSchoolYearIds) {
+                    $query->select('learner_id')
+                        ->from('additional_information')
+                        ->whereIn('school_year_id', $activeSchoolYearIds->diff($archivedSchoolYearIds));
+                })
+                ->with('additionalInfo')
+                ->get();
+        }
 
         // Get active curriculums
         $curriculums = Curriculum::where('is_archived', 0)->get();
