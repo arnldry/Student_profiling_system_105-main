@@ -202,7 +202,7 @@ class StudentController extends Controller
         }
 
         if (!$info) {
-            return redirect()->route('student.additional-info')->with('error', 'Please submit your additional information first.');
+            return redirect()->route('student.update-profile')->with('error', 'Please complete your personal information first.');
         }
 
 

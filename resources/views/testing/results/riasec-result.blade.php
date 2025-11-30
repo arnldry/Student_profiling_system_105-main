@@ -464,18 +464,29 @@
             <span>{{ $is_latest ? 'LATEST RESULTS OF THE RIASEC TEST' : 'RESULTS OF THE RIASEC TEST' }}</span>
             @if($allResults->count() > 1)
                 <div style="display: flex; gap: 8px; margin-left: 20px;">
-                    @if(isset($is_admin) && $is_admin)
-                        @if($prevResult)
-                            <a href="{{ route('admin.student-riasec', [$student->id, $prevResult->id]) }}" class="nav-link">Previous</a>
-                        @else
-                            <span class="nav-link disabled">Previous</span>
-                        @endif
-                        @if($nextResult)
-                            <a href="{{ route('admin.student-riasec', [$student->id, $nextResult->id]) }}" class="nav-link">Next</a>
-                        @else
-                            <span class="nav-link disabled">Next</span>
-                        @endif
-                    @else
+                    @if(isset($is_superadmin) && $is_superadmin)
+                             @if($prevResult)
+                                 <a href="{{ route('superadmin.student-riasec', [$student->id, $prevResult->id]) }}" class="nav-link">Previous</a>
+                             @else
+                                 <span class="nav-link disabled">Previous</span>
+                             @endif
+                             @if($nextResult)
+                                 <a href="{{ route('superadmin.student-riasec', [$student->id, $nextResult->id]) }}" class="nav-link">Next</a>
+                             @else
+                                 <span class="nav-link disabled">Next</span>
+                             @endif
+                         @elseif(isset($is_admin) && $is_admin)
+                             @if($prevResult)
+                                 <a href="{{ route('admin.student-riasec', [$student->id, $prevResult->id]) }}" class="nav-link">Previous</a>
+                             @else
+                                 <span class="nav-link disabled">Previous</span>
+                             @endif
+                             @if($nextResult)
+                                 <a href="{{ route('admin.student-riasec', [$student->id, $nextResult->id]) }}" class="nav-link">Next</a>
+                             @else
+                                 <span class="nav-link disabled">Next</span>
+                             @endif
+                         @else
                         @if($prevResult)
                             <a href="{{ route('testing.results.riasec-result', $prevResult->id) }}" class="nav-link">Previous</a>
                         @else
@@ -539,7 +550,9 @@
         <button onclick="window.print()" class="btn-print">
             🖨️ Print Result
         </button>
-        @if(isset($is_admin) && $is_admin)
+        @if(isset($is_superadmin) && $is_superadmin)
+            <a href="{{ route('superadmin.test-results') }}" class="btn-back">⬅️ Back to Test Results</a>
+        @elseif(isset($is_admin) && $is_admin)
             <a href="{{ route('admin.test-results') }}" class="btn-back">⬅️ Back to Test Results</a>
         @else
             <a href="{{ route('dashboard') }}" class="btn-back">⬅️ Back to Dashboard</a>

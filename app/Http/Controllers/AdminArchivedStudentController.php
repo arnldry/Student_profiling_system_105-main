@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ArchivedStudentInformation;
+use App\Models\AdditionalInformation;
 use App\Models\SchoolYear;
+use Illuminate\Support\Facades\DB;
 
 class AdminArchivedStudentController extends Controller
 {
@@ -257,5 +259,83 @@ class AdminArchivedStudentController extends Controller
         } else {
             return redirect()->back()->with('success', 'Archived student information updated successfully!');
         }
+    }
+
+    /**
+     * Restore archived student back to active
+     */
+    public function restoreArchivedStudent($id)
+    {
+        DB::transaction(function () use ($id) {
+            $archivedStudent = ArchivedStudentInformation::find($id);
+
+            if (!$archivedStudent) {
+                throw new \Exception('Archived student not found.');
+            }
+
+            // If student already has active info, delete it first (shouldn't happen in normal flow)
+            $existingActive = AdditionalInformation::where('learner_id', $archivedStudent->learner_id)->first();
+            if ($existingActive) {
+                $existingActive->delete();
+            }
+
+            // Create active record
+            AdditionalInformation::create([
+                'school_year_id'     => $archivedStudent->school_year_id,
+                'learner_id'         => $archivedStudent->learner_id,
+                'lrn'                => $archivedStudent->lrn,
+                'sex'                => $archivedStudent->sex,
+                'grade'              => $archivedStudent->grade,
+                'curriculum'         => $archivedStudent->curriculum,
+                'section'            => $archivedStudent->section,
+                'disability'         => $archivedStudent->disability,
+                'living_mode'        => $archivedStudent->living_mode,
+                'address'            => $archivedStudent->address,
+                'contact_number'     => $archivedStudent->contact_number,
+                'birthday'           => $archivedStudent->birthday,
+                'age'                => $archivedStudent->age,
+                'religion'           => $archivedStudent->religion,
+                'nationality'        => $archivedStudent->nationality,
+                'fb_messenger'       => $archivedStudent->fb_messenger,
+                'current_date'       => $archivedStudent->current_date,
+                'profile_picture'    => $archivedStudent->profile_picture,
+                'father_name'        => $archivedStudent->father_name,
+                'father_age'         => $archivedStudent->father_age,
+                'father_occupation'  => $archivedStudent->father_occupation,
+                'father_place_work'  => $archivedStudent->father_place_work,
+                'father_contact'     => $archivedStudent->father_contact,
+                'father_fb'          => $archivedStudent->father_fb,
+                'mother_name'        => $archivedStudent->mother_name,
+                'mother_age'         => $archivedStudent->mother_age,
+                'mother_occupation'  => $archivedStudent->mother_occupation,
+                'mother_place_work'  => $archivedStudent->mother_place_work,
+                'mother_contact'     => $archivedStudent->mother_contact,
+                'mother_fb'          => $archivedStudent->mother_fb,
+                'guardian_name'      => $archivedStudent->guardian_name,
+                'guardian_age'       => $archivedStudent->guardian_age,
+                'guardian_occupation' => $archivedStudent->guardian_occupation,
+                'guardian_place_work' => $archivedStudent->guardian_place_work,
+                'guardian_contact'   => $archivedStudent->guardian_contact,
+                'guardian_fb'        => $archivedStudent->guardian_fb,
+                'guardian_relationship' => $archivedStudent->guardian_relationship,
+                'student_agreement_1' => $archivedStudent->student_agreement_1,
+                'student_agreement_2' => $archivedStudent->student_agreement_2,
+                'parent_agreement_1' => $archivedStudent->parent_agreement_1,
+                'parent_agreement_2' => $archivedStudent->parent_agreement_2,
+            ]);
+
+            // Delete archived record
+            $archivedStudent->delete();
+
+            // Log activity
+            \App\Models\ActivityLog::create([
+                'admin_id' => \Illuminate\Support\Facades\Auth::id(),
+                'action' => 'Restored Archived Student',
+                'description' => 'Restored archived student information for: ' . ($archivedStudent->user ? $archivedStudent->user->name : 'ID: ' . $id),
+                'student_id' => $archivedStudent->learner_id,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Archived student restored to active successfully!');
     }
 }

@@ -660,7 +660,7 @@ public function updateStudentInfo(Request $request, $id)
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });
@@ -686,7 +686,7 @@ public function updateStudentInfo(Request $request, $id)
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });

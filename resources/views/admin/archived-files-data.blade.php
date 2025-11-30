@@ -871,6 +871,9 @@
                                          </button>
                                          <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editArchivedModal${student.id}">
                                            <i class="dw dw-edit2"></i> Edit
+                                         </button>
+                                         <button class="btn btn-success btn-sm" onclick="restoreArchivedStudent(${student.id}, '${student.user ? student.user.name : ''}')">
+                                           <i class="dw dw-upload"></i> Restore
                                          </button>`,
                                 profile_picture_url: student.profile_picture ? `/${student.profile_picture}` : null
                             });
@@ -884,6 +887,40 @@
                 });
             });
         });
+
+        function restoreArchivedStudent(studentId, studentName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to restore ${studentName}'s archived information back to active?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, restore it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the restore form
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/restore-archived-student/${studentId}`;
+                    form.style.display = 'none';
+
+                    // Add CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = csrfToken.getAttribute('content');
+                        form.appendChild(csrfInput);
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
 
         function viewArchivedInfo(studentId, studentName) {
 
