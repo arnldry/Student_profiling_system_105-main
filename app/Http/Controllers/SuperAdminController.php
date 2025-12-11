@@ -250,7 +250,7 @@ class SuperAdminController extends Controller
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });
@@ -276,7 +276,7 @@ class SuperAdminController extends Controller
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });
@@ -463,7 +463,7 @@ class SuperAdminController extends Controller
         // Check if this is the latest result
         $is_latest = ($result->id == $allResults->last()->id);
 
-        return view('testing.results.life-values-results', compact('scores', 'student', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_admin' => true]);
+        return view('testing.results.life-values-results', compact('scores', 'student', 'result', 'previousResult', 'previousScores', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_superadmin' => true]);
     }
 
     /** -------------------------------
@@ -524,7 +524,7 @@ class SuperAdminController extends Controller
         // Check if this is the latest result
         $is_latest = ($result->id == $allResults->last()->id);
 
-        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_admin' => true]);
+        return view('testing.results.riasec-result', compact('scores', 'top3', 'descriptions', 'student', 'result', 'previousResult', 'previousScores', 'previousTop3', 'allResults', 'nextResult', 'prevResult', 'currentAttempt', 'is_latest') + ['is_superadmin' => true]);
     }
 
     /** -------------------------------

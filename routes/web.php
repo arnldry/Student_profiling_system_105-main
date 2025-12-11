@@ -201,6 +201,9 @@ Route::middleware(['auth', 'preventBackHistory', 'role:superadmin'])->prefix('su
         Route::get('admin/archived-students/{id}', [AdminArchivedStudentController::class, 'getArchivedStudent'])
             ->name('admin.archived.student.view');
 
+        Route::post('admin/restore-archived-student/{id}', [AdminArchivedStudentController::class, 'restoreArchivedStudent'])
+            ->name('admin.restore-archived-student');
+
 
 
             

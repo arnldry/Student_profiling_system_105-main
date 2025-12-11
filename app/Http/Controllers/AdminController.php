@@ -126,30 +126,28 @@ class AdminController extends Controller
     }
 
     /** -------------------------------
-     *  STUDENT PROFILE LIST
-     *  ------------------------------- */
+      *  STUDENT PROFILE LIST
+      *  ------------------------------- */
     public function studentProfile()
     {
-        $activeSchoolYearIds = DB::table('additional_information')
-            ->select('school_year_id')
-            ->distinct()
-            ->pluck('school_year_id');
+        // Get all school year IDs that have students in additional_information
+        $activeSchoolYearIds = AdditionalInformation::select('school_year_id')->distinct()->pluck('school_year_id');
 
-        $archivedSchoolYearIds = DB::table('archived_student_information')
-            ->select('school_year_id')
-            ->distinct()
-            ->pluck('school_year_id');
+        // Get all archived school year IDs
+        $archivedSchoolYearIds = DB::table('archived_student_information')->select('school_year_id')->distinct()->pluck('school_year_id');
 
-        // If all school years are archived
+        // If all school years are archived, return empty collection
         if ($activeSchoolYearIds->diff($archivedSchoolYearIds)->isEmpty()) {
-            $users = collect(); // empty collection
+            $users = collect();
         } else {
+            // Get students whose additional info is not in archived school years
             $users = User::where('role', 'student')
                 ->whereIn('id', function ($query) use ($activeSchoolYearIds, $archivedSchoolYearIds) {
                     $query->select('learner_id')
                         ->from('additional_information')
                         ->whereIn('school_year_id', $activeSchoolYearIds->diff($archivedSchoolYearIds));
                 })
+                ->with('additionalInfo')
                 ->get();
         }
 
@@ -178,7 +176,7 @@ class AdminController extends Controller
         }
 
         // Add formatted dates for display
-        $info->current_date_formatted = $info->current_date ? $info->current_date->format('F j, Y') : null;
+        $info->current_date_formatted = $info->created_at ? $info->created_at->format('F j, Y') : null;
         $info->birthday_formatted = $info->birthday ? $info->birthday->format('F j, Y') : null;
 
         // Add agreement status
@@ -662,7 +660,7 @@ public function updateStudentInfo(Request $request, $id)
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });
@@ -688,7 +686,7 @@ public function updateStudentInfo(Request $request, $id)
                     'section' => $section,
                     'curriculum' => $curriculum,
                     'last_taken' => $latestResult ? $latestResult->created_at->format('Y-m-d H:i') : null,
-                    'can_retake' => $latestResult ? (!$latestResult->admin_reopened && $latestResult->created_at < now()->subYear()) : false,
+                    'can_retake' => $latestResult ? ($latestResult->admin_reopened || $latestResult->created_at < now()->subYear()) : false,
                     'admin_reopened' => $latestResult ? $latestResult->admin_reopened : false,
                 ];
             });

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use App\Models\AdditionalInformation;
+use App\Models\ArchivedStudentInformation;
 use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
@@ -116,6 +117,10 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended(route('admin.dashboard'));
             case 'student':
                 $hasAdditionalInfo = AdditionalInformation::where('learner_id', $user->id)->exists();
+                if (!$hasAdditionalInfo) {
+                    // Check archived if not in active
+                    $hasAdditionalInfo = ArchivedStudentInformation::where('learner_id', $user->id)->exists();
+                }
                 if (!$hasAdditionalInfo) {
                     return redirect()->intended(route('student.additional-info'));
                 }

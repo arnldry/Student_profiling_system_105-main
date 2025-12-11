@@ -79,6 +79,9 @@ class ArchivedStudentDataController extends Controller
                     'parent_agreement_2' => $student->parent_agreement_2,
                 ]);
             }
+
+            // Delete the original records from additional_information
+            AdditionalInformation::where('school_year_id', $schoolYearId)->delete();
         });
 
         return redirect()->route('superadmin.archived-student-data')

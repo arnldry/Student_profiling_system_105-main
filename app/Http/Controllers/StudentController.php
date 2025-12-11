@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInformation;
+use App\Models\ArchivedStudentInformation;
 use App\Models\SchoolYear;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,25 +13,33 @@ class StudentController extends Controller
 {
 
    public function __construct()
-     {
-         view()->composer('*', function ($view) {
-             $hasAdditionalInfo = false;
-             $additionalInfo = null;
+      {
+          view()->composer('*', function ($view) {
+              $hasAdditionalInfo = false;
+              $additionalInfo = null;
 
-             if (Auth::check() && Auth::user()->role === 'student') {
-                 $hasAdditionalInfo = AdditionalInformation::where('learner_id', Auth::id())->exists();
-                 if ($hasAdditionalInfo) {
-                     $additionalInfo = AdditionalInformation::where('learner_id', Auth::id())->latest()->first();
-                 }
-             }
+              if (Auth::check() && Auth::user()->role === 'student') {
+                  $hasAdditionalInfo = AdditionalInformation::where('learner_id', Auth::id())->exists();
+                  if (!$hasAdditionalInfo) {
+                      // Check archived if not in active
+                      $hasAdditionalInfo = ArchivedStudentInformation::where('learner_id', Auth::id())->exists();
+                  }
+                  if ($hasAdditionalInfo) {
+                      $additionalInfo = AdditionalInformation::where('learner_id', Auth::id())->latest()->first();
+                      if (!$additionalInfo) {
+                          // If not in active, get from archived
+                          $additionalInfo = ArchivedStudentInformation::where('learner_id', Auth::id())->latest()->first();
+                      }
+                  }
+              }
 
-             $hasActiveCurricula = \App\Models\Curriculum::where('is_archived', 0)->exists();
+              $hasActiveCurricula = \App\Models\Curriculum::where('is_archived', 0)->exists();
 
-             $view->with('hasAdditionalInfo', $hasAdditionalInfo);
-             $view->with('additionalInfo', $additionalInfo);
-             $view->with('hasActiveCurricula', $hasActiveCurricula);
-         });
-     }
+              $view->with('hasAdditionalInfo', $hasAdditionalInfo);
+              $view->with('additionalInfo', $additionalInfo);
+              $view->with('hasActiveCurricula', $hasActiveCurricula);
+          });
+      }
 
     public function dashboard(){
         $user = auth()->user();
@@ -108,6 +117,12 @@ class StudentController extends Controller
 
          // Get additional information for profile picture
          $additionalInfo = AdditionalInformation::where('learner_id', $user->id)->latest()->first();
+         if (!$additionalInfo) {
+             $additionalInfo = ArchivedStudentInformation::where('learner_id', $user->id)->latest()->first();
+         }
+         if (!$additionalInfo) {
+             $additionalInfo = ArchivedStudentInformation::where('learner_id', $user->id)->latest()->first();
+         }
 
          return view('student.update-profile', compact('user', 'additionalInfo'));
      }
@@ -181,11 +196,16 @@ class StudentController extends Controller
         $user = auth()->user();
         $info = AdditionalInformation::where('learner_id', $user->id)->first();
 
+        // If not found in active, check archived
         if (!$info) {
-            return redirect()->route('student.additional-info')->with('error', 'Please submit your additional information first.');
+            $info = ArchivedStudentInformation::where('learner_id', $user->id)->first();
         }
 
-        
+        if (!$info) {
+            return redirect()->route('student.update-profile')->with('error', 'Please complete your personal information first.');
+        }
+
+
         $schoolYear = SchoolYear::find($info->school_year_id);
         $info->school_year_name = $schoolYear ? $schoolYear->school_year : 'N/A';
 
@@ -207,6 +227,11 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         $info = AdditionalInformation::where('learner_id', $user->id)->first();
+
+        // If not found in active, check archived
+        if (!$info) {
+            $info = ArchivedStudentInformation::where('learner_id', $user->id)->first();
+        }
 
         if (!$info) {
             return response()->json(['error' => 'No student information found for the current user.']);
