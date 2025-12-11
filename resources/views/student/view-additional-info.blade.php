@@ -72,6 +72,7 @@
             border: 1px solid #000;
             padding: 5px 6px;
             vertical-align: top;
+            text-align: center;
         }
 
         .section-title {
@@ -138,6 +139,7 @@
             }
             .info-table td {
                 padding: 3px 4px;
+                text-align: center;
             }
         }
     </style>
@@ -220,7 +222,7 @@
                                 <td colspan="2"> <span>Family Name</span></td>
                                 <td colspan="1">  <span>First Name</span>             </td>
                                 <td colspan="2" > <span>Middle Name</span></td>
-                                <td colspan="2">Disability(if any):</td><td colspan="3">{{ $info->disability ?: 'None' }}</td>
+                                <td colspan="2">Disability(if any):</td><td colspan="3">{!! $info->disability ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
 
 
@@ -230,7 +232,7 @@
                             <tr>
                                 <td colspan="2">Mobile Number:</td><td colspan="4">{{ $info->contact_number ?: '-' }}</td>
                                 <td colspan="2">FB/Messenger:</td>
-                                <td colspan="4">{{ $info->fb_messenger ?: 'N/A' }}</td>
+                                <td colspan="4">{!! $info->fb_messenger ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">Birthday & Age:</td><td colspan="2">{{ $formattedBirthday }} ({{ $formattedAge }})</td>
@@ -244,12 +246,12 @@
                                 <td colspan="1">Age:</td><td colspan="5">{{ $info->father_age ?: '-' }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Occupation/Work:</td><td colspan="4">{{ $info->father_occupation ?: 'N/A' }}</td>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">{{ $info->father_contact ?: 'N/A' }}</td>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">{!! $info->father_occupation ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">{!! $info->father_contact ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">FB/Messenger:</td><td colspan="4">{{ $info->father_fb ?: 'N/A' }}</td>
-                                <td colspan="2">Place of Work:</td><td colspan="4">{{ $info->father_place_work ?: 'N/A' }}</td>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">{!! $info->father_fb ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">{!! $info->father_place_work ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
 
                             <tr>
@@ -257,12 +259,12 @@
                                 <td colspan="1">Age:</td><td colspan="5">{{ $info->mother_age ?: '-' }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Occupation/Work:</td><td colspan="4">{{ $info->mother_occupation ?: 'N/A' }}</td>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">{{ $info->mother_contact ?: 'N/A' }}</td>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">{!! $info->mother_occupation ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">{!! $info->mother_contact ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">FB/Messenger:</td><td colspan="4">{{ $info->mother_fb ?: 'N/A' }}</td>
-                                <td colspan="2">Place of Work:</td><td colspan="4">{{ $info->mother_place_work ?: 'N/A' }}</td>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">{!! $info->mother_fb ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">{!! $info->mother_place_work ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
 
                             <tr>
@@ -270,15 +272,15 @@
                                 <td colspan="1">Age:</td><td colspan="5">{{ $info->guardian_age ?: '-' }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Occupation/Work:</td><td colspan="4">{{ $info->guardian_occupation ?: 'N/A' }}</td>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">{{ $info->guardian_contact ?: 'N/A' }}</td>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">{!! $info->guardian_occupation ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">{!! $info->guardian_contact ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">FB/Messenger:</td><td colspan="4">{{ $info->guardian_fb ?: 'N/A' }}</td>
-                                <td colspan="2">Place of Work:</td><td colspan="4">{{ $info->guardian_place_work ?: 'N/A' }}</td>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">{!! $info->guardian_fb ?: '<span class="text-muted">N/A</span>' !!}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">{!! $info->guardian_place_work ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Relationship:</td><td colspan="10">{{ $info->guardian_relationship ?: 'N/A' }}</td>
+                                <td colspan="2">Relationship:</td><td colspan="10">{!! $info->guardian_relationship ?: '<span class="text-muted">N/A</span>' !!}</td>
                             </tr>
                         </table>
 
@@ -524,6 +526,7 @@
                             border: 1px solid #000;
                             padding: 2px 3px;
                             vertical-align: top;
+                            text-align: center;
                         }
                         .section-title {
                             text-align: center;

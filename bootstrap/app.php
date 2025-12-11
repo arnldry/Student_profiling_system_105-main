@@ -33,7 +33,8 @@ return Application::configure(basePath: dirname(__DIR__))
             if (str_contains($exception->getMessage(), 'Unknown database')) {
                 return response()->view('errors.404', [], 404);
             }
-            // Let other exceptions be handled by Laravel's default error handling
+            // For all other internal errors, return 404
+            return response()->view('errors.404', [], 404);
         });
     })->create();
 

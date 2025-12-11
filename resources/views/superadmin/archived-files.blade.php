@@ -153,7 +153,7 @@
                                 grade: student.grade,
                                 section: student.section,
                                 curriculum: student.curriculum,
-                                action: `<button class="btn btn-info btn-sm" onclick="viewArchivedInfo(${student.id})">
+                                action: `<button class="btn btn-info btn-sm" onclick="viewArchivedInfo(${student.id}, '${student.user ? student.user.name : ''}')">
                                             <i class="dw dw-eye"></i> View
                                          </button>`
                             });
@@ -171,34 +171,34 @@
         function viewArchivedInfo(studentId, studentName) {
 
                 // Format the student name
-                let learnerFullName = '-';
-            if (studentName) {
-                let parts = studentName.trim().split(' ');
-                if (parts.length >= 3) {
-                    let lastName = parts[parts.length - 1];
-                    let firstName = parts[0];
-                    let middleName = parts.slice(1, parts.length - 1).join(' ');
-                    learnerFullName = `${lastName}, ${firstName} ${middleName}`;
-                } else if (parts.length === 2) {
-                    learnerFullName = `${parts[1]}, ${parts[0]}`; 
-                } else {
-                    learnerFullName = studentName; 
-                }
-            }
-            fetch(`/superadmin/archived-students/${studentId}`)
-                .then(response => response.json())
+                let learnerFullName = '<span class="na-placeholder">N/A</span>';
+             if (studentName) {
+                 let parts = studentName.trim().split(' ');
+                 if (parts.length >= 3) {
+                     let lastName = parts[parts.length - 1];
+                     let firstName = parts[0];
+                     let middleName = parts.slice(1, parts.length - 1).join(' ');
+                     learnerFullName = `${lastName}, ${firstName} ${middleName}`;
+                 } else if (parts.length === 2) {
+                     learnerFullName = `${parts[1]}, ${parts[0]}`;
+                 } else {
+                     learnerFullName = studentName;
+                 }
+             }
+             fetch(`/superadmin/archived-students/${studentId}`)
+                 .then(response => response.json())
                 .then(data => {
-                if (data.error) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'No Information',
-                        text: data.error,
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    // Format Birthday and Compute Age
-                    let formattedBirthday = '-';
-                    let formattedAge = '-';
+                  if (data.error) {
+                      Swal.fire({
+                          icon: 'info',
+                          title: 'No Information',
+                          text: data.error,
+                          confirmButtonText: 'OK'
+                      });
+                  } else {
+                      // Format Birthday and Compute Age
+                      let formattedBirthday = '<span class="na-placeholder">N/A</span>';
+                      let formattedAge = '<span class="na-placeholder">N/A</span>';
                     
                     if (data.birthday) {
                         const birthDate = new Date(data.birthday);
@@ -236,65 +236,65 @@
                             </tr>
 
                             <tr>
-                                <td colspan="3">School Year: ${data.school_year_name || '-'}</td>
-                                <td colspan="3">Curriculum/Program: ${data.curriculum || '-'}</td>
-                                <td colspan="4">Grade & Section: ${data.grade || '-'}/${data.section || '-'}</td>
-                                <td colspan="2">Sex: ${data.sex || '-'}</td>
+                                <td colspan="3">School Year: ${data.school_year_name || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="3">Curriculum/Program: ${data.curriculum || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="4">Grade & Section: ${data.grade || '<span class="na-placeholder">N/A</span>'}/${data.section || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="2">Sex: ${data.sex || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
 
                             <tr>
                                 <td colspan="1" rowspan="2" class="section-title">LEARNER'S NAME</td>
                                 <td colspan="5">${learnerFullName}</td>
                                 <td colspan="2">Mode of Living:</td>
-                                <td colspan="4">${data.living_mode ? data.living_mode.join(', ') : '-'}</td>
+                                <td colspan="4">${data.living_mode ? data.living_mode.join(', ') : '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
                             <td colspan="2"> <span>Family Name</span></td>
                             <td colspan="1">  <span>First Name</span>             </td>
                             <td colspan="2" > <span>Middle Name</span></td>
-                
-                                <td colspan="2">Disability(if any):</td><td colspan="3"></td>
+
+                                <td colspan="2">Disability(if any):</td><td colspan="3">${data.disability || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
 
                             <tr>
-                                <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '-'}</td>
+                                <td colspan="2">Complete Address:</td><td colspan="10">${data.address || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.contact_number || '-'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.contact_number || '<span class="na-placeholder">N/A</span>'}</td>
                                 <td colspan="2">FB/Messenger:</td>
-                                <td colspan="4">${data.fb_messenger || 'N/A'}</td>
+                                <td colspan="4">${data.fb_messenger || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">Birthday & Age:</td><td colspan="2">${formattedBirthday} (${formattedAge})</td>
-                                <td colspan="1">Religion:</td><td colspan="2">${data.religion || '-'}</td>
+                                <td colspan="1">Religion:</td><td colspan="2">${data.religion || '<span class="na-placeholder">N/A</span>'}</td>
                                 <td colspan="1">Nationality:</td>
-                                <td colspan="4">${data.nationality || '-'}</td>
+                                <td colspan="4">${data.nationality || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
-                            
+
                             <tr>
-                                <td class="section-title" colspan="2">Father's Name</td><td colspan="4">${data.father_name || '-'}</td>
-                                <td colspan="1">Age:</td><td colspan="5">${data.father_age || '-'}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.father_occupation || 'N/A'}</td>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.father_contact || 'N/A'}</td>
+                                <td class="section-title" colspan="2">Father's Name</td><td colspan="4">${data.father_name || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.father_age || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || 'N/A'}</td>
-                                <td colspan="2">Place of Work:</td><td colspan="4">${data.father_place_work || 'N/A'}</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="section-title" colspan="2">Mother's Name</td><td colspan="4">${data.mother_name || '-'}</td>
-                                <td colspan="1">Age:</td><td colspan="5">${data.mother_age || '-'}</td>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.father_occupation || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.father_contact || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.mother_occupation || 'N/A'}</td>
-                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.mother_contact || 'N/A'}</td>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.father_fb || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.father_place_work || '<span class="na-placeholder">N/A</span>'}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="section-title" colspan="2">Mother's Name</td><td colspan="4">${data.mother_name || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="1">Age:</td><td colspan="5">${data.mother_age || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                             <tr>
-                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || 'N/A'}</td>
-                                <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || 'N/A'}</td>
+                                <td colspan="2">Occupation/Work:</td><td colspan="4">${data.mother_occupation || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="2">Mobile Number:</td><td colspan="4">${data.mother_contact || '<span class="na-placeholder">N/A</span>'}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">FB/Messenger:</td><td colspan="4">${data.mother_fb || '<span class="na-placeholder">N/A</span>'}</td>
+                                <td colspan="2">Place of Work:</td><td colspan="4">${data.mother_place_work || '<span class="na-placeholder">N/A</span>'}</td>
                             </tr>
                         </table>
 
@@ -342,12 +342,19 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted || '<span class="na-placeholder">N/A</span>'}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 20px;">Parent Agreements: ${data.parent_agreement_1 && data.parent_agreement_2 ? '✓ Accepted' : '<span class="na-placeholder">N/A</span>'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng magulang/guardian</div>
                                             </div>
                                         </div>
                                     </div>
@@ -391,12 +398,19 @@
                                         <span style="white-space: nowrap;">Nilagdaan ngayong araw:</span>
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 10px;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted || '<span class="na-placeholder">N/A</span>'}</div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">(Petsa)</div>
+                                                <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
+                                                <div style="height: 5px;"></div>
+                                                <div style="margin-bottom: 10px; font-size: 11px;">
+                                                    <strong>Agreement Status:</strong>
+                                                    <span style="margin-left: 10px;">Student Agreements: ${data.student_agreement_1 && data.student_agreement_2 ? '✓ Accepted' : '<span class="na-placeholder">N/A</span>'}</span>
+                                                </div>
                                                 <div style="border-bottom: 1px solid #000; height: 1em;"></div>
-                                                <div style="margin-top: 5px;">Lagda ng mag-aaral</div>
+                                                <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
                                         </div>
                                     </div>
@@ -446,14 +460,14 @@
 
                     Swal.fire({
                         html: flipCardContent,
-                        width: '60%',
-                        heightAuto: true,   
-                        showCloseButton: true,
-                        confirmButtonText: 'Close',
-                        customClass: { 
-                            popup: 'swal-form-popup',
+                        width: '70%',
+                        heightAuto: false,
+                        customClass: {
+                            popup: 'swal-form-popup scrollable-modal',
                             actions: 'swal-actions-custom'
                         },
+                        showCloseButton: true,
+                        confirmButtonText: 'Close',
                         showConfirmButton: false,
                         didOpen: () => {
                             // Attach event listeners after modal opens
@@ -526,6 +540,7 @@
                                 /* page-break-after: always; */
                             }
                             .print-page:last-child {
+                                page-break-before: always;
                                 /* page-break-after: auto; */
                                 margin-bottom: 0;
                             }
@@ -574,6 +589,7 @@
                             border: 1px solid #000;
                             padding: 2px 3px; /* Reduced from 3px 4px */
                             vertical-align: top;
+                            text-align: center;
                         }
                         .section-title {
                             text-align: center;
@@ -602,6 +618,11 @@
                         }
                         .sig-label {
                             font-size: 10px;
+                        }
+                        .na-placeholder {
+                            color: #666 !important;
+                            font-style: italic;
+                            font-size: 0.85em;
                         }
                     </style>
                 </head>
@@ -638,6 +659,17 @@
             background: #fff;
             font-family: 'Arial', sans-serif;
             color: #000;
+        }
+
+        .scrollable-modal .swal2-popup {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .na-placeholder {
+            color: #999 !important;
+            font-style: italic;
+            font-size: 0.9em;
         }
 
         /* Flip Card Styles */
@@ -690,6 +722,7 @@
             padding: 10px 20px;
             height: auto;
             overflow: visible;
+            text-align: center;
         }
 
         /* Flip Controls */

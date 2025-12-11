@@ -129,12 +129,19 @@ class ArchivedStudentDataController extends Controller
      */
     public function getArchivedStudent($id)
     {
-        $student = ArchivedStudentInformation::with('user')->find($id);
+        $student = ArchivedStudentInformation::with('user', 'schoolYear')->find($id);
 
         if (!$student) {
             return response()->json(['error' => 'Archived student not found.'], 404);
         }
 
-        return response()->json($student);
+        // Add school_year_name to the response
+        $studentData = $student->toArray();
+        $studentData['school_year_name'] = $student->schoolYear ? $student->schoolYear->school_year : null;
+
+        // Add formatted current date
+        $studentData['current_date_formatted'] = $student->current_date ? \Carbon\Carbon::parse($student->current_date)->format('M d, Y') : null;
+
+        return response()->json($studentData);
     }
 }
