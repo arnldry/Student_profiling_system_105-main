@@ -1379,7 +1379,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Birthday & Age:</td><td colspan="2">${formattedBirthday} (${formattedAge})</td>
-                                <td colspan="1">Religion:</td><td colspan="2">${data.religion || '-'}</td>
+                                <td colspan="1">Religion:</td><td colspan="2">${data.religion_denomination || data.religion || '-'}</td>
                                 <td colspan="1">Nationality:</td>
                                 <td colspan="4">${data.nationality || '-'}</td>
                             </tr>
@@ -1474,8 +1474,8 @@
                                         <div style="flex-grow: 1; display: flex; justify-content: space-around; margin-left: 10px;">
                                             <div style="text-align: center; flex-basis: 45%;">
                                                 <div style="height: 10px;"></div>
-                                                <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
-                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="font-size: 14px; margin-bottom: 8px;">${data.current_date_formatted}</div>
+                                                <div style="border-bottom: 1px solid #000; height: 0.7em;"></div>
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
@@ -1564,10 +1564,9 @@
                         </table>
                         <table class="info-table">
                             <tr>
-                                <td colspan="12">COUNSELOR\'S NOTES:________________________________
-                                ____________________________________________________________________
-                                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-                                    
+                                <td colspan="12" >COUNSELOR\'S NOTES:
+                                    <br><br><br><br><br><br>
+
                                 </td>
                             </tr>
                         </table>
@@ -1737,7 +1736,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">Birthday & Age:</td><td colspan="2">${formattedBirthday} (${formattedAge})</td>
-                                <td colspan="1">Religion:</td><td colspan="2">${data.religion || '-'}</td>
+                                <td colspan="1">Religion:</td><td colspan="2">${data.religion_denomination || data.religion || '-'}</td>
                                 <td colspan="1">Nationality:</td>
                                 <td colspan="4">${data.nationality || '-'}</td>
                             </tr>
@@ -1889,7 +1888,7 @@
                                             <div style="text-align: center; flex-basis: 45%;">
                                                 <div style="height: 10px;"></div>
                                                 <div style="font-size: 14px; margin-bottom: 1px;">${data.current_date_formatted}</div>
-                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="border-bottom: 1px solid #000; height: 0.5em;"></div>
                                                 <div style="margin-top: 2px;">(Petsa)</div>
                                             </div>
                                             <div style="text-align: center; flex-basis: 45%;">
@@ -1898,7 +1897,7 @@
                                                     <strong>Agreement Status:</strong>
                                                     <span style="margin-left: 20px;">Parent Agreements: ${data.agreements.parent_agreement_1 && data.agreements.parent_agreement_2 ? '✓ Accepted' : '✗ Not Accepted'}</span>
                                                 </div>
-                                                <div style="border-bottom: 1px solid #000; height: 1em;"></div>
+                                                <div style="border-bottom: 1px solid #000; height: 1.5em;"></div>
                                                 <div style="margin-top: 2px;">Lagda ng mag-aaral</div>
                                             </div>
                                         </div>
@@ -1922,9 +1921,8 @@
                         </table>
                         <table class="info-table">
                             <tr>
-                                <td colspan="12">COUNSELOR\'S NOTES:________________________________
-                                ____________________________________________________________________
-                                    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                                <td colspan="12" class="counselor-notes">COUNSELOR\'S NOTES:
+
 
                                 </td>
                             </tr>
@@ -1962,20 +1960,17 @@
                     <style>
                         @media print {
                             @page {
-                                size: letter; /* You can use A4 as well */
-                                margin: 0.25in;
+                                size: A4;
+                                margin: 0.05in 0.25in 0.05in 0.25in;
                             }
                             body {
                                 margin: 0;
                                 padding: 0;
                                 -webkit-print-color-adjust: exact !important;
                                 print-color-adjust: exact !important;
+                                page-break-inside: avoid;
                             }
                             .print-page {
-                                page-break-after: always;
-                            }
-                            .print-page:last-child {
-                                page-break-after: auto;
                                 margin-bottom: 0;
                             }
                         }
@@ -2016,13 +2011,17 @@
                         .info-table {
                             width: 100%;
                             border-collapse: collapse;
-                            margin-bottom: 3px; /* Reduced from 5px */
-                            font-size: 10px;
+                            margin-bottom: 2px;
+                            font-size: 9px;
                         }
                         .info-table td {
                             border: 1px solid #000;
-                            padding: 2px 3px; /* Reduced from 3px 4px */
+                            padding: 1px 3px;
                             vertical-align: top;
+                            text-align: center;
+                        }
+                        .info-table .counselor-notes {
+                            text-align: left !important;
                         }
                         .section-title {
                             text-align: center;
@@ -2030,17 +2029,17 @@
                             background-color: #f0f0f0 !important;
                         }
                         h5 {
-                            text-align: center; 
-                            margin: 8px 0;
+                            text-align: center;
+                            margin: 4px 0;
                             font-size: 11px;
                         }
                         ol {
                             padding-left: 20px;
                             margin: 0;
-                            font-size: 9px;
+                            font-size: 8px;
                         }
                         p {
-                           font-size: 9px;
+                           font-size: 8px;
                            text-align: justify;
                            margin: 0;
                         }
@@ -2050,16 +2049,15 @@
                             text-align: right;
                         }
                         .sig-label {
-                            font-size: 10px;
+                            font-size: 9px;
                         }
+                        
                     </style>
                 </head>
                 <body>
                     <div class="print-container">
                         <div class="print-page">
                             ${frontContent}
-                        </div>
-                        <div class="print-page">
                             ${backContent}
                         </div>
                     </div>
@@ -2353,6 +2351,11 @@
             border-color: #6c757d;
             box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
         }
+
+        
     </style>
 </body>
 </html>
+
+
+

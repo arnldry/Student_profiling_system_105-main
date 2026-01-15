@@ -85,6 +85,7 @@ class AdditionalInformationController extends Controller
             'guardian_place_work' => 'nullable|string',
             'guardian_contact' => 'nullable|string',
             'guardian_fb' => 'nullable|string',
+            'guardian_relationship' => 'nullable|string',
 
             // Agreements
             'student_agreement_1' => 'accepted',
@@ -119,10 +120,22 @@ class AdditionalInformationController extends Controller
             // Handle profile picture upload
             $profilePicturePath = null;
             if ($request->hasFile('profile_picture')) {
-                $file = $request->file('profile_picture');
-                $filename = Auth::id() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('profiles'), $filename);
-                $profilePicturePath = 'profiles/' . $filename;
+                try {
+                    $file = $request->file('profile_picture');
+                    $filename = Auth::id() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    
+                    // Ensure the profiles directory exists
+                    $profilesDir = public_path('profiles');
+                    if (!file_exists($profilesDir)) {
+                        mkdir($profilesDir, 0755, true);
+                    }
+                    
+                    $file->move($profilesDir, $filename);
+                    $profilePicturePath = 'profiles/' . $filename;
+                } catch (\Exception $uploadException) {
+                    Log::error('Profile picture upload failed: ' . $uploadException->getMessage());
+                    return back()->withInput()->withErrors(['profile_picture' => 'Failed to upload profile picture. Please try again.']);
+                }
             }
 
             // Prepare data for saving
@@ -167,6 +180,7 @@ class AdditionalInformationController extends Controller
                 'guardian_place_work' => $validated['guardian_place_work'] ?? null,
                 'guardian_contact' => $validated['guardian_contact'] ?? null,
                 'guardian_fb' => $validated['guardian_fb'] ?? null,
+                'guardian_relationship' => $validated['guardian_relationship'] ?? null,
 
                 'student_agreement_1' => true,
                 'student_agreement_2' => true,
@@ -190,8 +204,15 @@ class AdditionalInformationController extends Controller
                 AdditionalInformation::create($data);
             }
 
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error saving additional info: ' . $e->getMessage());
+            Log::error('SQL: ' . $e->getSql());
+            Log::error('Bindings: ' . json_encode($e->getBindings()));
+            Log::error($e->getTraceAsString());
+            return back()->withInput()->withErrors(['unexpected' => 'Database error occurred. Please check your information and try again.']);
         } catch (\Exception $e) {
             Log::error('Error saving additional info: ' . $e->getMessage());
+            Log::error('File: ' . $e->getFile() . ' Line: ' . $e->getLine());
             Log::error($e->getTraceAsString());
             return back()->withInput()->withErrors(['unexpected' => 'Something went wrong while saving your information. Please try again.']);
         }

@@ -1072,14 +1072,111 @@
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes, save it!',
                         cancelButtonText: 'Cancel'
-                    }).then((result) => {
+                    }).then(async (result) => {
                         if (result.isConfirmed) {
-                            // Remove event listener to allow submission
-                            form.removeEventListener('submit', handleSubmit);
-                            if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                            } else {
-                                form.submit();
+                            // Submit form via AJAX instead of traditional form submission
+                            const formData = new FormData(form);
+                            const formAction = form.getAttribute('action');
+                            
+                            // Get CSRF token from form or meta tag
+                            let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                                           form.querySelector('input[name="_token"]')?.value;
+
+                            try {
+                                const headers = {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                };
+                                
+                                // Add CSRF token to headers if available
+                                if (csrfToken) {
+                                    headers['X-CSRF-TOKEN'] = csrfToken;
+                                }
+
+                                const response = await fetch(formAction, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: headers
+                                });
+
+                                console.log('Response status:', response.status);
+                                const responseText = await response.text();
+                                console.log('Raw response:', responseText);
+                                
+                                // Try to parse JSON
+                                let data;
+                                try {
+                                    data = JSON.parse(responseText);
+                                } catch (parseError) {
+                                    console.error('JSON parse error:', parseError);
+                                    console.error('Response was:', responseText.substring(0, 500));
+                                    
+                                    // If response contains HTML error, show it
+                                    if (responseText.includes('<html') || responseText.includes('<!DOCTYPE')) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Server Error!',
+                                            html: '<p>The server returned an error (likely HTML instead of JSON):</p><pre style="text-align:left; max-height:300px; overflow:auto; font-size:12px;">' + 
+                                                  responseText.substring(0, 1000).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '...</pre><p>Check browser console for more details.</p>',
+                                            confirmButtonColor: '#dc3545'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: 'Invalid response from server. Check console for details.',
+                                            confirmButtonColor: '#dc3545'
+                                        });
+                                    }
+                                    return;
+                                }
+
+                                // Handle Laravel validation error responses
+                                if (response.status === 422 && data.errors) {
+                                    let errorMessage = 'Validation errors:\n';
+                                    for (const [field, messages] of Object.entries(data.errors)) {
+                                        errorMessage += '• ' + field + ': ' + messages.join(', ') + '\n';
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Validation Error!',
+                                        text: errorMessage,
+                                        confirmButtonColor: '#dc3545'
+                                    });
+                                    return;
+                                }
+
+                                if (data.success) {
+                                    // Close the modal
+                                    $(modal).modal('hide');
+                                    
+                                    // Show success message
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: data.message || 'Student information updated successfully!',
+                                        confirmButtonColor: '#28a745'
+                                    }).then(() => {
+                                        // Reload the page to show updated data
+                                        location.reload();
+                                    });
+                                } else {
+                                    // Show error message
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: data.message || 'An error occurred while saving.',
+                                        confirmButtonColor: '#dc3545'
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Fetch error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while saving. Error: ' + error.message,
+                                    confirmButtonColor: '#dc3545'
+                                });
                             }
                         }
                     });

@@ -505,16 +505,7 @@ public function updateStudentInfo(Request $request, $id)
                 }
             }
 
-            if (in_array('Living with Mother', $livingMode) && empty($validated['mother_name'])) {
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Mother name is required when "Living with Mother" is selected.'
-                    ], 422);
-                } else {
-                    return back()->withInput()->withErrors(['mother_name' => 'Mother name is required when "Living with Mother" is selected.']);
-                }
-            }
+            // Mother fields are now optional - removed required validation
 
             if (in_array('Living with Other Guardians', $livingMode) && empty($validated['guardian_name'])) {
                 if ($request->ajax()) {

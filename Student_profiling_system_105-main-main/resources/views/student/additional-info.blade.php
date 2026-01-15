@@ -211,11 +211,11 @@
 
         .denomination-item {
             padding: 12px 15px;
-            border: 1px solid #e9ecef;
+            border: 1px solid #007bff;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8f9fa;
+            background: #fff;
         }
 
         .denomination-item:hover {
@@ -226,7 +226,7 @@
         }
 
         .denomination-text {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 500;
             color: #333;
         }
@@ -1191,12 +1191,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const religionSelect = document.getElementById('religion');
     if (religionSelect) {
         religionSelect.addEventListener('change', function() {
-            // List of all denomination values that should trigger the modal
-            const denominations = ['Lutheran', 'Anglican / Episcopal', 'Baptist', 'Methodist', 'Presbyterian',
-                                  'Calvinist / Reformed', 'Pentecostal (e.g., Assemblies of God)', 'Evangelical',
-                                  'Seventh-day Adventist', 'Church of Christ', 'Born Again / Bible churches',
-                                  'Non-denominational Christian churches', 'Jehovah\'s Witnesses', 'Mormons', 'Iglesia ni Cristo (INC)'];
-
             if (this.value === 'Protestant') {
                 $('#protestantDenominationModal').modal('show');
             }
