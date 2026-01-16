@@ -494,16 +494,7 @@ public function updateStudentInfo(Request $request, $id)
             // Custom validation: Make parent/guardian fields required only when living mode is selected
             $livingMode = $validated['living_mode'];
 
-            if (in_array('Living with Father', $livingMode) && empty($validated['father_name'])) {
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Father name is required when "Living with Father" is selected.'
-                    ], 422);
-                } else {
-                    return back()->withInput()->withErrors(['father_name' => 'Father name is required when "Living with Father" is selected.']);
-                }
-            }
+            // Father fields are now optional - removed required validation
 
             // Mother fields are now optional - removed required validation
 
